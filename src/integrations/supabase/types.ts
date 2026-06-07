@@ -47,6 +47,12 @@ export interface Database {
           position: number | null
           excerpt: string | null
           sources: string[] | null
+          citation_urls: string[] | null
+          runs_total: number
+          runs_mentioned: number
+          confidence_pct: number | null
+          all_sentiments: string[] | null
+          web_grounded: boolean | null
           raw_response: string | null
           scanned_at: string
         }

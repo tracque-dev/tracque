@@ -58,15 +58,28 @@ export default function AIResults() {
       {/* Model mention rate cards */}
       {modelRates.length > 0 && (
         <div className="grid grid-cols-5 gap-3">
-          {modelRates.map(({ model, rate }) => (
-            <div key={model} className="bg-card rounded-xl border border-border p-3 shadow-card text-center">
-              <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${MODEL_COLORS[model] ?? 'bg-muted text-muted-foreground'}`}>
-                {MODEL_LABELS[model] ?? model}
-              </span>
-              <p className="text-2xl font-bold mt-2">{rate}%</p>
-              <p className="text-xs text-muted-foreground">mention rate</p>
-            </div>
-          ))}
+          {modelRates.map(({ model, rate }) => {
+            const forModel = scans.filter(s => s.model === model && s.mentioned)
+            const avgConf = forModel.length
+              ? Math.round(forModel.reduce((a, s) => a + (s.confidence_pct ?? 0), 0) / forModel.length)
+              : null
+            const webGrounded = scans.filter(s => s.model === model).some(s => s.web_grounded)
+            return (
+              <div key={model} className="bg-card rounded-xl border border-border p-3 shadow-card text-center">
+                <div className="flex items-center justify-center gap-1 mb-1">
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${MODEL_COLORS[model] ?? 'bg-muted text-muted-foreground'}`}>
+                    {MODEL_LABELS[model] ?? model}
+                  </span>
+                  {webGrounded && <span title="Web grounded — live data" className="text-emerald-500 text-xs">⚡</span>}
+                </div>
+                <p className="text-2xl font-bold mt-1">{rate}%</p>
+                <p className="text-xs text-muted-foreground">mention rate</p>
+                {avgConf != null && (
+                  <p className="text-xs text-muted-foreground mt-0.5">{avgConf}% confidence</p>
+                )}
+              </div>
+            )
+          })}
         </div>
       )}
 
@@ -106,8 +119,14 @@ export default function AIResults() {
                     <div className="flex-1 min-w-0">
                       {entry.mentioned ? (
                         <>
-                          <div className="flex items-center gap-3 mb-1">
-                            {entry.position && <span className="text-xs text-muted-foreground">Position #{entry.position}</span>}
+                          <div className="flex items-center flex-wrap gap-2 mb-1">
+                            {entry.position && <span className="text-xs text-muted-foreground">#{entry.position}</span>}
+                            {entry.confidence_pct != null && (
+                              <span className="text-xs text-muted-foreground">{entry.confidence_pct}% confidence</span>
+                            )}
+                            {entry.runs_total > 1 && (
+                              <span className="text-xs text-muted-foreground">{entry.runs_mentioned}/{entry.runs_total} runs</span>
+                            )}
                             {entry.sentiment && (
                               <span className={`text-xs px-1.5 py-0.5 rounded font-medium ${
                                 entry.sentiment === 'positive' ? 'bg-emerald-50 text-emerald-700' :
@@ -115,7 +134,10 @@ export default function AIResults() {
                                 'bg-red-50 text-red-700'
                               }`}>{entry.sentiment}</span>
                             )}
-                            {entry.sources?.map((s: string) => (
+                            {entry.web_grounded && (
+                              <span className="text-xs text-emerald-600 font-medium">⚡ live web</span>
+                            )}
+                            {(entry.citation_urls ?? entry.sources)?.slice(0, 3).map((s: string) => (
                               <span key={s} className="text-xs px-1.5 py-0.5 bg-muted rounded text-muted-foreground">{s}</span>
                             ))}
                           </div>
