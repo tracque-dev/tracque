@@ -1,5 +1,5 @@
 import { Outlet, NavLink } from 'react-router-dom'
-import { LayoutDashboard, Building2, Hash, Bot, Search, Settings } from 'lucide-react'
+import { LayoutDashboard, Building2, Hash, Bot, Search, Globe, BarChart3, Settings } from 'lucide-react'
 import { cn } from '../lib/utils'
 
 const nav = [
@@ -8,6 +8,8 @@ const nav = [
   { to: '/app/keywords', icon: Hash, label: 'Keywords' },
   { to: '/app/ai', icon: Bot, label: 'AI Visibility' },
   { to: '/app/seo', icon: Search, label: 'SEO Rankings' },
+  { to: '/app/site-audit', icon: Globe, label: 'Site Audit' },
+  { to: '/app/attribution', icon: BarChart3, label: 'Attribution' },
 ]
 
 export default function Layout() {
@@ -19,7 +21,7 @@ export default function Layout() {
           <div className="w-7 h-7 rounded-lg bg-[hsl(var(--sidebar-primary))] flex items-center justify-center">
             <Bot className="w-4 h-4 text-white" />
           </div>
-          <span className="text-white font-semibold text-base tracking-tight">Traque</span>
+          <span className="text-white font-semibold text-base tracking-tight">Tracque</span>
         </div>
 
         {/* Nav */}
@@ -64,7 +66,7 @@ export default function Layout() {
             Settings
           </NavLink>
           <p className="text-[10px] text-[hsl(var(--sidebar-foreground))] px-3 pt-3 opacity-50">
-            AI + SEO visibility
+            AI visibility · SEO · Attribution
           </p>
         </div>
       </aside>
