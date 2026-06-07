@@ -1,17 +1,8 @@
-import { Search, TrendingUp, TrendingDown, Minus } from 'lucide-react'
-
-const seoData = [
-  { keyword: 'best project management software', brand: 'Acme Corp', position: 3, prevPosition: 5, url: 'acmecorp.com/features', volume: 12400, difficulty: 72 },
-  { keyword: 'best project management software', brand: 'Rival Inc', position: 1, prevPosition: 1, url: 'rivalinc.com', volume: 12400, difficulty: 72 },
-  { keyword: 'project management tools 2025', brand: 'Acme Corp', position: 7, prevPosition: 4, url: 'acmecorp.com/blog/tools-2025', volume: 8100, difficulty: 58 },
-  { keyword: 'project management tools 2025', brand: 'Rival Inc', position: 2, prevPosition: 3, url: 'rivalinc.com/compare', volume: 8100, difficulty: 58 },
-  { keyword: 'how to manage remote teams', brand: 'Acme Corp', position: 12, prevPosition: 14, url: 'acmecorp.com/blog/remote', volume: 22000, difficulty: 45 },
-  { keyword: 'project management software pricing', brand: 'Acme Corp', position: 4, prevPosition: 4, url: 'acmecorp.com/pricing', volume: 3600, difficulty: 61 },
-  { keyword: 'asana alternatives', brand: 'Rival Inc', position: 3, prevPosition: 6, url: 'rivalinc.com/vs-asana', volume: 5400, difficulty: 55 },
-]
+import { Search, TrendingUp, TrendingDown, Minus, Loader2 } from 'lucide-react'
+import { useLatestSeoResults } from '../lib/hooks'
 
 function PositionChange({ curr, prev }: { curr: number; prev: number }) {
-  const diff = prev - curr // positive = improvement
+  const diff = prev - curr
   if (diff === 0) return <span className="flex items-center gap-0.5 text-xs text-muted-foreground"><Minus className="w-3 h-3" /></span>
   if (diff > 0) return <span className="flex items-center gap-0.5 text-xs text-emerald-600 font-medium"><TrendingUp className="w-3 h-3" />+{diff}</span>
   return <span className="flex items-center gap-0.5 text-xs text-red-500 font-medium"><TrendingDown className="w-3 h-3" />{diff}</span>
@@ -24,22 +15,14 @@ function PositionBadge({ pos }: { pos: number }) {
   return <span className={`text-xs px-2 py-0.5 rounded ${color}`}>#{pos}</span>
 }
 
-function DifficultyBar({ val }: { val: number }) {
-  const color = val >= 70 ? 'bg-red-400' : val >= 50 ? 'bg-amber-400' : 'bg-emerald-400'
-  return (
-    <div className="flex items-center gap-2">
-      <div className="w-16 h-1.5 bg-muted rounded-full overflow-hidden">
-        <div className={`h-full ${color} rounded-full`} style={{ width: `${val}%` }} />
-      </div>
-      <span className="text-xs text-muted-foreground">{val}</span>
-    </div>
-  )
-}
-
 export default function SEOResults() {
-  const ownKeywords = [...new Set(seoData.filter(r => r.brand === 'Acme Corp').map(r => r.keyword))]
-  const avgPos = Math.round(seoData.filter(r => r.brand === 'Acme Corp').reduce((a, r) => a + r.position, 0) / seoData.filter(r => r.brand === 'Acme Corp').length * 10) / 10
-  const top3 = seoData.filter(r => r.brand === 'Acme Corp' && r.position <= 3).length
+  const { data: results = [], isLoading } = useLatestSeoResults()
+
+  const ranked = results.filter(r => r.position != null)
+  const avgPos = ranked.length
+    ? Math.round(ranked.reduce((a, r) => a + (r.position ?? 0), 0) / ranked.length * 10) / 10
+    : null
+  const top3 = ranked.filter(r => (r.position ?? 0) <= 3).length
 
   return (
     <div className="p-6 space-y-6">
@@ -49,14 +32,13 @@ export default function SEOResults() {
         </div>
         <div>
           <h1 className="text-xl font-semibold">SEO Rankings</h1>
-          <p className="text-xs text-muted-foreground">Google rank tracking vs competitors</p>
+          <p className="text-xs text-muted-foreground">Google rank tracking via SerpAPI</p>
         </div>
       </div>
 
-      {/* Summary cards */}
       <div className="grid grid-cols-3 gap-4">
         <div className="bg-card rounded-xl border border-border p-4 shadow-card">
-          <p className="text-2xl font-bold">{avgPos}</p>
+          <p className="text-2xl font-bold">{avgPos ?? '—'}</p>
           <p className="text-xs text-muted-foreground">Avg Google position</p>
         </div>
         <div className="bg-card rounded-xl border border-border p-4 shadow-card">
@@ -64,42 +46,52 @@ export default function SEOResults() {
           <p className="text-xs text-muted-foreground">Keywords in top 3</p>
         </div>
         <div className="bg-card rounded-xl border border-border p-4 shadow-card">
-          <p className="text-2xl font-bold">{ownKeywords.length}</p>
-          <p className="text-xs text-muted-foreground">Keywords tracked</p>
+          <p className="text-2xl font-bold">{results.length}</p>
+          <p className="text-xs text-muted-foreground">Keyword/brand combos tracked</p>
         </div>
       </div>
 
-      {/* Rankings table */}
-      <div className="bg-card rounded-xl border border-border shadow-card">
-        <div className="px-4 py-3 border-b border-border flex items-center justify-between">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Rankings</p>
-          <span className="text-xs text-muted-foreground">vs. last week</span>
+      {isLoading ? (
+        <div className="flex items-center justify-center py-16">
+          <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
         </div>
-        <table className="w-full">
-          <thead>
-            <tr className="border-b border-border">
-              {['Keyword', 'Brand', 'Position', 'Change', 'URL', 'Volume', 'Difficulty'].map(h => (
-                <th key={h} className="px-4 py-2 text-left text-xs font-semibold text-muted-foreground">{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {seoData.map((row, i) => (
-              <tr key={i} className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors">
-                <td className="px-4 py-2.5 text-sm max-w-[180px] truncate">{row.keyword}</td>
-                <td className="px-4 py-2.5">
-                  <span className={`text-xs font-medium ${row.brand === 'Acme Corp' ? 'text-blue-600' : 'text-muted-foreground'}`}>{row.brand}</span>
-                </td>
-                <td className="px-4 py-2.5"><PositionBadge pos={row.position} /></td>
-                <td className="px-4 py-2.5"><PositionChange curr={row.position} prev={row.prevPosition} /></td>
-                <td className="px-4 py-2.5 text-xs text-muted-foreground truncate max-w-[140px]">{row.url}</td>
-                <td className="px-4 py-2.5 text-xs text-muted-foreground">{row.volume.toLocaleString()}</td>
-                <td className="px-4 py-2.5"><DifficultyBar val={row.difficulty} /></td>
+      ) : results.length === 0 ? (
+        <div className="text-center py-16 text-muted-foreground">
+          <Search className="w-8 h-8 mx-auto mb-3 opacity-30" />
+          <p className="text-sm font-medium">No SEO data yet</p>
+          <p className="text-xs mt-1">Add your SerpAPI key in Settings to enable Google rank tracking</p>
+        </div>
+      ) : (
+        <div className="bg-card rounded-xl border border-border shadow-card">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-border">
+                {['Keyword', 'Brand', 'Position', 'URL', 'Volume', 'Last checked'].map(h => (
+                  <th key={h} className="px-4 py-2 text-left text-xs font-semibold text-muted-foreground">{h}</th>
+                ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {results.map((row) => (
+                <tr key={row.id} className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors">
+                  <td className="px-4 py-2.5 text-sm max-w-[180px] truncate">{row.phrase}</td>
+                  <td className="px-4 py-2.5 text-xs font-medium text-foreground">{row.brand_name}</td>
+                  <td className="px-4 py-2.5">
+                    {row.position ? <PositionBadge pos={row.position} /> : <span className="text-xs text-muted-foreground">Not ranked</span>}
+                  </td>
+                  <td className="px-4 py-2.5 text-xs text-muted-foreground truncate max-w-[140px]">{row.url ?? '—'}</td>
+                  <td className="px-4 py-2.5 text-xs text-muted-foreground">
+                    {row.search_volume ? row.search_volume.toLocaleString() : '—'}
+                  </td>
+                  <td className="px-4 py-2.5 text-xs text-muted-foreground">
+                    {new Date(row.scanned_at).toLocaleDateString()}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   )
 }

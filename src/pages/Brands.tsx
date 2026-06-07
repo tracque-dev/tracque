@@ -1,36 +1,17 @@
 import { useState } from 'react'
-import { Building2, Plus, Trash2, Globe, CheckCircle2 } from 'lucide-react'
-
-interface Brand {
-  id: string
-  name: string
-  domain: string
-  type: 'own' | 'competitor'
-  mentionRate: number
-  avgSentiment: 'positive' | 'neutral' | 'negative'
-  createdAt: string
-}
-
-const DEMO_BRANDS: Brand[] = [
-  { id: '1', name: 'Acme Corp', domain: 'acmecorp.com', type: 'own', mentionRate: 42, avgSentiment: 'positive', createdAt: '2025-01-10' },
-  { id: '2', name: 'Rival Inc', domain: 'rivalinc.com', type: 'competitor', mentionRate: 31, avgSentiment: 'neutral', createdAt: '2025-01-10' },
-  { id: '3', name: 'Gadget Co', domain: 'gadgetco.io', type: 'competitor', mentionRate: 18, avgSentiment: 'negative', createdAt: '2025-01-12' },
-]
+import { Building2, Plus, Trash2, Globe, CheckCircle2, Loader2 } from 'lucide-react'
+import { useBrands, useAddBrand, useDeleteBrand } from '../lib/hooks'
 
 export default function Brands() {
-  const [brands, setBrands] = useState<Brand[]>(DEMO_BRANDS)
+  const { data: brands = [], isLoading } = useBrands()
+  const addBrand = useAddBrand()
+  const deleteBrand = useDeleteBrand()
   const [showAdd, setShowAdd] = useState(false)
   const [form, setForm] = useState({ name: '', domain: '', type: 'own' as 'own' | 'competitor' })
 
-  function addBrand() {
+  async function handleAdd() {
     if (!form.name.trim()) return
-    setBrands(prev => [...prev, {
-      id: Date.now().toString(),
-      ...form,
-      mentionRate: 0,
-      avgSentiment: 'neutral',
-      createdAt: new Date().toISOString().split('T')[0],
-    }])
+    await addBrand.mutateAsync({ name: form.name, domain: form.domain || undefined, type: form.type })
     setForm({ name: '', domain: '', type: 'own' })
     setShowAdd(false)
   }
@@ -55,7 +36,6 @@ export default function Brands() {
         </button>
       </div>
 
-      {/* Add form */}
       {showAdd && (
         <div className="bg-card rounded-xl border border-border p-4 shadow-card space-y-3">
           <p className="text-sm font-semibold">Add a brand to track</p>
@@ -63,6 +43,7 @@ export default function Brands() {
             <div>
               <label className="text-xs text-muted-foreground mb-1 block">Brand name</label>
               <input
+                autoFocus
                 className="w-full text-sm border border-border rounded-lg px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary bg-background"
                 placeholder="Acme Corp"
                 value={form.name}
@@ -91,7 +72,12 @@ export default function Brands() {
             </div>
           </div>
           <div className="flex gap-2">
-            <button onClick={addBrand} className="px-3 py-1.5 text-sm bg-primary text-white rounded-lg font-medium hover:bg-primary/90">
+            <button
+              onClick={handleAdd}
+              disabled={addBrand.isPending}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-primary text-white rounded-lg font-medium hover:bg-primary/90 disabled:opacity-50"
+            >
+              {addBrand.isPending && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
               Add Brand
             </button>
             <button onClick={() => setShowAdd(false)} className="px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground rounded-lg">
@@ -101,56 +87,50 @@ export default function Brands() {
         </div>
       )}
 
-      {/* Brand cards */}
-      <div className="grid grid-cols-1 gap-3">
-        {brands.map((brand) => (
-          <div key={brand.id} className="bg-card rounded-xl border border-border p-4 shadow-card flex items-center gap-4">
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm ${
-              brand.type === 'own' ? 'bg-blue-500/10 text-blue-700' : 'bg-slate-100 text-slate-600'
-            }`}>
-              {brand.name.charAt(0)}
-            </div>
-
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <p className="text-sm font-semibold">{brand.name}</p>
-                {brand.type === 'own' && (
-                  <span className="text-xs px-1.5 py-0.5 bg-blue-50 text-blue-700 rounded font-medium flex items-center gap-0.5">
-                    <CheckCircle2 className="w-3 h-3" /> My Brand
-                  </span>
+      {isLoading ? (
+        <div className="flex items-center justify-center py-16">
+          <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+        </div>
+      ) : brands.length === 0 ? (
+        <div className="text-center py-16 text-muted-foreground">
+          <Building2 className="w-8 h-8 mx-auto mb-3 opacity-30" />
+          <p className="text-sm font-medium">No brands yet</p>
+          <p className="text-xs mt-1">Add your brand and competitors to start tracking</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-3">
+          {brands.map((brand) => (
+            <div key={brand.id} className="bg-card rounded-xl border border-border p-4 shadow-card flex items-center gap-4">
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm ${
+                brand.type === 'own' ? 'bg-blue-500/10 text-blue-700' : 'bg-slate-100 text-slate-600'
+              }`}>
+                {brand.name.charAt(0)}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-semibold">{brand.name}</p>
+                  {brand.type === 'own' && (
+                    <span className="text-xs px-1.5 py-0.5 bg-blue-50 text-blue-700 rounded font-medium flex items-center gap-0.5">
+                      <CheckCircle2 className="w-3 h-3" /> My Brand
+                    </span>
+                  )}
+                </div>
+                {brand.domain && (
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
+                    <Globe className="w-3 h-3" />{brand.domain}
+                  </div>
                 )}
               </div>
-              {brand.domain && (
-                <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
-                  <Globe className="w-3 h-3" />{brand.domain}
-                </div>
-              )}
+              <button
+                onClick={() => deleteBrand.mutate(brand.id)}
+                className="p-1.5 text-muted-foreground hover:text-red-500 transition-colors rounded"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
             </div>
-
-            <div className="flex items-center gap-6 text-center">
-              <div>
-                <p className="text-lg font-bold text-foreground">{brand.mentionRate}%</p>
-                <p className="text-xs text-muted-foreground">Mention rate</p>
-              </div>
-              <div>
-                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                  brand.avgSentiment === 'positive' ? 'bg-emerald-50 text-emerald-700' :
-                  brand.avgSentiment === 'neutral' ? 'bg-amber-50 text-amber-700' :
-                  'bg-red-50 text-red-700'
-                }`}>{brand.avgSentiment}</span>
-                <p className="text-xs text-muted-foreground mt-0.5">Sentiment</p>
-              </div>
-            </div>
-
-            <button
-              onClick={() => setBrands(b => b.filter(x => x.id !== brand.id))}
-              className="p-1.5 text-muted-foreground hover:text-red-500 transition-colors rounded"
-            >
-              <Trash2 className="w-4 h-4" />
-            </button>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
