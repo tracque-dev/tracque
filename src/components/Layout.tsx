@@ -1,6 +1,7 @@
-import { Outlet, NavLink } from 'react-router-dom'
-import { LayoutDashboard, Building2, Hash, Bot, Search, Globe, BarChart3, Sparkles, Zap, Settings } from 'lucide-react'
+import { Outlet, NavLink, useNavigate } from 'react-router-dom'
+import { LayoutDashboard, Building2, Hash, Bot, Search, Globe, BarChart3, Sparkles, Zap, Settings, LogOut } from 'lucide-react'
 import { cn } from '../lib/utils'
+import { useAuth } from '../lib/auth'
 
 const nav = [
   { to: '/app/dashboard',       icon: LayoutDashboard, label: 'Dashboard' },
@@ -15,6 +16,14 @@ const nav = [
 ]
 
 export default function Layout() {
+  const { user, signOut } = useAuth()
+  const navigate = useNavigate()
+
+  async function handleSignOut() {
+    await signOut()
+    navigate('/')
+  }
+
   return (
     <div className="flex h-screen bg-background">
       <aside className="w-56 flex flex-col bg-[hsl(var(--sidebar))] shrink-0">
@@ -67,9 +76,17 @@ export default function Layout() {
             <Settings className="w-4 h-4" />
             Settings
           </NavLink>
-          <p className="text-[10px] text-[hsl(var(--sidebar-foreground))] px-3 pt-3 opacity-50">
-            AI visibility · SEO · Attribution
-          </p>
+          {user && (
+            <div className="px-3 pt-2">
+              <p className="text-[10px] text-[hsl(var(--sidebar-foreground))] opacity-50 truncate">{user.email}</p>
+              <button
+                onClick={handleSignOut}
+                className="flex items-center gap-1.5 mt-1.5 text-[10px] text-[hsl(var(--sidebar-foreground))] opacity-50 hover:opacity-100 transition-opacity"
+              >
+                <LogOut className="w-3 h-3" /> Sign out
+              </button>
+            </div>
+          )}
         </div>
       </aside>
 

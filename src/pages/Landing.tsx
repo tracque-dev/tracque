@@ -59,7 +59,7 @@ function PricingCard({
         ))}
       </ul>
       <Link
-        to="/app/dashboard"
+        to="/auth"
         className={`w-full py-3 rounded-xl text-sm font-semibold text-center transition-colors ${
           highlighted
             ? 'bg-white text-[#1a1a1a] hover:bg-[#f0f0f0]'
@@ -119,8 +119,8 @@ export default function Landing() {
           ))}
         </div>
         <div className="flex items-center gap-3">
-          <Link to="/app/dashboard" className="text-sm text-[#4a4a4a] hover:text-[#1a1a1a]">Log in</Link>
-          <Link to="/app/dashboard" className="text-sm bg-[#1a1a1a] text-white px-4 py-2 rounded-xl font-medium hover:bg-[#333] transition-colors">
+          <Link to="/auth" className="text-sm text-[#4a4a4a] hover:text-[#1a1a1a]">Log in</Link>
+          <Link to="/auth" className="text-sm bg-[#1a1a1a] text-white px-4 py-2 rounded-xl font-medium hover:bg-[#333] transition-colors">
             Start free
           </Link>
         </div>
@@ -144,7 +144,7 @@ export default function Landing() {
         </p>
         <div className="flex items-center justify-center gap-3">
           <Link
-            to="/app/dashboard"
+            to="/auth"
             className="flex items-center gap-2 bg-[#1a1a1a] text-white px-6 py-3.5 rounded-xl font-semibold hover:bg-[#333] transition-colors"
           >
             Start for free <ArrowRight className="w-4 h-4" />
@@ -409,7 +409,7 @@ export default function Landing() {
           AI search is where your next customer starts their research. Know if you're there — and prove it drove revenue.
         </p>
         <Link
-          to="/app/dashboard"
+          to="/auth"
           className="inline-flex items-center gap-2 bg-[#1a1a1a] text-white px-8 py-4 rounded-xl font-semibold hover:bg-[#333] transition-colors text-base"
         >
           Start free today <ArrowRight className="w-4 h-4" />
