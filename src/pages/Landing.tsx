@@ -8,18 +8,22 @@ import { ArrowRight, Check, ChevronDown, Search, Zap, BarChart3, Globe, Sparkles
 function Mark({ className = 'w-7 h-7' }: { className?: string }) {
   return (
     <div className={`${className} rounded-[9px] bg-[#0A0A0A] flex items-center justify-center`}>
-      {/* Train tracks ascending up-and-to-the-right, converging toward a
-          blue vanishing point — "Tracque" + growth. */}
-      <svg viewBox="0 0 24 24" fill="none" className="w-[64%] h-[64%]">
-        {/* rails (converge as they rise) */}
-        <path d="M6.4 19 L19.4 7.4" stroke="white" strokeWidth="1.9" strokeLinecap="round" />
-        <path d="M3.6 15 L18.2 5.8" stroke="white" strokeWidth="1.9" strokeLinecap="round" />
-        {/* crossties */}
-        <path d="M6.3 12.9 L9.3 17.1" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
-        <path d="M10.7 10.2 L13.3 13.8" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
-        <path d="M14.9 7.6 L17 10.2" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
-        {/* vanishing point */}
-        <circle cx="19.4" cy="6.2" r="1.7" fill="#3B82F6" />
+      {/* Train tracks that climb up → flat → up, to the right.
+          Two parallel rails (same bends) + evenly spaced crossties. */}
+      <svg viewBox="0 0 24 24" fill="none" className="w-[66%] h-[66%]"
+           stroke="white" strokeLinecap="round" strokeLinejoin="round">
+        {/* rails */}
+        <path d="M1.63 18.83 L8.17 11.2 L14.17 11.2 L19.63 4.83" strokeWidth="1.8" />
+        <path d="M4.37 21.17 L9.83 14.8 L15.83 14.8 L22.37 7.17" strokeWidth="1.8" />
+        {/* evenly spaced crossties (perpendicular to local track) */}
+        <path d="M2.96 16.67 L6.30 19.53" strokeWidth="1.5" />
+        <path d="M5.23 14.01 L8.57 16.87" strokeWidth="1.5" />
+        <path d="M9.28 10.8 L9.28 15.2"   strokeWidth="1.5" />
+        <path d="M12.78 10.8 L12.78 15.2" strokeWidth="1.5" />
+        <path d="M14.16 10.60 L17.50 13.46" strokeWidth="1.5" />
+        <path d="M16.44 7.94 L19.78 10.80"  strokeWidth="1.5" />
+        {/* destination point */}
+        <circle cx="21" cy="6" r="1.35" fill="#3B82F6" stroke="none" />
       </svg>
     </div>
   )
