@@ -19,10 +19,12 @@ const SUPABASE_SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 const DISPATCH_BATCH = 100
 
 Deno.serve(async () => {
-  // Pull pending tasks not yet dispatched
+  // Pull pending tasks not yet dispatched.
+  // `source` decides which worker handles it: 'api' → process-single-task,
+  // 'frontend' → scrape-task (managed browser + proxy rotation).
   const { data: tasks } = await supabase
     .from('scan_tasks')
-    .select('id, job_id, model')
+    .select('id, job_id, model, source')
     .eq('status', 'pending')
     .lt('attempts', 3)
     .order('created_at', { ascending: true })
@@ -36,16 +38,19 @@ Deno.serve(async () => {
 
   // If QStash available — true parallel dispatch
   if (QSTASH_TOKEN) {
-    const messages = tasks.map(task => ({
-      destination: `${SUPABASE_URL}/functions/v1/process-single-task`,
-      headers: {
-        'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ task_id: task.id }),
-      // Delay between same-model tasks to respect rate limits
-      delay: getModelDelay(task.model),
-    }))
+    const messages = tasks.map(task => {
+      const worker = task.source === 'frontend' ? 'scrape-task' : 'process-single-task'
+      return {
+        destination: `${SUPABASE_URL}/functions/v1/${worker}`,
+        headers: {
+          'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ task_id: task.id }),
+        // Frontend scrapes are slower + more ban-sensitive → larger stagger.
+        delay: task.source === 'frontend' ? getFrontendDelay(task.model) : getModelDelay(task.model),
+      }
+    })
 
     // Batch publish to QStash
     const batchSize = 10
@@ -84,4 +89,12 @@ function getModelDelay(model: string): number {
     chatgpt: 60, perplexity: 50, gemini: 60, claude: 50, grok: 60
   }
   return Math.ceil(60 / (rpm[model] ?? 50)) // seconds between calls
+}
+
+function getFrontendDelay(model: string): number {
+  // Frontend scrapes spread wider: each consumes a proxy + browser session,
+  // and bunched requests from one surface raise ban risk. ~6–10 rpm/surface.
+  const rpm: Record<string, number> = { chatgpt: 8, perplexity: 10 }
+  const jitter = Math.floor(Math.random() * 5) // de-synchronize workers
+  return Math.ceil(60 / (rpm[model] ?? 8)) + jitter
 }
