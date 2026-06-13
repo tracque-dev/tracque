@@ -1,95 +1,183 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Check, ChevronDown, Bot, Search, Zap, BarChart3, Globe, Sparkles, TrendingUp, DollarSign } from 'lucide-react'
+import { ArrowRight, Check, ChevronDown, Search, Zap, BarChart3, Globe, Sparkles, TrendingUp, DollarSign, Bot } from 'lucide-react'
+
+// ── Brand mark ─────────────────────────────────────────────
+// Custom geometric glyph (rising signal / tracked path) — reads as a
+// designed brand, not a stock icon.
+function Mark({ className = 'w-7 h-7' }: { className?: string }) {
+  return (
+    <div className={`${className} rounded-[9px] bg-[#0A0A0A] flex items-center justify-center`}>
+      <svg viewBox="0 0 24 24" fill="none" className="w-[60%] h-[60%]">
+        <path d="M4 16.5 L9 11 L13 14 L20 6" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+        <circle cx="20" cy="6" r="2.4" fill="#3B82F6" stroke="white" strokeWidth="1.4" />
+      </svg>
+    </div>
+  )
+}
+
+// ── Scroll reveal ──────────────────────────────────────────
+function Reveal({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
+  const ref = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const io = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { el.classList.add('in'); io.disconnect() }
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' })
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
+  return <div ref={ref} className={`reveal ${className}`} style={{ animationDelay: `${delay}ms` }}>{children}</div>
+}
+
+function Eyebrow({ children }: { children: React.ReactNode }) {
+  return <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#3B82F6] mb-4">{children}</p>
+}
+
+// ── Hero product mock (the money shot) ─────────────────────
+const MODELS = [
+  { name: 'ChatGPT',    dot: '#10A37F', rate: 82 },
+  { name: 'Claude',     dot: '#D97757', rate: 90 },
+  { name: 'Perplexity', dot: '#20808D', rate: 74 },
+  { name: 'Gemini',     dot: '#4285F4', rate: 61 },
+  { name: 'Grok',       dot: '#0A0A0A', rate: 48 },
+]
+
+function HeroVisual() {
+  return (
+    <div className="relative">
+      {/* main panel */}
+      <div className="relative rounded-2xl border border-[#E7E2DB] bg-white shadow-[0_24px_60px_-20px_rgba(10,10,10,0.22)] overflow-hidden">
+        {/* window chrome */}
+        <div className="flex items-center justify-between px-4 h-11 border-b border-[#F0ECE6] bg-[#FCFBF9]">
+          <div className="flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#E7E2DB]" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#E7E2DB]" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#E7E2DB]" />
+          </div>
+          <span className="font-mono text-[11px] text-[#A39E95]">tracque.com/app</span>
+          <div className="flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 live-dot" />
+            <span className="font-mono text-[10px] uppercase tracking-wider text-emerald-600">live</span>
+          </div>
+        </div>
+
+        {/* body */}
+        <div className="p-5">
+          <div className="flex items-baseline justify-between mb-4">
+            <div>
+              <p className="text-[13px] font-semibold text-[#0A0A0A]">Brand visibility</p>
+              <p className="font-mono text-[11px] text-[#A39E95]">“best geo testing tool”</p>
+            </div>
+            <div className="text-right">
+              <p className="text-[13px] font-semibold text-emerald-600 nums">+18%</p>
+              <p className="font-mono text-[10px] text-[#A39E95]">7-day</p>
+            </div>
+          </div>
+
+          <div className="space-y-2.5">
+            {MODELS.map((m, i) => (
+              <div key={m.name} className="flex items-center gap-3">
+                <span className="w-2 h-2 rounded-full shrink-0" style={{ background: m.dot }} />
+                <span className="text-[12px] text-[#57534E] w-20 shrink-0">{m.name}</span>
+                <div className="flex-1 h-1.5 rounded-full bg-[#F0ECE6] overflow-hidden">
+                  <div
+                    className="h-full rounded-full origin-left"
+                    style={{
+                      width: `${m.rate}%`,
+                      background: 'linear-gradient(90deg,#2563EB,#7C3AED)',
+                      animation: `bar-grow 0.9s ${0.2 + i * 0.1}s cubic-bezier(0.16,1,0.3,1) both`,
+                    }}
+                  />
+                </div>
+                <span className="font-mono text-[12px] text-[#0A0A0A] nums w-9 text-right">{m.rate}%</span>
+              </div>
+            ))}
+          </div>
+
+          {/* attribution strip */}
+          <div className="mt-5 pt-4 border-t border-[#F0ECE6] flex items-center gap-2 flex-wrap font-mono text-[10.5px] text-[#A39E95]">
+            {['1,204 clicks', '38 signups', '$48,210'].map((s, i, a) => (
+              <span key={s} className="flex items-center gap-2">
+                <span className={i === a.length - 1 ? 'text-emerald-600 font-semibold' : ''}>{s}</span>
+                {i < a.length - 1 && <ArrowRight className="w-3 h-3 text-[#D8D2C8]" />}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* floating accent card */}
+      <div className="hidden sm:block absolute -right-5 -bottom-6 rounded-xl border border-[#E7E2DB] bg-white shadow-[0_16px_40px_-12px_rgba(10,10,10,0.25)] px-4 py-3">
+        <p className="font-mono text-[10px] uppercase tracking-wider text-[#A39E95] mb-0.5">Revenue from AI</p>
+        <p className="text-lg font-bold text-[#0A0A0A] nums">$48.2k<span className="text-emerald-600 text-xs font-semibold ml-1.5">▲</span></p>
+      </div>
+    </div>
+  )
+}
 
 // ── Accordion ─────────────────────────────────────────────
-
 function Accordion({ question, answer }: { question: string; answer: string }) {
   const [open, setOpen] = useState(false)
   return (
-    <div className="border border-[#E8E4DF] rounded-2xl overflow-hidden bg-white">
-      <button
-        onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center justify-between px-6 py-5 text-left"
-      >
-        <span className="text-[15px] font-semibold text-[#1a1a1a] pr-8">{question}</span>
-        <div className="w-8 h-8 rounded-full bg-[#F5F0EB] flex items-center justify-center shrink-0">
-          <ChevronDown className={`w-4 h-4 text-[#1a1a1a] transition-transform ${open ? 'rotate-180' : ''}`} />
-        </div>
+    <div className="border border-[#E7E2DB] rounded-xl overflow-hidden bg-white transition-colors hover:border-[#D8D2C8]">
+      <button onClick={() => setOpen(o => !o)} className="w-full flex items-center justify-between px-5 py-4 text-left">
+        <span className="text-[15px] font-medium text-[#0A0A0A] pr-8">{question}</span>
+        <ChevronDown className={`w-4 h-4 text-[#A39E95] shrink-0 transition-transform duration-300 ${open ? 'rotate-180' : ''}`} />
       </button>
-      {open && (
-        <>
-          <div className="h-px bg-[#E8E4DF] mx-6" />
-          <p className="px-6 py-5 text-[15px] text-[#4a4a4a] leading-relaxed">{answer}</p>
-        </>
-      )}
+      <div className={`grid transition-all duration-300 ${open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
+        <div className="overflow-hidden">
+          <p className="px-5 pb-5 text-[14px] text-[#57534E] leading-relaxed">{answer}</p>
+        </div>
+      </div>
     </div>
   )
 }
 
 // ── Pricing card ───────────────────────────────────────────
-
-function PricingCard({
-  name, price, desc, features, cta, highlighted = false
-}: {
-  name: string
-  price: string
-  desc: string
-  features: string[]
-  cta: string
-  highlighted?: boolean
+function PricingCard({ name, price, period, desc, features, cta, highlighted = false }: {
+  name: string; price: string; period?: string; desc: string; features: string[]; cta: string; highlighted?: boolean
 }) {
   return (
-    <div className={`rounded-2xl p-8 flex flex-col ${
-      highlighted
-        ? 'bg-[#1a1a1a] text-white'
-        : 'bg-white border border-[#E8E4DF] text-[#1a1a1a]'
+    <div className={`rounded-2xl p-6 flex flex-col transition-transform duration-300 hover:-translate-y-1 ${
+      highlighted ? 'bg-[#0A0A0A] text-white shadow-[0_24px_50px_-20px_rgba(10,10,10,0.5)]' : 'bg-white border border-[#E7E2DB] text-[#0A0A0A]'
     }`}>
-      <div className="mb-6">
-        <p className={`text-xs font-semibold uppercase tracking-widest mb-2 ${highlighted ? 'text-[#a0a0a0]' : 'text-[#888]'}`}>{name}</p>
-        <p className="text-4xl font-bold mb-1">{price}</p>
-        <p className={`text-sm ${highlighted ? 'text-[#a0a0a0]' : 'text-[#888]'}`}>{desc}</p>
+      {highlighted && <span className="self-start font-mono text-[10px] uppercase tracking-wider bg-white/10 text-white px-2 py-1 rounded-md mb-4">Most popular</span>}
+      <p className={`font-mono text-[11px] uppercase tracking-[0.16em] mb-3 ${highlighted ? 'text-white/50' : 'text-[#A39E95]'}`}>{name}</p>
+      <div className="flex items-baseline gap-1 mb-1">
+        <span className="text-4xl font-bold tracking-tight nums">{price}</span>
+        {period && <span className={`text-sm ${highlighted ? 'text-white/50' : 'text-[#A39E95]'}`}>{period}</span>}
       </div>
-      <ul className="space-y-3 flex-1 mb-8">
+      <p className={`text-[13px] mb-6 ${highlighted ? 'text-white/50' : 'text-[#A39E95]'}`}>{desc}</p>
+      <ul className="space-y-2.5 flex-1 mb-6">
         {features.map(f => (
-          <li key={f} className="flex items-start gap-3">
-            <Check className={`w-4 h-4 mt-0.5 shrink-0 ${highlighted ? 'text-white' : 'text-[#1a1a1a]'}`} />
-            <span className={`text-sm ${highlighted ? 'text-[#d0d0d0]' : 'text-[#4a4a4a]'}`}>{f}</span>
+          <li key={f} className="flex items-start gap-2.5">
+            <Check className={`w-4 h-4 mt-0.5 shrink-0 ${highlighted ? 'text-[#3B82F6]' : 'text-[#0A0A0A]'}`} />
+            <span className={`text-[13px] ${highlighted ? 'text-white/75' : 'text-[#57534E]'}`}>{f}</span>
           </li>
         ))}
       </ul>
-      <Link
-        to="/auth"
-        className={`w-full py-3 rounded-xl text-sm font-semibold text-center transition-colors ${
-          highlighted
-            ? 'bg-white text-[#1a1a1a] hover:bg-[#f0f0f0]'
-            : 'bg-[#1a1a1a] text-white hover:bg-[#333]'
-        }`}
-      >
-        {cta}
-      </Link>
+      <Link to="/auth" className={`w-full py-2.5 rounded-lg text-[13px] font-semibold text-center transition-colors ${
+        highlighted ? 'bg-white text-[#0A0A0A] hover:bg-[#EDEAE4]' : 'bg-[#0A0A0A] text-white hover:bg-[#262626]'
+      }`}>{cta}</Link>
     </div>
   )
 }
 
 // ── Comparison row ─────────────────────────────────────────
-
 function CompRow({ feature, tracque, profound, heyamos, peec }: {
-  feature: string
-  tracque: boolean | string
-  profound: boolean | string
-  heyamos: boolean | string
-  peec: boolean | string
+  feature: string; tracque: boolean | string; profound: boolean | string; heyamos: boolean | string; peec: boolean | string
 }) {
-  function Cell({ val }: { val: boolean | string }) {
-    if (val === true) return <Check className="w-4 h-4 text-[#1a1a1a] mx-auto" />
-    if (val === false) return <span className="text-[#ccc] text-lg mx-auto block text-center">—</span>
-    return <span className="text-xs text-[#4a4a4a] text-center block">{val}</span>
+  function Cell({ val, hl = false }: { val: boolean | string; hl?: boolean }) {
+    if (val === true) return <Check className={`w-4 h-4 mx-auto ${hl ? 'text-[#3B82F6]' : 'text-[#0A0A0A]'}`} />
+    if (val === false) return <span className="text-[#D8D2C8] mx-auto block text-center">—</span>
+    return <span className="font-mono text-[11px] text-[#57534E] text-center block">{val}</span>
   }
   return (
-    <tr className="border-b border-[#E8E4DF]">
-      <td className="py-3.5 pr-6 text-sm text-[#1a1a1a]">{feature}</td>
-      <td className="py-3.5 text-center"><Cell val={tracque} /></td>
+    <tr className="border-b border-[#F0ECE6]">
+      <td className="py-3.5 pr-6 text-[13px] text-[#0A0A0A]">{feature}</td>
+      <td className="py-3.5 text-center bg-[#F7F9FF]"><Cell val={tracque} hl /></td>
       <td className="py-3.5 text-center"><Cell val={profound} /></td>
       <td className="py-3.5 text-center"><Cell val={heyamos} /></td>
       <td className="py-3.5 text-center"><Cell val={peec} /></td>
@@ -98,355 +186,283 @@ function CompRow({ feature, tracque, profound, heyamos, peec }: {
 }
 
 // ── Main ───────────────────────────────────────────────────
-
 export default function Landing() {
   return (
-    <div className="min-h-screen bg-[#FAF9F7] text-[#1a1a1a]" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif' }}>
+    <div className="min-h-screen bg-[#FAF9F7] text-[#0A0A0A] antialiased">
 
       {/* Nav */}
-      <nav className="flex items-center justify-between px-8 py-5 max-w-6xl mx-auto">
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-[#1a1a1a] flex items-center justify-center">
-            <Bot className="w-4 h-4 text-white" />
+      <nav className="sticky top-0 z-50 backdrop-blur-md bg-[#FAF9F7]/80 border-b border-[#E7E2DB]/70">
+        <div className="flex items-center justify-between px-6 lg:px-8 h-16 max-w-6xl mx-auto">
+          <div className="flex items-center gap-2.5">
+            <Mark />
+            <span className="text-[17px] font-bold tracking-tight">Tracque</span>
           </div>
-          <span className="text-lg font-bold tracking-tight">Tracque</span>
-        </div>
-        <div className="hidden md:flex items-center gap-8">
-          {['Features', 'Pricing', 'Compare', 'FAQ'].map(item => (
-            <a key={item} href={`#${item.toLowerCase()}`} className="text-sm text-[#4a4a4a] hover:text-[#1a1a1a] transition-colors">
-              {item}
-            </a>
-          ))}
-        </div>
-        <div className="flex items-center gap-3">
-          <Link to="/auth" className="text-sm text-[#4a4a4a] hover:text-[#1a1a1a]">Log in</Link>
-          <Link to="/auth" className="text-sm bg-[#1a1a1a] text-white px-4 py-2 rounded-xl font-medium hover:bg-[#333] transition-colors">
-            Start free
-          </Link>
+          <div className="hidden md:flex items-center gap-8">
+            {['Features', 'Pricing', 'Compare', 'FAQ'].map(item => (
+              <a key={item} href={`#${item.toLowerCase()}`} className="text-[13px] text-[#57534E] hover:text-[#0A0A0A] transition-colors">{item}</a>
+            ))}
+          </div>
+          <div className="flex items-center gap-2">
+            <Link to="/auth" className="text-[13px] text-[#57534E] hover:text-[#0A0A0A] px-3 py-2">Log in</Link>
+            <Link to="/auth" className="text-[13px] bg-[#0A0A0A] text-white px-4 py-2 rounded-lg font-medium hover:bg-[#262626] transition-colors">Start free</Link>
+          </div>
         </div>
       </nav>
 
       {/* Hero */}
-      <section className="max-w-4xl mx-auto px-8 pt-20 pb-16 text-center">
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-[#E8E4DF] rounded-full text-xs text-[#4a4a4a] mb-8">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-          AI visibility + SEO + revenue attribution in one platform
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-grid [mask-image:radial-gradient(80%_60%_at_50%_0%,#000,transparent)]" />
+        <div className="absolute inset-x-0 top-0 h-[640px] glow-radial pointer-events-none" />
+        <div className="relative max-w-6xl mx-auto px-6 lg:px-8 pt-20 pb-24 grid lg:grid-cols-2 gap-16 items-center">
+          <div>
+            <Reveal>
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-[#E7E2DB] rounded-full text-[12px] text-[#57534E] mb-7 shadow-sm">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                AI visibility · SEO · revenue attribution
+              </div>
+              <h1 className="text-[44px] md:text-[56px] font-bold leading-[1.04] tracking-[-0.035em] mb-6">
+                See your brand in<br />
+                <span className="bg-gradient-to-r from-[#2563EB] to-[#7C3AED] bg-clip-text text-transparent">every AI answer.</span><br />
+                Prove what it earns.
+              </h1>
+              <p className="text-[17px] text-[#57534E] max-w-md mb-8 leading-relaxed">
+                Tracque shows whether ChatGPT, Perplexity, Gemini, Claude, and Grok recommend your brand —
+                then traces every mention through to clicks, signups, and revenue.
+              </p>
+              <div className="flex items-center gap-3">
+                <Link to="/auth" className="group flex items-center gap-2 bg-[#0A0A0A] text-white px-5 py-3 rounded-lg text-[14px] font-semibold hover:bg-[#262626] transition-colors">
+                  Start for free <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                </Link>
+                <a href="#compare" className="px-5 py-3 rounded-lg border border-[#E7E2DB] bg-white text-[14px] font-medium text-[#57534E] hover:border-[#0A0A0A] hover:text-[#0A0A0A] transition-colors">
+                  Compare vs Profound
+                </a>
+              </div>
+              <p className="font-mono text-[11px] text-[#A39E95] mt-4">free plan · no credit card · live in 5 min</p>
+            </Reveal>
+          </div>
+          <Reveal delay={120} className="lg:pl-4">
+            <HeroVisual />
+          </Reveal>
         </div>
-        <h1 className="text-5xl md:text-6xl font-bold leading-[1.1] tracking-tight mb-6">
-          Track your brand across<br />
-          <span className="text-[#888]">every AI engine.</span><br />
-          Measure what it's worth.
-        </h1>
-        <p className="text-lg text-[#4a4a4a] max-w-2xl mx-auto mb-10 leading-relaxed">
-          Tracque shows you if ChatGPT, Perplexity, Gemini, and Claude mention your brand —
-          then traces every AI mention through to clicks, trials, and revenue.
-          The only tool that closes the loop.
-        </p>
-        <div className="flex items-center justify-center gap-3">
-          <Link
-            to="/auth"
-            className="flex items-center gap-2 bg-[#1a1a1a] text-white px-6 py-3.5 rounded-xl font-semibold hover:bg-[#333] transition-colors"
-          >
-            Start for free <ArrowRight className="w-4 h-4" />
-          </Link>
-          <a href="#compare" className="px-6 py-3.5 rounded-xl border border-[#E8E4DF] text-sm font-medium text-[#4a4a4a] hover:border-[#1a1a1a] hover:text-[#1a1a1a] transition-colors bg-white">
-            See how we compare
-          </a>
+
+        {/* trust strip */}
+        <div className="relative border-t border-[#E7E2DB] bg-white/60">
+          <div className="max-w-6xl mx-auto px-6 lg:px-8 py-5 flex items-center gap-6 flex-wrap justify-center">
+            <span className="font-mono text-[11px] uppercase tracking-wider text-[#A39E95]">Tracks across</span>
+            {['ChatGPT', 'Claude', 'Perplexity', 'Gemini', 'Grok', 'Google AI Overviews'].map(n => (
+              <span key={n} className="text-[14px] font-semibold text-[#57534E]">{n}</span>
+            ))}
+          </div>
         </div>
-        <p className="text-xs text-[#888] mt-4">Free plan available · No credit card required</p>
       </section>
 
       {/* Stats bar */}
-      <section className="border-y border-[#E8E4DF] bg-white py-8">
-        <div className="max-w-4xl mx-auto px-8 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+      <section className="border-b border-[#E7E2DB] bg-white">
+        <div className="max-w-6xl mx-auto px-6 lg:px-8 grid grid-cols-2 md:grid-cols-4 divide-x divide-[#F0ECE6]">
           {[
-            { val: '5', label: 'AI models tracked' },
-            { val: '40–60%', label: 'Monthly citation drift' },
-            { val: '$49/mo', label: 'Paid plans from' },
-            { val: '100%', label: 'Attribution coverage' },
+            { val: '5', label: 'AI engines tracked' },
+            { val: '40–60%', label: 'monthly citation drift' },
+            { val: '$49', label: 'paid plans from /mo' },
+            { val: '100%', label: 'attribution coverage' },
           ].map(({ val, label }) => (
-            <div key={label}>
-              <p className="text-3xl font-bold">{val}</p>
-              <p className="text-xs text-[#888] mt-1">{label}</p>
+            <div key={label} className="py-8 px-4 text-center">
+              <p className="text-3xl font-bold tracking-tight nums">{val}</p>
+              <p className="font-mono text-[11px] text-[#A39E95] mt-1.5 uppercase tracking-wider">{label}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* How it works */}
-      <section className="max-w-4xl mx-auto px-8 py-20">
-        <p className="text-xs font-semibold uppercase tracking-widest text-[#888] mb-3">How it works</p>
-        <h2 className="text-3xl font-bold mb-12">From AI mention to revenue — fully tracked.</h2>
-        <div className="grid md:grid-cols-3 gap-6">
+      <section className="max-w-6xl mx-auto px-6 lg:px-8 py-24">
+        <Reveal>
+          <Eyebrow>How it works</Eyebrow>
+          <h2 className="text-[32px] font-bold tracking-tight mb-3 max-w-xl">From AI mention to revenue — one continuous loop.</h2>
+          <p className="text-[#57534E] max-w-lg mb-14">Three moves, fully instrumented. No spreadsheets, no guesswork about whether AI search is actually working.</p>
+        </Reveal>
+        <div className="grid md:grid-cols-3 gap-px bg-[#E7E2DB] rounded-2xl overflow-hidden border border-[#E7E2DB]">
           {[
-            {
-              step: '01',
-              icon: Bot,
-              title: 'Track',
-              desc: 'Tracque queries ChatGPT, Perplexity, Gemini, Claude, and Grok daily with your keywords. See exactly where you appear, at what position, and with what sentiment vs competitors.',
-            },
-            {
-              step: '02',
-              icon: Zap,
-              title: 'Act',
-              desc: 'Get specific, ranked recommendations with ready-to-use templates. Not "improve your content" — exact actions like which Reddit thread to answer, which G2 reviews to get, which page to rewrite.',
-            },
-            {
-              step: '03',
-              icon: DollarSign,
-              title: 'Measure',
-              desc: 'Every AI mention traced to a session, every session to a conversion, every conversion to revenue. See which AI engine drives the highest-value customers — not just the most traffic.',
-            },
-          ].map(({ step, icon: Icon, title, desc }) => (
-            <div key={step} className="bg-white border border-[#E8E4DF] rounded-2xl p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-9 h-9 rounded-xl bg-[#FAF9F7] flex items-center justify-center">
-                  <Icon className="w-4 h-4 text-[#1a1a1a]" />
-                </div>
-                <span className="text-xs font-bold text-[#ccc]">{step}</span>
+            { step: '01', icon: Bot, title: 'Track', desc: 'We query every AI engine daily with your keywords — multiple runs each for statistical confidence. See exactly where you appear, at what position, with what sentiment vs competitors.' },
+            { step: '02', icon: Zap, title: 'Act', desc: 'Get ranked recommendations with ready-to-paste templates. Not "improve your content" — the exact Reddit thread to answer, the G2 reviews to get, the page to rewrite.' },
+            { step: '03', icon: DollarSign, title: 'Measure', desc: 'Every mention traced to a session, every session to a conversion, every conversion to revenue. See which engine drives your highest-value customers — not just clicks.' },
+          ].map(({ step, icon: Icon, title, desc }, i) => (
+            <Reveal key={step} delay={i * 100} className="bg-white p-7">
+              <div className="flex items-center justify-between mb-5">
+                <Icon className="w-5 h-5 text-[#0A0A0A]" strokeWidth={1.75} />
+                <span className="font-mono text-[12px] text-[#D8D2C8]">{step}</span>
               </div>
-              <p className="font-bold text-lg mb-2">{title}</p>
-              <p className="text-sm text-[#4a4a4a] leading-relaxed">{desc}</p>
-            </div>
+              <p className="font-semibold text-lg mb-2">{title}</p>
+              <p className="text-[14px] text-[#57534E] leading-relaxed">{desc}</p>
+            </Reveal>
           ))}
         </div>
       </section>
 
       {/* Features */}
-      <section id="features" className="bg-white border-y border-[#E8E4DF] py-20">
-        <div className="max-w-4xl mx-auto px-8">
-          <p className="text-xs font-semibold uppercase tracking-widest text-[#888] mb-3">Features</p>
-          <h2 className="text-3xl font-bold mb-12">Everything in one platform.</h2>
-          <div className="grid md:grid-cols-2 gap-4">
+      <section id="features" className="bg-white border-y border-[#E7E2DB] py-24">
+        <div className="max-w-6xl mx-auto px-6 lg:px-8">
+          <Reveal>
+            <Eyebrow>Features</Eyebrow>
+            <h2 className="text-[32px] font-bold tracking-tight mb-14">Everything in one platform.</h2>
+          </Reveal>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-px bg-[#F0ECE6] border border-[#F0ECE6] rounded-2xl overflow-hidden">
             {[
-              { icon: Bot, title: 'AI Visibility', desc: 'Track brand mentions across ChatGPT, Perplexity, Gemini, Claude, and Grok. See mention rate, sentiment, position, and citation sources. Updated daily.' },
-              { icon: Search, title: 'SEO Rankings', desc: 'Google position tracking alongside AI visibility. See the full picture — where you rank in traditional search and how it affects AI citations.' },
-              { icon: Sparkles, title: 'Prompt Discovery', desc: 'Find what people actually ask AI about your category. Sourced from Google People Also Ask, autocomplete, Perplexity related questions, Reddit, and Google Trends.' },
-              { icon: Zap, title: 'Recommendations', desc: 'Claude analyzes your data and outputs specific actions with ready-to-use templates. Each recommendation tied to exact data points, ranked by impact.' },
-              { icon: Globe, title: 'Site Audit', desc: 'Crawl your site and auto-generate a complete GA4 event schema + GTM container. Set up AI bot tracking in 5 minutes, not 5 days.' },
-              { icon: BarChart3, title: 'Attribution', desc: 'Trace AI mentions → clicks → conversions → revenue. See which AI engine drives the highest LTV customers. Connect GA4 and Stripe for the full picture.' },
-              { icon: TrendingUp, title: 'Confidence Scores', desc: 'Every metric backed by multiple scan runs. Not a single snapshot — statistical confidence from 3–5 runs per keyword, per model, per day.' },
-              { icon: DollarSign, title: 'UTM Tracking', desc: 'Auto-capture utm_source=perplexity, utm_source=chatgpt and AI referrer headers. See AI traffic alongside paid and organic in one view.' },
-            ].map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="flex gap-4 p-5 rounded-2xl border border-[#E8E4DF]">
-                <div className="w-8 h-8 rounded-lg bg-[#FAF9F7] flex items-center justify-center shrink-0 mt-0.5">
-                  <Icon className="w-4 h-4 text-[#1a1a1a]" />
-                </div>
-                <div>
-                  <p className="font-semibold mb-1">{title}</p>
-                  <p className="text-sm text-[#4a4a4a] leading-relaxed">{desc}</p>
-                </div>
-              </div>
+              { icon: Bot, title: 'AI Visibility', desc: 'Mentions across ChatGPT, Perplexity, Gemini, Claude, Grok. Rate, sentiment, position, citations — daily.' },
+              { icon: Search, title: 'SEO Rankings', desc: 'Google position tracking beside AI visibility. The full picture of where you show up.' },
+              { icon: Sparkles, title: 'Prompt Discovery', desc: 'What people actually ask AI about your category — from PAA, autocomplete, Reddit, Perplexity, Trends.' },
+              { icon: Zap, title: 'Recommendations', desc: 'Claude turns your data into specific actions with templates, ranked by impact.' },
+              { icon: Globe, title: 'Site Audit', desc: 'Crawl your site, auto-generate a GA4 event schema + GTM container. Bot tracking in minutes.' },
+              { icon: BarChart3, title: 'Attribution', desc: 'AI mention → click → conversion → revenue. See which engine drives the highest LTV.' },
+              { icon: TrendingUp, title: 'Confidence Scores', desc: 'Every metric from 3–5 runs per keyword, per model, per day. Real intervals, not fake precision.' },
+              { icon: DollarSign, title: 'UTM Tracking', desc: 'Auto-capture utm_source=perplexity / chatgpt and AI referrers, beside paid and organic.' },
+            ].map(({ icon: Icon, title, desc }, i) => (
+              <Reveal key={title} delay={(i % 4) * 80} className="group bg-white p-6 hover:bg-[#FCFBF9] transition-colors">
+                <Icon className="w-5 h-5 text-[#0A0A0A] mb-4 group-hover:text-[#2563EB] transition-colors" strokeWidth={1.75} />
+                <p className="font-semibold text-[15px] mb-1.5">{title}</p>
+                <p className="text-[13px] text-[#57534E] leading-relaxed">{desc}</p>
+              </Reveal>
             ))}
           </div>
         </div>
       </section>
 
       {/* The loop */}
-      <section className="max-w-4xl mx-auto px-8 py-20">
-        <div className="bg-[#1a1a1a] rounded-2xl p-10 text-white text-center">
-          <p className="text-xs font-semibold uppercase tracking-widest text-[#666] mb-4">The full loop</p>
-          <h2 className="text-3xl font-bold mb-8">From AI question to closed deal.</h2>
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            {[
-              'Buyer asks ChatGPT',
-              'You get mentioned',
-              'They click through',
-              'UTM captured',
-              'They convert',
-              'Revenue tracked',
-            ].map((step, i, arr) => (
-              <div key={step} className="flex items-center gap-3">
-                <div className="px-4 py-2 bg-white/10 rounded-xl text-sm font-medium">{step}</div>
-                {i < arr.length - 1 && <ArrowRight className="w-4 h-4 text-[#444]" />}
+      <section className="max-w-6xl mx-auto px-6 lg:px-8 py-24">
+        <Reveal>
+          <div className="relative bg-[#0A0A0A] rounded-3xl p-10 md:p-14 text-white overflow-hidden">
+            <div className="absolute inset-0 bg-dots opacity-[0.15]" />
+            <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[480px] h-[480px] rounded-full bg-[#2563EB]/20 blur-3xl" />
+            <div className="relative text-center">
+              <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#3B82F6] mb-4">The full loop</p>
+              <h2 className="text-[32px] font-bold tracking-tight mb-10">From AI question to closed deal.</h2>
+              <div className="flex flex-wrap items-center justify-center gap-2.5 mb-8">
+                {['Buyer asks ChatGPT', 'You get mentioned', 'They click through', 'UTM captured', 'They convert', 'Revenue tracked'].map((step, i, arr) => (
+                  <div key={step} className="flex items-center gap-2.5">
+                    <div className={`px-3.5 py-2 rounded-lg text-[13px] font-medium border ${i === arr.length - 1 ? 'bg-[#3B82F6] border-[#3B82F6] text-white' : 'bg-white/[0.06] border-white/10 text-white/90'}`}>{step}</div>
+                    {i < arr.length - 1 && <ArrowRight className="w-3.5 h-3.5 text-white/30" />}
+                  </div>
+                ))}
               </div>
-            ))}
+              <p className="text-[14px] text-white/45 max-w-xl mx-auto">No other tool tracks this end-to-end. Profound stops at mentions. HeyAmos stops at actions. <span className="text-white/80">Tracque tracks the money.</span></p>
+            </div>
           </div>
-          <p className="text-sm text-[#888] mt-8">No other tool tracks this end-to-end. Profound stops at mentions. HeyAmos stops at actions. Tracque tracks the money.</p>
-        </div>
+        </Reveal>
       </section>
 
       {/* Comparison */}
-      <section id="compare" className="bg-white border-y border-[#E8E4DF] py-20">
-        <div className="max-w-4xl mx-auto px-8">
-          <p className="text-xs font-semibold uppercase tracking-widest text-[#888] mb-3">Compare</p>
-          <h2 className="text-3xl font-bold mb-10">More features. A fraction of the price.</h2>
-          <div className="overflow-x-auto">
-            <table className="w-full">
+      <section id="compare" className="bg-white border-y border-[#E7E2DB] py-24">
+        <div className="max-w-5xl mx-auto px-6 lg:px-8">
+          <Reveal>
+            <Eyebrow>Compare</Eyebrow>
+            <h2 className="text-[32px] font-bold tracking-tight mb-2">More features. A fraction of the price.</h2>
+            <p className="text-[#57534E] mb-10">The same monitoring competitors charge $399 for — plus SEO, attribution, and recommendations they don't offer.</p>
+          </Reveal>
+          <Reveal className="overflow-x-auto">
+            <table className="w-full min-w-[640px]">
               <thead>
-                <tr className="border-b border-[#E8E4DF]">
-                  <th className="py-3 pr-6 text-left text-sm font-semibold">Feature</th>
+                <tr className="border-b border-[#E7E2DB]">
+                  <th className="py-3 pr-6 text-left font-mono text-[11px] uppercase tracking-wider text-[#A39E95]">Feature</th>
                   {[
-                    { name: 'Tracque', price: 'from $49/mo', highlight: true },
-                    { name: 'Profound', price: '$399/mo', highlight: false },
-                    { name: 'HeyAmos', price: '$99/mo', highlight: false },
-                    { name: 'Peec', price: '$150/mo', highlight: false },
-                  ].map(({ name, price, highlight }) => (
-                    <th key={name} className="py-3 text-center">
-                      <p className={`text-sm font-bold ${highlight ? 'text-[#1a1a1a]' : 'text-[#888]'}`}>{name}</p>
-                      <p className={`text-xs mt-0.5 ${highlight ? 'text-[#1a1a1a]' : 'text-[#aaa]'}`}>{price}</p>
+                    { name: 'Tracque', price: 'from $49', hl: true },
+                    { name: 'Profound', price: '$399', hl: false },
+                    { name: 'HeyAmos', price: '$99', hl: false },
+                    { name: 'Peec', price: '$150', hl: false },
+                  ].map(({ name, price, hl }) => (
+                    <th key={name} className={`py-3 text-center ${hl ? 'bg-[#F7F9FF] rounded-t-lg' : ''}`}>
+                      <p className={`text-[13px] font-bold ${hl ? 'text-[#2563EB]' : 'text-[#0A0A0A]'}`}>{name}</p>
+                      <p className={`font-mono text-[11px] mt-0.5 ${hl ? 'text-[#2563EB]' : 'text-[#A39E95]'}`}>{price}/mo</p>
                     </th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                <CompRow feature="AI visibility tracking"     tracque={true}        profound={true}    heyamos={true}     peec={true} />
-                <CompRow feature="SEO rank tracking"          tracque={true}        profound={false}   heyamos={false}    peec={false} />
-                <CompRow feature="Unlimited prompts"          tracque={true}        profound={true}    heyamos={false}    peec={false} />
-                <CompRow feature="All 5 AI models"            tracque={true}        profound={true}    heyamos={'Pro only'} peec={'Starter: 1'} />
-                <CompRow feature="Confidence scoring"         tracque={true}        profound={false}   heyamos={false}    peec={false} />
-                <CompRow feature="Revenue attribution"        tracque={true}        profound={false}   heyamos={false}    peec={false} />
-                <CompRow feature="UTM tracking"               tracque={true}        profound={false}   heyamos={false}    peec={false} />
-                <CompRow feature="GA4 integration"            tracque={true}        profound={false}   heyamos={false}    peec={false} />
-                <CompRow feature="Prompt discovery"           tracque={true}        profound={true}    heyamos={false}    peec={false} />
-                <CompRow feature="Deep recommendations"       tracque={true}        profound={'Basic'} heyamos={'5/week'} peec={'Basic'} />
-                <CompRow feature="Site audit + GA4 setup"     tracque={true}        profound={false}   heyamos={false}    peec={false} />
-                <CompRow feature="AI bot traffic tracking"    tracque={true}        profound={true}    heyamos={false}    peec={false} />
-                <CompRow feature="Free tier"                  tracque={true}        profound={false}   heyamos={false}    peec={false} />
+                <CompRow feature="AI visibility tracking" tracque={true} profound={true} heyamos={true} peec={true} />
+                <CompRow feature="SEO rank tracking" tracque={true} profound={false} heyamos={false} peec={false} />
+                <CompRow feature="Unlimited prompts" tracque={true} profound={true} heyamos={false} peec={false} />
+                <CompRow feature="All 5 AI models" tracque={true} profound={true} heyamos={'Pro only'} peec={'Starter: 1'} />
+                <CompRow feature="Confidence scoring" tracque={true} profound={false} heyamos={false} peec={false} />
+                <CompRow feature="Revenue attribution" tracque={true} profound={false} heyamos={false} peec={false} />
+                <CompRow feature="UTM tracking" tracque={true} profound={false} heyamos={false} peec={false} />
+                <CompRow feature="GA4 integration" tracque={true} profound={false} heyamos={false} peec={false} />
+                <CompRow feature="Prompt discovery" tracque={true} profound={true} heyamos={false} peec={false} />
+                <CompRow feature="Deep recommendations" tracque={true} profound={'Basic'} heyamos={'5/week'} peec={'Basic'} />
+                <CompRow feature="Site audit + GA4 setup" tracque={true} profound={false} heyamos={false} peec={false} />
+                <CompRow feature="AI bot traffic tracking" tracque={true} profound={true} heyamos={false} peec={false} />
+                <CompRow feature="Free tier" tracque={true} profound={false} heyamos={false} peec={false} />
               </tbody>
             </table>
-          </div>
+          </Reveal>
         </div>
       </section>
 
       {/* Pricing */}
-      <section id="pricing" className="max-w-4xl mx-auto px-8 py-20">
-        <p className="text-xs font-semibold uppercase tracking-widest text-[#888] mb-3">Pricing</p>
-        <h2 className="text-3xl font-bold mb-3">Simple, transparent pricing.</h2>
-        <p className="text-[#4a4a4a] mb-10">Profound and HeyAmos both charge $399/mo. Tracque does more — monitoring, SEO, recommendations, and revenue attribution — starting free, with Pro at a fraction of their price.</p>
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
-          <PricingCard
-            name="Free"
-            price="$0"
-            desc="Try it, no card needed"
-            features={[
-              '1 brand',
-              '10 prompts',
-              '2 AI models',
-              'Weekly scans',
-              'Basic recommendations',
-            ]}
-            cta="Start free"
-          />
-          <PricingCard
-            name="Starter"
-            price="$49/mo"
-            desc="For solo founders"
-            features={[
-              '3 brands',
-              '25 prompts',
-              'All 5 AI models',
-              'Daily scans',
-              'SEO rank tracking',
-              'Deep recommendations',
-            ]}
-            cta="Start Starter"
-          />
-          <PricingCard
-            name="Pro"
-            price="$149/mo"
-            desc="For marketing teams"
-            features={[
-              '10 brands',
-              '100 prompts',
-              'All 5 AI models',
-              'Revenue attribution',
-              'GA4 + UTM tracking',
-              'Site audit',
-              'Content generation',
-            ]}
-            cta="Start Pro"
-            highlighted
-          />
-          <PricingCard
-            name="Agency"
-            price="$399/mo"
-            desc="For agencies & larger teams"
-            features={[
-              'Unlimited brands',
-              'Unlimited prompts',
-              'White-label reports',
-              'Client workspaces',
-              'API access',
-              'Priority support',
-            ]}
-            cta="Book a call"
-          />
+      <section id="pricing" className="max-w-6xl mx-auto px-6 lg:px-8 py-24">
+        <Reveal>
+          <Eyebrow>Pricing</Eyebrow>
+          <h2 className="text-[32px] font-bold tracking-tight mb-3">Honest, transparent pricing.</h2>
+          <p className="text-[#57534E] mb-12 max-w-2xl">Profound and HeyAmos both charge $399/mo. Tracque does more — monitoring, SEO, recommendations, and revenue attribution — starting free.</p>
+        </Reveal>
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Reveal delay={0}><PricingCard name="Free" price="$0" desc="Try it, no card needed" features={['1 brand', '10 prompts', '2 AI models', 'Weekly scans', 'Basic recommendations']} cta="Start free" /></Reveal>
+          <Reveal delay={80}><PricingCard name="Starter" price="$49" period="/mo" desc="For solo founders" features={['3 brands', '25 prompts', 'All 5 AI models', 'Daily scans', 'SEO rank tracking', 'Deep recommendations']} cta="Start Starter" /></Reveal>
+          <Reveal delay={160}><PricingCard name="Pro" price="$149" period="/mo" desc="For marketing teams" features={['10 brands', '100 prompts', 'All 5 AI models', 'Revenue attribution', 'GA4 + UTM tracking', 'Site audit', 'Content generation']} cta="Start Pro" highlighted /></Reveal>
+          <Reveal delay={240}><PricingCard name="Agency" price="$399" period="/mo" desc="For agencies & teams" features={['Unlimited brands', 'Unlimited prompts', 'White-label reports', 'Client workspaces', 'API access', 'Priority support']} cta="Book a call" /></Reveal>
         </div>
-        <p className="text-center text-xs text-[#888] mt-6">All paid plans include a 14-day trial · Cancel anytime · Even our $399 Agency tier matches Profound's <span className="line-through">entry</span> price — with attribution they don't offer at any price.</p>
+        <p className="text-center font-mono text-[11px] text-[#A39E95] mt-8">14-day trial on paid plans · cancel anytime · even our $399 tier outspecs Profound's $399 — with attribution they don't offer at any price</p>
       </section>
 
       {/* FAQ */}
-      <section id="faq" className="bg-white border-y border-[#E8E4DF] py-20">
-        <div className="max-w-2xl mx-auto px-8">
-          <p className="text-xs font-semibold uppercase tracking-widest text-[#888] mb-3">FAQ</p>
-          <h2 className="text-3xl font-bold mb-8">Common questions.</h2>
-          <div className="space-y-3">
-            <Accordion
-              question="How does Tracque track AI visibility?"
-              answer="Tracque queries the AI model APIs (ChatGPT, Perplexity, Gemini, Claude, Grok) with your keywords daily, runs each query multiple times to build statistical confidence, parses responses for brand mentions, sentiment, position, and cited sources — then stores everything historically so you can see trends over time."
-            />
-            <Accordion
-              question="How is this different from Profound or HeyAmos?"
-              answer="Those tools stop at visibility scores. Tracque closes the full loop — from AI mention to UTM capture to GA4 conversion to revenue. We're also the only tool that combines AI visibility with traditional SEO ranking data. Paid plans start at $49/mo, and even our $399 Agency tier does more than Profound's $399 plan — including revenue attribution they don't offer at any price."
-            />
-            <Accordion
-              question="What is GEO / AEO?"
-              answer="GEO (Generative Engine Optimization) is the practice of making your brand more likely to be cited and recommended by AI engines like ChatGPT and Perplexity. AEO (Answer Engine Optimization) focuses specifically on getting your content chosen as the direct answer. Both are increasingly important as AI handles more of the buyer research journey."
-            />
-            <Accordion
-              question="How does revenue attribution work?"
-              answer="When someone clicks from an AI engine to your site, they arrive with a referrer (perplexity.ai, chat.openai.com) or UTM parameters. Tracque captures these via GA4 integration and a lightweight tracking snippet, then connects them to your conversion events and Stripe revenue data — so you can see exactly which AI engine drove which customers."
-            />
-            <Accordion
-              question="Is it accurate? AI responses vary every time."
-              answer="Yes — this is exactly why we run 3–5 queries per keyword per model per day and report confidence scores rather than single snapshots. A 'mention rate' of 80% means your brand appeared in 4 out of 5 runs. We show you the confidence interval, not fake precision."
-            />
-            <Accordion
-              question="Do I need technical knowledge to set it up?"
-              answer="No. Add your brand, add keywords, and click Run Scan. The Site Audit generates your GA4 setup automatically — you just import a JSON file into Google Tag Manager. Most customers are seeing real data within 30 minutes of signing up."
-            />
-            <Accordion
-              question="What about the Perplexity / ChatGPT API vs the real interface?"
-              answer="Good question. We use web-grounded API calls where available (Perplexity's online model, Gemini with Search grounding, ChatGPT with web search tool) which closely match what users see in the real interfaces. We're transparent about this — our data is directional intelligence, not a census of every ChatGPT conversation."
-            />
+      <section id="faq" className="bg-white border-y border-[#E7E2DB] py-24">
+        <div className="max-w-2xl mx-auto px-6 lg:px-8">
+          <Reveal>
+            <Eyebrow>FAQ</Eyebrow>
+            <h2 className="text-[32px] font-bold tracking-tight mb-8">Common questions.</h2>
+          </Reveal>
+          <div className="space-y-2.5">
+            {[
+              { q: 'How does Tracque track AI visibility?', a: 'We query the AI engines (ChatGPT, Perplexity, Gemini, Claude, Grok) with your keywords daily, run each query multiple times to build statistical confidence, parse responses for brand mentions, sentiment, position, and cited sources — then store everything historically so you see trends over time.' },
+              { q: 'How is this different from Profound or HeyAmos?', a: "Those tools stop at visibility scores. Tracque closes the full loop — AI mention → UTM capture → GA4 conversion → revenue. We're also the only tool combining AI visibility with traditional SEO ranking. Paid plans start at $49/mo, and even our $399 Agency tier does more than Profound's $399 plan, including revenue attribution they don't offer at any price." },
+              { q: 'What is GEO / AEO?', a: 'GEO (Generative Engine Optimization) is making your brand more likely to be cited and recommended by AI engines. AEO (Answer Engine Optimization) focuses on getting chosen as the direct answer. Both matter more as AI handles the buyer research journey.' },
+              { q: 'How does revenue attribution work?', a: 'When someone clicks from an AI engine, they arrive with a referrer (perplexity.ai, chat.openai.com) or UTM parameters. Tracque captures these via GA4 and a lightweight snippet, then connects them to conversion events and Stripe revenue — so you see exactly which engine drove which customers.' },
+              { q: 'Is it accurate? AI responses vary every time.', a: "Exactly why we run 3–5 queries per keyword per model per day and report confidence scores, not single snapshots. An 80% mention rate means your brand appeared in 4 of 5 runs. We show the interval, not fake precision." },
+              { q: 'Do I need technical knowledge to set it up?', a: 'No. Add your brand, add keywords, click Run Scan. The Site Audit generates your GA4 setup automatically — you import one JSON file into Google Tag Manager. Most customers see real data within 30 minutes.' },
+              { q: 'API vs the real chat interface?', a: "We use web-grounded API calls where available (Perplexity online, Gemini with Search grounding, ChatGPT web search) which closely match the real interfaces, and we're building real frontend capture for the highest-fidelity surfaces. We're transparent: directional intelligence, not a census of every conversation." },
+            ].map(({ q, a }) => <Accordion key={q} question={q} answer={a} />)}
           </div>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="max-w-4xl mx-auto px-8 py-20 text-center">
-        <h2 className="text-4xl font-bold mb-4">Start tracking what actually matters.</h2>
-        <p className="text-[#4a4a4a] mb-8 max-w-xl mx-auto">
-          AI search is where your next customer starts their research. Know if you're there — and prove it drove revenue.
-        </p>
-        <Link
-          to="/auth"
-          className="inline-flex items-center gap-2 bg-[#1a1a1a] text-white px-8 py-4 rounded-xl font-semibold hover:bg-[#333] transition-colors text-base"
-        >
-          Start free today <ArrowRight className="w-4 h-4" />
-        </Link>
-        <p className="text-xs text-[#888] mt-4">Free plan · No credit card · Set up in 5 minutes</p>
+      <section className="max-w-6xl mx-auto px-6 lg:px-8 py-24">
+        <Reveal>
+          <div className="relative bg-[#0A0A0A] rounded-3xl px-8 py-16 text-center overflow-hidden">
+            <div className="absolute inset-0 bg-grid opacity-[0.12]" />
+            <div className="absolute -bottom-32 left-1/2 -translate-x-1/2 w-[560px] h-[400px] rounded-full bg-[#7C3AED]/20 blur-3xl" />
+            <div className="relative">
+              <h2 className="text-[36px] font-bold tracking-tight text-white mb-4">Start tracking what actually matters.</h2>
+              <p className="text-white/55 mb-8 max-w-xl mx-auto text-[16px]">AI search is where your next customer starts their research. Know if you're there — and prove it drove revenue.</p>
+              <Link to="/auth" className="group inline-flex items-center gap-2 bg-white text-[#0A0A0A] px-7 py-3.5 rounded-lg font-semibold hover:bg-[#EDEAE4] transition-colors text-[15px]">
+                Start free today <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              </Link>
+              <p className="font-mono text-[11px] text-white/40 mt-4">free plan · no credit card · live in 5 min</p>
+            </div>
+          </div>
+        </Reveal>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-[#E8E4DF] py-8">
-        <div className="max-w-4xl mx-auto px-8 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-lg bg-[#1a1a1a] flex items-center justify-center">
-              <Bot className="w-3.5 h-3.5 text-white" />
-            </div>
-            <span className="text-sm font-bold">Tracque</span>
+      <footer className="border-t border-[#E7E2DB] py-10">
+        <div className="max-w-6xl mx-auto px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2.5">
+            <Mark className="w-6 h-6" />
+            <span className="text-[15px] font-bold">Tracque</span>
           </div>
-          <p className="text-xs text-[#888]">© 2026 Tracque. AI visibility + SEO + attribution.</p>
-          <div className="flex gap-4">
-            {['Privacy', 'Terms'].map(l => (
-              <a key={l} href="#" className="text-xs text-[#888] hover:text-[#1a1a1a]">{l}</a>
-            ))}
+          <p className="font-mono text-[11px] text-[#A39E95]">© 2026 Tracque · AI visibility + SEO + attribution</p>
+          <div className="flex gap-5">
+            {['Privacy', 'Terms'].map(l => <a key={l} href="#" className="text-[12px] text-[#A39E95] hover:text-[#0A0A0A] transition-colors">{l}</a>)}
           </div>
         </div>
       </footer>
-
     </div>
   )
 }
