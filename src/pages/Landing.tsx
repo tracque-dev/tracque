@@ -262,7 +262,7 @@ export default function Landing() {
           {[
             { val: '5', label: 'AI engines tracked' },
             { val: '40–60%', label: 'monthly citation drift' },
-            { val: '$49', label: 'paid plans from /mo' },
+            { val: '1', label: 'tool that proves revenue' },
             { val: '100%', label: 'attribution coverage' },
           ].map(({ val, label }) => (
             <div key={label} className="py-8 px-4 text-center">
@@ -354,8 +354,8 @@ export default function Landing() {
         <div className="max-w-5xl mx-auto px-6 lg:px-8">
           <Reveal>
             <Eyebrow>Compare</Eyebrow>
-            <h2 className="text-[32px] font-bold tracking-tight mb-2">More features. A fraction of the price.</h2>
-            <p className="text-[#57534E] mb-10">The same monitoring competitors charge $399 for — plus SEO, attribution, and recommendations they don't offer.</p>
+            <h2 className="text-[32px] font-bold tracking-tight mb-2">More than monitoring.</h2>
+            <p className="text-[#57534E] mb-10">Everyone tracks mentions. Tracque is the only one that adds SEO, deep recommendations, and revenue attribution — the full path from AI answer to closed deal.</p>
           </Reveal>
           <Reveal className="overflow-x-auto">
             <table className="w-full min-w-[640px]">
@@ -363,7 +363,7 @@ export default function Landing() {
                 <tr className="border-b border-[#E7E2DB]">
                   <th className="py-3 pr-6 text-left font-mono text-[11px] uppercase tracking-wider text-[#A39E95]">Feature</th>
                   {[
-                    { name: 'Tracque', price: 'from $49', hl: true },
+                    { name: 'Tracque', price: 'from $249', hl: true },
                     { name: 'Profound', price: '$399', hl: false },
                     { name: 'HeyAmos', price: '$99', hl: false },
                     { name: 'Peec', price: '$150', hl: false },
@@ -399,16 +399,16 @@ export default function Landing() {
       <section id="pricing" className="max-w-6xl mx-auto px-6 lg:px-8 py-24">
         <Reveal>
           <Eyebrow>Pricing</Eyebrow>
-          <h2 className="text-[32px] font-bold tracking-tight mb-3">Honest, transparent pricing.</h2>
-          <p className="text-[#57534E] mb-12 max-w-2xl">Profound and HeyAmos both charge $399/mo. Tracque does more — monitoring, SEO, recommendations, and revenue attribution — starting free.</p>
+          <h2 className="text-[32px] font-bold tracking-tight mb-3">Priced for proof, not vanity scores.</h2>
+          <p className="text-[#57534E] mb-12 max-w-2xl">The only platform that ties AI visibility to revenue. Built for teams that report to a CFO, not a dashboard. Start free, upgrade when you need the receipts.</p>
         </Reveal>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Reveal delay={0}><PricingCard name="Free" price="$0" desc="Try it, no card needed" features={['1 brand', '10 prompts', '2 AI models', 'Weekly scans', 'Basic recommendations']} cta="Start free" /></Reveal>
-          <Reveal delay={80}><PricingCard name="Starter" price="$49" period="/mo" desc="For solo founders" features={['3 brands', '25 prompts', 'All 5 AI models', 'Daily scans', 'SEO rank tracking', 'Deep recommendations']} cta="Start Starter" /></Reveal>
-          <Reveal delay={160}><PricingCard name="Pro" price="$149" period="/mo" desc="For marketing teams" features={['10 brands', '100 prompts', 'All 5 AI models', 'Revenue attribution', 'GA4 + UTM tracking', 'Site audit', 'Content generation']} cta="Start Pro" highlighted /></Reveal>
-          <Reveal delay={240}><PricingCard name="Agency" price="$399" period="/mo" desc="For agencies & teams" features={['Unlimited brands', 'Unlimited prompts', 'White-label reports', 'Client workspaces', 'API access', 'Priority support']} cta="Book a call" /></Reveal>
+          <Reveal delay={0}><PricingCard name="Free" price="$0" desc="See your scores, no card" features={['1 brand', '10 prompts', '2 AI models', 'Weekly scans', 'Basic recommendations']} cta="Start free" /></Reveal>
+          <Reveal delay={80}><PricingCard name="Starter" price="$249" period="/mo" desc="For growing brands" features={['3 brands', '25 prompts', 'All 5 AI models', 'Daily scans', 'SEO rank tracking', 'Deep recommendations']} cta="Start Starter" /></Reveal>
+          <Reveal delay={160}><PricingCard name="Pro" price="$599" period="/mo" desc="For marketing teams" features={['10 brands', '100 prompts', 'All 5 AI models', 'Revenue attribution', 'GA4 + UTM tracking', 'Site audit', 'Content generation']} cta="Start Pro" highlighted /></Reveal>
+          <Reveal delay={240}><PricingCard name="Agency" price="$1,499" period="/mo" desc="For agencies & enterprises" features={['Unlimited brands', 'Unlimited prompts', 'White-label reports', 'Client workspaces', 'API access', 'Priority support']} cta="Book a call" /></Reveal>
         </div>
-        <p className="text-center font-mono text-[11px] text-[#A39E95] mt-8">14-day trial on paid plans · cancel anytime · even our $399 tier outspecs Profound's $399 — with attribution they don't offer at any price</p>
+        <p className="text-center font-mono text-[11px] text-[#A39E95] mt-8">14-day trial on paid plans · cancel anytime · the only tool that proves AI mentions turned into revenue — at any price</p>
       </section>
 
       {/* FAQ */}
@@ -421,7 +421,7 @@ export default function Landing() {
           <div className="space-y-2.5">
             {[
               { q: 'How does Tracque track AI visibility?', a: 'We query the AI engines (ChatGPT, Perplexity, Gemini, Claude, Grok) with your keywords daily, run each query multiple times to build statistical confidence, parse responses for brand mentions, sentiment, position, and cited sources — then store everything historically so you see trends over time.' },
-              { q: 'How is this different from Profound or HeyAmos?', a: "Those tools stop at visibility scores. Tracque closes the full loop — AI mention → UTM capture → GA4 conversion → revenue. We're also the only tool combining AI visibility with traditional SEO ranking. Paid plans start at $49/mo, and even our $399 Agency tier does more than Profound's $399 plan, including revenue attribution they don't offer at any price." },
+              { q: 'How is this different from Profound or HeyAmos?', a: "Those tools stop at visibility scores. Tracque closes the full loop — AI mention → UTM capture → GA4 conversion → revenue. We're also the only tool combining AI visibility with traditional SEO ranking. We're priced as a premium platform because we replace a stack of point tools and tie everything to dollars — the proof your competitors can't show at any price." },
               { q: 'What is GEO / AEO?', a: 'GEO (Generative Engine Optimization) is making your brand more likely to be cited and recommended by AI engines. AEO (Answer Engine Optimization) focuses on getting chosen as the direct answer. Both matter more as AI handles the buyer research journey.' },
               { q: 'How does revenue attribution work?', a: 'When someone clicks from an AI engine, they arrive with a referrer (perplexity.ai, chat.openai.com) or UTM parameters. Tracque captures these via GA4 and a lightweight snippet, then connects them to conversion events and Stripe revenue — so you see exactly which engine drove which customers.' },
               { q: 'Is it accurate? AI responses vary every time.', a: "Exactly why we run 3–5 queries per keyword per model per day and report confidence scores, not single snapshots. An 80% mention rate means your brand appeared in 4 of 5 runs. We show the interval, not fake precision." },
