@@ -406,8 +406,23 @@ export default function Landing() {
           <Reveal delay={0}><PricingCard name="Free" price="$0" desc="See your scores, no card" features={['1 brand', '10 prompts', '2 AI models', 'Weekly scans', 'Basic recommendations']} cta="Start free" /></Reveal>
           <Reveal delay={80}><PricingCard name="Starter" price="$249" period="/mo" desc="For growing brands" features={['3 brands', '25 prompts', 'All 5 AI models', 'Daily scans', 'SEO rank tracking', 'Deep recommendations']} cta="Start Starter" /></Reveal>
           <Reveal delay={160}><PricingCard name="Pro" price="$599" period="/mo" desc="For marketing teams" features={['10 brands', '100 prompts', 'All 5 AI models', 'Revenue attribution', 'GA4 + UTM tracking', 'Site audit', 'Content generation']} cta="Start Pro" highlighted /></Reveal>
-          <Reveal delay={240}><PricingCard name="Agency" price="$1,499" period="/mo" desc="For agencies & enterprises" features={['Unlimited brands', 'Unlimited prompts', 'White-label reports', 'Client workspaces', 'API access', 'Priority support']} cta="Book a call" /></Reveal>
+          <Reveal delay={240}><PricingCard name="Agency" price="$1,499" period="/mo" desc="For agencies & teams" features={['Unlimited brands', 'Unlimited prompts', 'White-label reports', 'Client workspaces', 'API access', 'Priority support']} cta="Start Agency" /></Reveal>
         </div>
+        {/* Enterprise strip */}
+        <Reveal>
+          <div className="mt-4 rounded-2xl border border-[#E7E2DB] bg-white p-6 md:p-7 flex flex-col md:flex-row md:items-center justify-between gap-5">
+            <div className="flex items-start gap-4">
+              <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#A39E95] mt-1">Enterprise</span>
+              <div>
+                <p className="font-semibold text-[16px] mb-1">Custom — for brands that live or die by AI search.</p>
+                <p className="text-[13px] text-[#57534E] max-w-xl leading-relaxed">SSO &amp; SAML, custom scan volume, real frontend capture across every engine, security review, dedicated strategist, and an SLA. Everything in Agency, built around your stack.</p>
+              </div>
+            </div>
+            <Link to="/auth" className="shrink-0 inline-flex items-center justify-center gap-2 bg-[#0A0A0A] text-white px-6 py-3 rounded-lg text-[14px] font-semibold hover:bg-[#262626] transition-colors">
+              Talk to sales <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </Reveal>
         <p className="text-center font-mono text-[11px] text-[#A39E95] mt-8">14-day trial on paid plans · cancel anytime · the only tool that proves AI mentions turned into revenue — at any price</p>
       </section>
 

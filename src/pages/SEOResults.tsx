@@ -1,95 +1,165 @@
-import { Search, TrendingUp, TrendingDown, Minus, Loader2 } from 'lucide-react'
-import { useLatestSeoResults } from '../lib/hooks'
+import { Search, TrendingUp, TrendingDown, Minus, Loader2, Link2, RefreshCw, Gauge, Users2, KeyRound, BarChart3 } from 'lucide-react'
+import { useLatestSeoResults, useDomainOverview, useBacklinks, useRunSeoSync } from '../lib/hooks'
 
-function PositionChange({ curr, prev }: { curr: number; prev: number }) {
-  const diff = prev - curr
-  if (diff === 0) return <span className="flex items-center gap-0.5 text-xs text-muted-foreground"><Minus className="w-3 h-3" /></span>
-  if (diff > 0) return <span className="flex items-center gap-0.5 text-xs text-emerald-600 font-medium"><TrendingUp className="w-3 h-3" />+{diff}</span>
-  return <span className="flex items-center gap-0.5 text-xs text-red-500 font-medium"><TrendingDown className="w-3 h-3" />{diff}</span>
+function fmt(n: number | null | undefined): string {
+  if (n == null) return '—'
+  if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + 'M'
+  if (n >= 1_000) return (n / 1_000).toFixed(1) + 'K'
+  return n.toLocaleString()
 }
 
 function PositionBadge({ pos }: { pos: number }) {
-  const color = pos <= 3 ? 'bg-emerald-50 text-emerald-700 font-bold' :
-    pos <= 10 ? 'bg-amber-50 text-amber-700 font-medium' :
-    'bg-muted text-muted-foreground'
-  return <span className={`text-xs px-2 py-0.5 rounded ${color}`}>#{pos}</span>
+  const color = pos <= 3 ? 'bg-emerald-50 text-emerald-700' : pos <= 10 ? 'bg-amber-50 text-amber-700' : 'bg-muted text-muted-foreground'
+  return <span className={`font-mono text-xs px-2 py-0.5 rounded ${color}`}>#{pos}</span>
+}
+
+// Keyword difficulty bar (0–100), color-graded like Ahrefs KD.
+function KDBadge({ kd }: { kd: number | null }) {
+  if (kd == null) return <span className="text-xs text-muted-foreground">—</span>
+  const color = kd < 30 ? '#10b981' : kd < 60 ? '#f59e0b' : '#ef4444'
+  return (
+    <div className="flex items-center gap-2">
+      <div className="w-10 h-1.5 rounded-full bg-muted overflow-hidden">
+        <div className="h-full rounded-full" style={{ width: `${kd}%`, background: color }} />
+      </div>
+      <span className="font-mono text-xs nums" style={{ color }}>{kd}</span>
+    </div>
+  )
+}
+
+function StatCard({ icon: Icon, label, value, sub }: { icon: any; label: string; value: string; sub?: string }) {
+  return (
+    <div className="bg-card rounded-xl border border-border p-4 shadow-card">
+      <div className="flex items-center gap-2 mb-2 text-muted-foreground">
+        <Icon className="w-3.5 h-3.5" />
+        <p className="text-[11px] font-mono uppercase tracking-wider">{label}</p>
+      </div>
+      <p className="text-2xl font-bold nums">{value}</p>
+      {sub && <p className="text-xs text-muted-foreground mt-0.5">{sub}</p>}
+    </div>
+  )
 }
 
 export default function SEOResults() {
   const { data: results = [], isLoading } = useLatestSeoResults()
+  const { data: domains = [] } = useDomainOverview()
+  const runSync = useRunSeoSync()
+
+  const own = domains.find(d => d.type === 'own') ?? domains[0]
+  const { data: backlinks = [] } = useBacklinks(own?.brand_id)
 
   const ranked = results.filter(r => r.position != null)
-  const avgPos = ranked.length
-    ? Math.round(ranked.reduce((a, r) => a + (r.position ?? 0), 0) / ranked.length * 10) / 10
-    : null
+  const avgPos = ranked.length ? Math.round(ranked.reduce((a, r) => a + (r.position ?? 0), 0) / ranked.length * 10) / 10 : null
   const top3 = ranked.filter(r => (r.position ?? 0) <= 3).length
 
   return (
     <div className="p-6 space-y-6">
-      <div className="flex items-center gap-3">
-        <div className="w-8 h-8 rounded-lg bg-violet-500/10 flex items-center justify-center">
-          <Search className="w-4 h-4 text-violet-600" />
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-violet-500/10 flex items-center justify-center">
+            <Search className="w-4 h-4 text-violet-600" />
+          </div>
+          <div>
+            <h1 className="text-xl font-semibold">SEO</h1>
+            <p className="text-xs text-muted-foreground">Rank tracking, keyword metrics, backlinks & domain authority</p>
+          </div>
         </div>
+        <button
+          onClick={() => runSync.mutate({})}
+          disabled={runSync.isPending}
+          className="flex items-center gap-2 bg-foreground text-background px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
+        >
+          {runSync.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
+          {runSync.isPending ? 'Scanning…' : 'Run SEO scan'}
+        </button>
+      </div>
+
+      {/* Domain authority overview */}
+      {own && (
         <div>
-          <h1 className="text-xl font-semibold">SEO Rankings</h1>
-          <p className="text-xs text-muted-foreground">Google rank tracking via SerpAPI</p>
+          <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-2">
+            Domain overview · <span className="text-foreground">{own.domain ?? own.brand_name}</span>
+          </p>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <StatCard icon={Gauge}     label="Domain Rating"   value={own.domain_rating != null ? String(own.domain_rating) : '—'} />
+            <StatCard icon={BarChart3} label="Organic traffic" value={fmt(own.organic_traffic)} sub="est. monthly" />
+            <StatCard icon={KeyRound}  label="Organic keywords" value={fmt(own.organic_keywords)} />
+            <StatCard icon={Users2}    label="Ref. domains"    value={fmt(own.referring_domains)} />
+            <StatCard icon={Link2}     label="Backlinks"       value={fmt(own.backlinks_total)} />
+          </div>
         </div>
-      </div>
+      )}
 
+      {/* Rank summary */}
       <div className="grid grid-cols-3 gap-4">
-        <div className="bg-card rounded-xl border border-border p-4 shadow-card">
-          <p className="text-2xl font-bold">{avgPos ?? '—'}</p>
-          <p className="text-xs text-muted-foreground">Avg Google position</p>
-        </div>
-        <div className="bg-card rounded-xl border border-border p-4 shadow-card">
-          <p className="text-2xl font-bold">{top3}</p>
-          <p className="text-xs text-muted-foreground">Keywords in top 3</p>
-        </div>
-        <div className="bg-card rounded-xl border border-border p-4 shadow-card">
-          <p className="text-2xl font-bold">{results.length}</p>
-          <p className="text-xs text-muted-foreground">Keyword/brand combos tracked</p>
-        </div>
+        <StatCard icon={TrendingUp} label="Avg position"  value={avgPos != null ? String(avgPos) : '—'} />
+        <StatCard icon={TrendingUp} label="In top 3"      value={String(top3)} />
+        <StatCard icon={Search}     label="Tracked"       value={String(results.length)} sub="keyword × brand" />
       </div>
 
+      {/* Tracked keywords */}
       {isLoading ? (
-        <div className="flex items-center justify-center py-16">
-          <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
-        </div>
+        <div className="flex items-center justify-center py-16"><Loader2 className="w-5 h-5 animate-spin text-muted-foreground" /></div>
       ) : results.length === 0 ? (
-        <div className="text-center py-16 text-muted-foreground">
+        <div className="text-center py-16 text-muted-foreground border border-dashed border-border rounded-xl">
           <Search className="w-8 h-8 mx-auto mb-3 opacity-30" />
           <p className="text-sm font-medium">No SEO data yet</p>
-          <p className="text-xs mt-1">Add your SerpAPI key in Settings to enable Google rank tracking</p>
+          <p className="text-xs mt-1">Click <span className="font-medium text-foreground">Run SEO scan</span> — needs a SerpAPI key (rank) and DataForSEO keys (metrics) in your Supabase secrets.</p>
         </div>
       ) : (
-        <div className="bg-card rounded-xl border border-border shadow-card">
+        <div className="bg-card rounded-xl border border-border shadow-card overflow-hidden">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-border">
-                {['Keyword', 'Brand', 'Position', 'URL', 'Volume', 'Last checked'].map(h => (
-                  <th key={h} className="px-4 py-2 text-left text-xs font-semibold text-muted-foreground">{h}</th>
+              <tr className="border-b border-border bg-muted/30">
+                {['Keyword', 'Brand', 'Position', 'KD', 'Volume', 'CPC', 'Ranking URL'].map(h => (
+                  <th key={h} className="px-4 py-2.5 text-left text-[11px] font-mono uppercase tracking-wider text-muted-foreground">{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {results.map((row) => (
-                <tr key={row.id} className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors">
-                  <td className="px-4 py-2.5 text-sm max-w-[180px] truncate">{row.phrase}</td>
-                  <td className="px-4 py-2.5 text-xs font-medium text-foreground">{row.brand_name}</td>
-                  <td className="px-4 py-2.5">
-                    {row.position ? <PositionBadge pos={row.position} /> : <span className="text-xs text-muted-foreground">Not ranked</span>}
-                  </td>
-                  <td className="px-4 py-2.5 text-xs text-muted-foreground truncate max-w-[140px]">{row.url ?? '—'}</td>
-                  <td className="px-4 py-2.5 text-xs text-muted-foreground">
-                    {row.search_volume ? row.search_volume.toLocaleString() : '—'}
-                  </td>
-                  <td className="px-4 py-2.5 text-xs text-muted-foreground">
-                    {new Date(row.scanned_at).toLocaleDateString()}
-                  </td>
+                <tr key={row.id} className="border-b border-border last:border-0 hover:bg-muted/20 transition-colors">
+                  <td className="px-4 py-2.5 text-sm max-w-[200px] truncate font-medium">{row.phrase}</td>
+                  <td className="px-4 py-2.5 text-xs text-muted-foreground">{row.brand_name}</td>
+                  <td className="px-4 py-2.5">{row.position ? <PositionBadge pos={row.position} /> : <span className="text-xs text-muted-foreground">Not in top 100</span>}</td>
+                  <td className="px-4 py-2.5"><KDBadge kd={(row as any).difficulty ?? null} /></td>
+                  <td className="px-4 py-2.5 text-xs nums text-muted-foreground">{fmt(row.search_volume)}</td>
+                  <td className="px-4 py-2.5 text-xs nums text-muted-foreground">{(row as any).cpc != null ? `$${Number((row as any).cpc).toFixed(2)}` : '—'}</td>
+                  <td className="px-4 py-2.5 text-xs text-muted-foreground truncate max-w-[180px]">{row.url ?? '—'}</td>
                 </tr>
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* Backlinks */}
+      {backlinks.length > 0 && (
+        <div>
+          <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-2">Top backlinks · {own?.domain ?? own?.brand_name}</p>
+          <div className="bg-card rounded-xl border border-border shadow-card overflow-hidden">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-border bg-muted/30">
+                  {['Source', 'DR', 'Anchor', 'Type', 'First seen'].map(h => (
+                    <th key={h} className="px-4 py-2.5 text-left text-[11px] font-mono uppercase tracking-wider text-muted-foreground">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {backlinks.map((b) => (
+                  <tr key={b.id} className="border-b border-border last:border-0 hover:bg-muted/20 transition-colors">
+                    <td className="px-4 py-2.5 text-xs max-w-[220px] truncate">{b.source_domain ?? b.source_url}</td>
+                    <td className="px-4 py-2.5 text-xs nums font-medium">{b.domain_rating ?? '—'}</td>
+                    <td className="px-4 py-2.5 text-xs text-muted-foreground max-w-[200px] truncate">{b.anchor || '—'}</td>
+                    <td className="px-4 py-2.5"><span className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${b.dofollow ? 'bg-emerald-50 text-emerald-700' : 'bg-muted text-muted-foreground'}`}>{b.dofollow ? 'dofollow' : 'nofollow'}</span></td>
+                    <td className="px-4 py-2.5 text-xs text-muted-foreground">{b.first_seen ?? '—'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>

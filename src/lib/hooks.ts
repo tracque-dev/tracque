@@ -154,3 +154,77 @@ export function useRunScan() {
     },
   })
 }
+
+// ── SEO suite ─────────────────────────────────────────────
+
+export interface DomainOverview {
+  brand_id: string
+  brand_name: string
+  domain: string | null
+  domain_rating: number | null
+  organic_traffic: number | null
+  organic_keywords: number | null
+  referring_domains: number | null
+  backlinks_total: number | null
+  type: 'own' | 'competitor'
+  updated_at: string
+}
+
+export interface Backlink {
+  id: string
+  brand_id: string
+  source_domain: string | null
+  source_url: string | null
+  target_url: string | null
+  anchor: string | null
+  domain_rating: number | null
+  dofollow: boolean
+  first_seen: string | null
+}
+
+export function useDomainOverview() {
+  const userId = useUserId()
+  return useQuery({
+    queryKey: ['domain_overview', userId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('domain_overview').select('*').eq('user_id', userId)
+        .order('domain_rating', { ascending: false, nullsFirst: false })
+      if (error) throw error
+      return data as DomainOverview[]
+    },
+  })
+}
+
+export function useBacklinks(brandId?: string) {
+  return useQuery({
+    queryKey: ['backlinks', brandId],
+    enabled: !!brandId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('backlinks').select('*').eq('brand_id', brandId!)
+        .order('domain_rating', { ascending: false, nullsFirst: false }).limit(25)
+      if (error) throw error
+      return data as Backlink[]
+    },
+  })
+}
+
+export function useRunSeoSync() {
+  const userId = useUserId()
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async (opts?: { brand_ids?: string[]; keyword_ids?: string[] }) => {
+      const { data, error } = await supabase.functions.invoke('sync-seo', {
+        body: { user_id: userId, ...opts },
+      })
+      if (error) throw error
+      return data
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['seo_results'] })
+      qc.invalidateQueries({ queryKey: ['domain_overview'] })
+      qc.invalidateQueries({ queryKey: ['backlinks'] })
+    },
+  })
+}
