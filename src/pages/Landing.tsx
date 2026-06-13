@@ -8,9 +8,18 @@ import { ArrowRight, Check, ChevronDown, Search, Zap, BarChart3, Globe, Sparkles
 function Mark({ className = 'w-7 h-7' }: { className?: string }) {
   return (
     <div className={`${className} rounded-[9px] bg-[#0A0A0A] flex items-center justify-center`}>
-      <svg viewBox="0 0 24 24" fill="none" className="w-[60%] h-[60%]">
-        <path d="M4 16.5 L9 11 L13 14 L20 6" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
-        <circle cx="20" cy="6" r="2.4" fill="#3B82F6" stroke="white" strokeWidth="1.4" />
+      {/* Train tracks ascending up-and-to-the-right, converging toward a
+          blue vanishing point — "Tracque" + growth. */}
+      <svg viewBox="0 0 24 24" fill="none" className="w-[64%] h-[64%]">
+        {/* rails (converge as they rise) */}
+        <path d="M6.4 19 L19.4 7.4" stroke="white" strokeWidth="1.9" strokeLinecap="round" />
+        <path d="M3.6 15 L18.2 5.8" stroke="white" strokeWidth="1.9" strokeLinecap="round" />
+        {/* crossties */}
+        <path d="M6.3 12.9 L9.3 17.1" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M10.7 10.2 L13.3 13.8" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M14.9 7.6 L17 10.2" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
+        {/* vanishing point */}
+        <circle cx="19.4" cy="6.2" r="1.7" fill="#3B82F6" />
       </svg>
     </div>
   )
