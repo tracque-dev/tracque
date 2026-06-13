@@ -162,7 +162,7 @@ export default function Landing() {
           {[
             { val: '5', label: 'AI models tracked' },
             { val: '40–60%', label: 'Monthly citation drift' },
-            { val: '$19/mo', label: 'Starting price' },
+            { val: '$49/mo', label: 'Paid plans from' },
             { val: '100%', label: 'Attribution coverage' },
           ].map(({ val, label }) => (
             <div key={label}>
@@ -277,7 +277,7 @@ export default function Landing() {
                 <tr className="border-b border-[#E8E4DF]">
                   <th className="py-3 pr-6 text-left text-sm font-semibold">Feature</th>
                   {[
-                    { name: 'Tracque', price: '$19/mo', highlight: true },
+                    { name: 'Tracque', price: 'from $49/mo', highlight: true },
                     { name: 'Profound', price: '$399/mo', highlight: false },
                     { name: 'HeyAmos', price: '$99/mo', highlight: false },
                     { name: 'Peec', price: '$150/mo', highlight: false },
@@ -313,55 +313,67 @@ export default function Landing() {
       <section id="pricing" className="max-w-4xl mx-auto px-8 py-20">
         <p className="text-xs font-semibold uppercase tracking-widest text-[#888] mb-3">Pricing</p>
         <h2 className="text-3xl font-bold mb-3">Simple, transparent pricing.</h2>
-        <p className="text-[#4a4a4a] mb-10">Profound charges $399/mo for monitoring alone. Tracque gives you monitoring, SEO, attribution, and recommendations — starting free.</p>
-        <div className="grid md:grid-cols-3 gap-5">
+        <p className="text-[#4a4a4a] mb-10">Profound and HeyAmos both charge $399/mo. Tracque does more — monitoring, SEO, recommendations, and revenue attribution — starting free, with Pro at a fraction of their price.</p>
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
           <PricingCard
-            name="Starter"
-            price="Free"
-            desc="Forever free, no card needed"
+            name="Free"
+            price="$0"
+            desc="Try it, no card needed"
             features={[
               '1 brand',
-              '10 keywords',
-              '3 AI models',
-              'Daily scans',
+              '10 prompts',
+              '2 AI models',
+              'Weekly scans',
               'Basic recommendations',
             ]}
             cta="Start free"
           />
           <PricingCard
-            name="Pro"
-            price="$19/mo"
-            desc="Everything you need to grow"
+            name="Starter"
+            price="$49/mo"
+            desc="For solo founders"
             features={[
-              '5 brands',
-              'Unlimited keywords',
+              '3 brands',
+              '25 prompts',
               'All 5 AI models',
+              'Daily scans',
               'SEO rank tracking',
+              'Deep recommendations',
+            ]}
+            cta="Start Starter"
+          />
+          <PricingCard
+            name="Pro"
+            price="$149/mo"
+            desc="For marketing teams"
+            features={[
+              '10 brands',
+              '100 prompts',
+              'All 5 AI models',
               'Revenue attribution',
               'GA4 + UTM tracking',
-              'Deep recommendations',
               'Site audit',
+              'Content generation',
             ]}
             cta="Start Pro"
             highlighted
           />
           <PricingCard
             name="Agency"
-            price="$49/mo"
-            desc="For agencies and larger teams"
+            price="$399/mo"
+            desc="For agencies & larger teams"
             features={[
               'Unlimited brands',
-              'Unlimited keywords',
-              'All 5 AI models',
+              'Unlimited prompts',
               'White-label reports',
               'Client workspaces',
               'API access',
               'Priority support',
             ]}
-            cta="Start Agency"
+            cta="Book a call"
           />
         </div>
-        <p className="text-center text-xs text-[#888] mt-6">All plans include a 14-day trial of Pro features · Cancel anytime</p>
+        <p className="text-center text-xs text-[#888] mt-6">All paid plans include a 14-day trial · Cancel anytime · Even our $399 Agency tier matches Profound's <span className="line-through">entry</span> price — with attribution they don't offer at any price.</p>
       </section>
 
       {/* FAQ */}
@@ -376,7 +388,7 @@ export default function Landing() {
             />
             <Accordion
               question="How is this different from Profound or HeyAmos?"
-              answer="Those tools stop at visibility scores. Tracque closes the full loop — from AI mention to UTM capture to GA4 conversion to revenue. We're also the only tool that combines AI visibility with traditional SEO ranking data. And we start at $19/mo vs $399/mo for Profound."
+              answer="Those tools stop at visibility scores. Tracque closes the full loop — from AI mention to UTM capture to GA4 conversion to revenue. We're also the only tool that combines AI visibility with traditional SEO ranking data. Paid plans start at $49/mo, and even our $399 Agency tier does more than Profound's $399 plan — including revenue attribution they don't offer at any price."
             />
             <Accordion
               question="What is GEO / AEO?"
