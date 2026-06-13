@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Bot, Loader2, ArrowRight } from 'lucide-react'
+import { Loader2, ArrowRight } from 'lucide-react'
 import { supabase } from '../integrations/supabase/client'
+import { Mark } from '../components/Logo'
 
 type Mode = 'signin' | 'signup' | 'reset'
 
@@ -48,9 +49,7 @@ export default function Auth() {
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="flex items-center justify-center gap-2 mb-8">
-          <div className="w-8 h-8 rounded-xl bg-[#1a1a1a] flex items-center justify-center">
-            <Bot className="w-4 h-4 text-white" />
-          </div>
+          <Mark className="w-8 h-8" />
           <span className="text-xl font-bold tracking-tight">Tracque</span>
         </div>
 

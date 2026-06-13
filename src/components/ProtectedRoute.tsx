@@ -1,6 +1,7 @@
 import { Navigate } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
-import { Loader2, Bot } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
+import { Mark } from './Logo'
 
 export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
@@ -9,9 +10,7 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
     return (
       <div className="min-h-screen bg-[#FAF9F7] flex items-center justify-center">
         <div className="flex items-center gap-3 text-[#4a4a4a]">
-          <div className="w-8 h-8 rounded-xl bg-[#1a1a1a] flex items-center justify-center">
-            <Bot className="w-4 h-4 text-white" />
-          </div>
+          <Mark className="w-8 h-8" />
           <Loader2 className="w-4 h-4 animate-spin" />
         </div>
       </div>

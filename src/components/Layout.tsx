@@ -2,6 +2,7 @@ import { Outlet, NavLink, useNavigate } from 'react-router-dom'
 import { LayoutDashboard, Building2, Hash, Bot, Search, Globe, BarChart3, Sparkles, Zap, Settings, LogOut } from 'lucide-react'
 import { cn } from '../lib/utils'
 import { useAuth } from '../lib/auth'
+import { Mark } from './Logo'
 
 const nav = [
   { to: '/app/dashboard',       icon: LayoutDashboard, label: 'Dashboard' },
@@ -29,9 +30,7 @@ export default function Layout() {
       <aside className="w-56 flex flex-col bg-[hsl(var(--sidebar))] shrink-0">
         {/* Brand */}
         <div className="flex items-center gap-2.5 px-4 py-5 border-b border-white/5">
-          <div className="w-7 h-7 rounded-lg bg-[hsl(var(--sidebar-primary))] flex items-center justify-center">
-            <Bot className="w-4 h-4 text-white" />
-          </div>
+          <Mark className="w-7 h-7" badge="hsl(var(--sidebar-primary))" rail="#0A0A0A" node="#ffffff" />
           <span className="text-white font-semibold text-base tracking-tight">Tracque</span>
         </div>
 
