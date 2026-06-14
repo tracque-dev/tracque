@@ -1,21 +1,74 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../integrations/supabase/client'
 import { useUserId } from './auth'
+import { useSelectedClient } from './clientContext'
 import type { Brand, Keyword, LatestScanResult, LatestSeoResult, MentionRate } from '../integrations/supabase/types'
 
 export { useUserId }
 export const USER_ID = 'demo-user' // legacy fallback
 
+// ── Clients (agency workspaces) ───────────────────────────
+
+export interface Client {
+  id: string
+  user_id: string
+  name: string
+  domain: string | null
+  color: string
+  archived: boolean
+  created_at: string
+}
+
+export function useClients() {
+  const userId = useUserId()
+  return useQuery({
+    queryKey: ['clients', userId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('clients').select('*').eq('user_id', userId).eq('archived', false)
+        .order('created_at', { ascending: true })
+      if (error) throw error
+      return data as Client[]
+    },
+  })
+}
+
+export function useAddClient() {
+  const userId = useUserId()
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async (c: { name: string; domain?: string; color?: string }) => {
+      const { data, error } = await supabase.from('clients').insert({ ...c, user_id: userId }).select().single()
+      if (error) throw error
+      return data as Client
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['clients', userId] }),
+  })
+}
+
+export function useArchiveClient() {
+  const userId = useUserId()
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from('clients').update({ archived: true }).eq('id', id)
+      if (error) throw error
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['clients', userId] }),
+  })
+}
+
 // ── Brands ────────────────────────────────────────────────
 
 export function useBrands() {
   const userId = useUserId()
+  const { clientId } = useSelectedClient()
   return useQuery({
-    queryKey: ['brands', userId],
+    queryKey: ['brands', userId, clientId],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('brands').select('*').eq('user_id', userId)
-        .order('created_at', { ascending: true })
+      let q = supabase.from('brands').select('*').eq('user_id', userId)
+      if (clientId !== 'all') q = q.eq('client_id', clientId)
+      const { data, error } = await q.order('created_at', { ascending: true })
       if (error) throw error
       return data as Brand[]
     },
@@ -24,11 +77,13 @@ export function useBrands() {
 
 export function useAddBrand() {
   const userId = useUserId()
+  const { clientId } = useSelectedClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: async (brand: { name: string; domain?: string; type: 'own' | 'competitor' }) => {
+      const client_id = clientId === 'all' ? null : clientId
       const { data, error } = await supabase
-        .from('brands').insert({ ...brand, user_id: userId }).select().single()
+        .from('brands').insert({ ...brand, user_id: userId, client_id }).select().single()
       if (error) throw error
       return data
     },
@@ -52,12 +107,13 @@ export function useDeleteBrand() {
 
 export function useKeywords() {
   const userId = useUserId()
+  const { clientId } = useSelectedClient()
   return useQuery({
-    queryKey: ['keywords', userId],
+    queryKey: ['keywords', userId, clientId],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('keywords').select('*').eq('user_id', userId)
-        .order('created_at', { ascending: true })
+      let q = supabase.from('keywords').select('*').eq('user_id', userId)
+      if (clientId !== 'all') q = q.eq('client_id', clientId)
+      const { data, error } = await q.order('created_at', { ascending: true })
       if (error) throw error
       return data as Keyword[]
     },
@@ -66,11 +122,13 @@ export function useKeywords() {
 
 export function useAddKeyword() {
   const userId = useUserId()
+  const { clientId } = useSelectedClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: async (kw: { phrase: string; intent?: 'informational' | 'commercial' | 'navigational' }) => {
+      const client_id = clientId === 'all' ? null : clientId
       const { data, error } = await supabase
-        .from('keywords').insert({ ...kw, user_id: userId }).select().single()
+        .from('keywords').insert({ ...kw, user_id: userId, client_id }).select().single()
       if (error) throw error
       return data
     },

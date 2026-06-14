@@ -1,11 +1,15 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom'
-import { LayoutDashboard, Building2, Hash, Bot, Search, Globe, BarChart3, Sparkles, Zap, Settings, LogOut } from 'lucide-react'
+import { LayoutDashboard, Building2, Hash, Bot, Search, Globe, BarChart3, Sparkles, Zap, Settings, LogOut, Users2, ChevronsUpDown, Check } from 'lucide-react'
+import { useState } from 'react'
 import { cn } from '../lib/utils'
 import { useAuth } from '../lib/auth'
+import { useClients } from '../lib/hooks'
+import { useSelectedClient } from '../lib/clientContext'
 import { Mark } from './Logo'
 
 const nav = [
   { to: '/app/dashboard',       icon: LayoutDashboard, label: 'Dashboard' },
+  { to: '/app/clients',         icon: Users2,          label: 'Clients' },
   { to: '/app/brands',          icon: Building2,       label: 'Brands' },
   { to: '/app/keywords',        icon: Hash,            label: 'Keywords' },
   { to: '/app/prompts',         icon: Sparkles,        label: 'Prompt Discovery' },
@@ -15,6 +19,44 @@ const nav = [
   { to: '/app/site-audit',      icon: Globe,           label: 'Site Audit' },
   { to: '/app/attribution',     icon: BarChart3,       label: 'Attribution' },
 ]
+
+function ClientSwitcher() {
+  const { data: clients = [] } = useClients()
+  const { clientId, setClientId } = useSelectedClient()
+  const [open, setOpen] = useState(false)
+  const active = clients.find(c => c.id === clientId)
+  const label = clientId === 'all' ? 'All clients' : active?.name ?? 'All clients'
+  const color = clientId === 'all' ? '#64748B' : active?.color ?? '#64748B'
+
+  return (
+    <div className="relative px-2 pb-2">
+      <button onClick={() => setOpen(o => !o)} className="w-full flex items-center gap-2 px-2.5 py-2 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] transition-colors">
+        <span className="w-4 h-4 rounded shrink-0" style={{ background: color }} />
+        <span className="text-sm text-white/90 truncate flex-1 text-left">{label}</span>
+        <ChevronsUpDown className="w-3.5 h-3.5 text-white/40 shrink-0" />
+      </button>
+      {open && (
+        <>
+          <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
+          <div className="absolute left-2 right-2 mt-1 z-20 bg-[hsl(var(--sidebar-accent))] border border-white/10 rounded-lg shadow-xl py-1 max-h-72 overflow-auto">
+            <button onClick={() => { setClientId('all'); setOpen(false) }} className="w-full flex items-center gap-2 px-2.5 py-2 text-sm text-white/90 hover:bg-white/5">
+              <span className="w-3.5 h-3.5 rounded shrink-0 bg-slate-500" />
+              <span className="flex-1 text-left">All clients</span>
+              {clientId === 'all' && <Check className="w-3.5 h-3.5 text-[hsl(var(--sidebar-primary))]" />}
+            </button>
+            {clients.map(c => (
+              <button key={c.id} onClick={() => { setClientId(c.id); setOpen(false) }} className="w-full flex items-center gap-2 px-2.5 py-2 text-sm text-white/90 hover:bg-white/5">
+                <span className="w-3.5 h-3.5 rounded shrink-0" style={{ background: c.color }} />
+                <span className="flex-1 text-left truncate">{c.name}</span>
+                {clientId === c.id && <Check className="w-3.5 h-3.5 text-[hsl(var(--sidebar-primary))]" />}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
 
 export default function Layout() {
   const { user, signOut } = useAuth()
@@ -32,6 +74,11 @@ export default function Layout() {
         <div className="flex items-center gap-2.5 px-4 py-5 border-b border-white/5">
           <Mark className="w-7 h-7" badge="hsl(var(--sidebar-primary))" rail="#0A0A0A" node="#ffffff" />
           <span className="text-white font-semibold text-base tracking-tight">Tracque</span>
+        </div>
+
+        {/* Client workspace switcher */}
+        <div className="pt-2">
+          <ClientSwitcher />
         </div>
 
         {/* Nav */}

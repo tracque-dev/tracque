@@ -4,6 +4,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 import Landing from './pages/Landing'
 import Auth from './pages/Auth'
 import Dashboard from './pages/Dashboard'
+import Clients from './pages/Clients'
 import Brands from './pages/Brands'
 import Keywords from './pages/Keywords'
 import AIResults from './pages/AIResults'
@@ -26,6 +27,7 @@ export default function App() {
       }>
         <Route index element={<Navigate to="dashboard" replace />} />
         <Route path="dashboard" element={<Dashboard />} />
+        <Route path="clients" element={<Clients />} />
         <Route path="brands" element={<Brands />} />
         <Route path="keywords" element={<Keywords />} />
         <Route path="ai" element={<AIResults />} />

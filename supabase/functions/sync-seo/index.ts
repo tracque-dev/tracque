@@ -26,18 +26,39 @@ function rootDomain(d: string): string {
   return d.replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0].toLowerCase()
 }
 
-// ── SerpAPI: live Google rank for a query ──────────────────
-async function serpRank(phrase: string, domain: string): Promise<{ position: number | null; url: string | null }> {
-  if (!SERP_API_KEY) return { position: null, url: null }
+// ── Cross-client cache (dedupe across all clients) ─────────
+// Scan a SERP/domain once per TTL; every client tracking it reads the
+// cached row instead of paying the provider again. The big cost lever.
+async function cacheGet(key: string): Promise<any | null> {
+  const { data } = await supabase.rpc('seo_cache_get', { p_key: key })
+  return data ?? null
+}
+async function cachePut(key: string, payload: any, ttlSecs = 86400): Promise<void> {
+  await supabase.rpc('seo_cache_put', { p_key: key, p_payload: payload, p_ttl_secs: ttlSecs })
+}
+
+// Fetch a SERP's organic results once per phrase, cached. Rank for any
+// specific domain is then derived locally — so 10 clients tracking the
+// same keyword cost ONE SerpAPI search, not ten.
+async function serpOrganic(phrase: string): Promise<any[]> {
+  if (!SERP_API_KEY) return []
+  const key = `serp:us:${phrase.toLowerCase().trim()}`
+  const cached = await cacheGet(key)
+  if (cached) return cached as any[]
   const params = new URLSearchParams({ engine: 'google', q: phrase, num: '100', api_key: SERP_API_KEY, gl: 'us', hl: 'en' })
   const res = await fetch(`https://serpapi.com/search?${params}`)
-  if (!res.ok) return { position: null, url: null }
+  if (!res.ok) return []
   const data = await res.json()
+  const organic = (data.organic_results ?? []).map((r: any) => ({ position: r.position ?? null, link: r.link ?? '' }))
+  await cachePut(key, organic, 86400) // 1-day TTL
+  return organic
+}
+
+function rankFromOrganic(organic: any[], domain: string): { position: number | null; url: string | null } {
   const target = rootDomain(domain)
-  const organic = data.organic_results ?? []
   for (const r of organic) {
     const link = r.link ?? ''
-    if (rootDomain(link).includes(target) || target.includes(rootDomain(link))) {
+    if (link && (rootDomain(link).includes(target) || target.includes(rootDomain(link)))) {
       return { position: r.position ?? null, url: link || null }
     }
   }
@@ -81,28 +102,44 @@ async function dfsKeywordMetrics(phrases: string[]): Promise<Map<string, any>> {
   return out
 }
 
-// Domain overview: organic traffic + ranking keyword count.
+// Domain overview: organic traffic + ranking keyword count. Cached per domain.
 async function dfsDomainOverview(domain: string): Promise<{ organic_traffic: number | null; organic_keywords: number | null }> {
-  const result = await dfsPost('dataforseo_labs/google/domain_rank_overview/live', { target: rootDomain(domain), ...US })
+  const root = rootDomain(domain)
+  const key = `dfs_domain:${root}`
+  const hit = await cacheGet(key)
+  if (hit) return hit
+  const result = await dfsPost('dataforseo_labs/google/domain_rank_overview/live', { target: root, ...US })
   const organic = result?.[0]?.items?.[0]?.metrics?.organic ?? {}
-  return { organic_traffic: Math.round(organic.etv ?? 0) || null, organic_keywords: organic.count ?? null }
+  const out = { organic_traffic: Math.round(organic.etv ?? 0) || null, organic_keywords: organic.count ?? null }
+  await cachePut(key, out, 604800) // 7-day TTL (domain stats move slowly)
+  return out
 }
 
-// Backlink summary: referring domains, total backlinks, authority rank.
+// Backlink summary: referring domains, total backlinks, authority rank. Cached.
 async function dfsBacklinkSummary(domain: string): Promise<{ referring_domains: number | null; backlinks_total: number | null; domain_rating: number | null }> {
-  const result = await dfsPost('backlinks/summary/live', { target: rootDomain(domain), internal_list_limit: 10, backlinks_status_type: 'live' })
+  const root = rootDomain(domain)
+  const key = `dfs_blsum:${root}`
+  const hit = await cacheGet(key)
+  if (hit) return hit
+  const result = await dfsPost('backlinks/summary/live', { target: root, internal_list_limit: 10, backlinks_status_type: 'live' })
   const r = result?.[0] ?? {}
-  return {
+  const out = {
     referring_domains: r.referring_domains ?? null,
     backlinks_total: r.backlinks ?? null,
     domain_rating: r.rank != null ? Math.round(r.rank / 10) : null, // DFS rank 0–1000 → 0–100
   }
+  await cachePut(key, out, 604800)
+  return out
 }
 
-// Top backlinks list.
+// Top backlinks list. Cached per domain.
 async function dfsBacklinks(domain: string): Promise<any[]> {
-  const result = await dfsPost('backlinks/backlinks/live', { target: rootDomain(domain), limit: 25, mode: 'as_is', order_by: ['rank,desc'], backlinks_status_type: 'live' })
-  return (result?.[0]?.items ?? []).map((b: any) => ({
+  const root = rootDomain(domain)
+  const key = `dfs_bl:${root}`
+  const hit = await cacheGet(key)
+  if (hit) return hit
+  const result = await dfsPost('backlinks/backlinks/live', { target: root, limit: 25, mode: 'as_is', order_by: ['rank,desc'], backlinks_status_type: 'live' })
+  const out = (result?.[0]?.items ?? []).map((b: any) => ({
     source_domain: b.domain_from ?? null,
     source_url: b.url_from ?? null,
     target_url: b.url_to ?? null,
@@ -111,6 +148,8 @@ async function dfsBacklinks(domain: string): Promise<any[]> {
     dofollow: b.dofollow ?? true,
     first_seen: b.first_seen ? b.first_seen.slice(0, 10) : null,
   }))
+  await cachePut(key, out, 604800)
+  return out
 }
 
 // ── Main ───────────────────────────────────────────────────
@@ -145,12 +184,13 @@ Deno.serve(async (req) => {
     }
   }
 
-  // 2) Rank tracking per (brand, keyword) via SerpAPI + denormalized metrics.
+  // 2) Rank tracking — fetch each SERP ONCE (cached), derive rank per brand.
   let rankCount = 0
-  for (const b of brands) {
-    for (const k of keywords) {
-      const { position, url } = await serpRank(k.phrase, b.domain!)
-      const m = metrics.get(k.phrase.toLowerCase())
+  for (const k of keywords) {
+    const organic = await serpOrganic(k.phrase)
+    const m = metrics.get(k.phrase.toLowerCase())
+    for (const b of brands) {
+      const { position, url } = rankFromOrganic(organic, b.domain!)
       await supabase.from('seo_results').insert({
         keyword_id: k.id, brand_id: b.id, position, url,
         search_volume: m?.search_volume ?? null, difficulty: m?.difficulty ?? null, cpc: m?.cpc ?? null,
