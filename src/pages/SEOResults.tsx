@@ -27,6 +27,13 @@ function KDBadge({ kd }: { kd: number | null }) {
   )
 }
 
+// Domain Rating (0–100) — higher is better, so green at the top end.
+function DRBadge({ dr }: { dr: number | null }) {
+  if (dr == null) return <span className="text-xs text-muted-foreground">—</span>
+  const color = dr >= 60 ? '#10b981' : dr >= 30 ? '#f59e0b' : '#94a3b8'
+  return <span className="font-mono text-sm font-semibold nums" style={{ color }}>{dr}</span>
+}
+
 function StatCard({ icon: Icon, label, value, sub }: { icon: any; label: string; value: string; sub?: string }) {
   return (
     <div className="bg-card rounded-xl border border-border p-4 shadow-card">
@@ -87,6 +94,41 @@ export default function SEOResults() {
             <StatCard icon={KeyRound}  label="Organic keywords" value={fmt(own.organic_keywords)} />
             <StatCard icon={Users2}    label="Ref. domains"    value={fmt(own.referring_domains)} />
             <StatCard icon={Link2}     label="Backlinks"       value={fmt(own.backlinks_total)} />
+          </div>
+        </div>
+      )}
+
+      {/* Competitor comparison — own brand vs tracked competitors */}
+      {domains.length > 1 && (
+        <div>
+          <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-2">Competitors · domain authority</p>
+          <div className="bg-card rounded-xl border border-border shadow-card overflow-hidden">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-border bg-muted/30">
+                  {['Domain', 'DR', 'Organic traffic', 'Keywords', 'Ref. domains', 'Backlinks'].map(h => (
+                    <th key={h} className="px-4 py-2.5 text-left text-[11px] font-mono uppercase tracking-wider text-muted-foreground">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {domains.map(d => (
+                  <tr key={d.brand_id} className={`border-b border-border last:border-0 transition-colors ${d.type === 'own' ? 'bg-blue-50/50' : 'hover:bg-muted/20'}`}>
+                    <td className="px-4 py-2.5">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium">{d.domain ?? d.brand_name}</span>
+                        {d.type === 'own' && <span className="text-[10px] font-mono px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded">YOU</span>}
+                      </div>
+                    </td>
+                    <td className="px-4 py-2.5"><DRBadge dr={d.domain_rating} /></td>
+                    <td className="px-4 py-2.5 text-xs nums text-muted-foreground">{fmt(d.organic_traffic)}</td>
+                    <td className="px-4 py-2.5 text-xs nums text-muted-foreground">{fmt(d.organic_keywords)}</td>
+                    <td className="px-4 py-2.5 text-xs nums text-muted-foreground">{fmt(d.referring_domains)}</td>
+                    <td className="px-4 py-2.5 text-xs nums text-muted-foreground">{fmt(d.backlinks_total)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       )}
