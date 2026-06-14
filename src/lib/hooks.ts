@@ -273,6 +273,72 @@ export function useBacklinks(brandId?: string) {
   })
 }
 
+// ── Attribution (conversion tracking) ────────────────────
+
+export interface SourceAttribution {
+  source: string
+  is_ai: boolean
+  sessions: number
+  visitors: number
+  conversions: number
+  revenue: number
+}
+
+export interface TrackingSite {
+  id: string
+  user_id: string
+  client_id: string | null
+  site_key: string
+  domain: string | null
+  ga4_id: string | null
+}
+
+export function useAttributionBySource() {
+  const userId = useUserId()
+  const { clientId } = useSelectedClient()
+  return useQuery({
+    queryKey: ['attribution', userId, clientId],
+    queryFn: async () => {
+      let q = supabase.from('attribution_by_source').select('*').eq('user_id', userId)
+      if (clientId !== 'all') q = q.eq('client_id', clientId)
+      const { data, error } = await q
+      if (error) throw error
+      return data as SourceAttribution[]
+    },
+  })
+}
+
+export function useTrackingSites() {
+  const userId = useUserId()
+  const { clientId } = useSelectedClient()
+  return useQuery({
+    queryKey: ['tracking_sites', userId, clientId],
+    queryFn: async () => {
+      let q = supabase.from('tracking_sites').select('*').eq('user_id', userId)
+      if (clientId !== 'all') q = q.eq('client_id', clientId)
+      const { data, error } = await q.order('created_at', { ascending: true })
+      if (error) throw error
+      return data as TrackingSite[]
+    },
+  })
+}
+
+export function useCreateTrackingSite() {
+  const userId = useUserId()
+  const { clientId } = useSelectedClient()
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async (opts: { domain?: string; ga4_id?: string }) => {
+      const client_id = clientId === 'all' ? null : clientId
+      const { data, error } = await supabase
+        .from('tracking_sites').insert({ user_id: userId, client_id, ...opts }).select().single()
+      if (error) throw error
+      return data as TrackingSite
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['tracking_sites'] }),
+  })
+}
+
 export function useRunSeoSync() {
   const userId = useUserId()
   const qc = useQueryClient()

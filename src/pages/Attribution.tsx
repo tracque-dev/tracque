@@ -1,137 +1,184 @@
-import { BarChart3, TrendingUp, DollarSign, MousePointerClick, Users, Zap } from 'lucide-react'
+import { useState } from 'react'
+import { BarChart3, TrendingUp, DollarSign, MousePointerClick, Users, Loader2, Plus, Check, Copy, Code2 } from 'lucide-react'
+import { useAttributionBySource, useTrackingSites, useCreateTrackingSite, type SourceAttribution } from '../lib/hooks'
 
-const SOURCES = [
-  { source: 'perplexity', label: 'Perplexity AI', sessions: 1240, conversions: 38, revenue: 9500, color: 'bg-blue-500' },
-  { source: 'chatgpt', label: 'ChatGPT', sessions: 890, conversions: 21, revenue: 5250, color: 'bg-emerald-500' },
-  { source: 'google', label: 'Google (organic)', sessions: 4200, conversions: 84, revenue: 21000, color: 'bg-amber-500' },
-  { source: 'google_ads', label: 'Google Ads', sessions: 3100, conversions: 62, revenue: 15500, color: 'bg-red-400' },
-  { source: 'meta_ads', label: 'Meta Ads', sessions: 2800, conversions: 42, revenue: 10500, color: 'bg-indigo-500' },
-  { source: 'gemini', label: 'Gemini', sessions: 340, conversions: 8, revenue: 2000, color: 'bg-violet-500' },
-]
+const AI_SOURCES = new Set(['chatgpt', 'perplexity', 'gemini', 'claude', 'grok', 'copilot'])
 
-const totalRevenue = SOURCES.reduce((a, s) => a + s.revenue, 0)
-const totalConversions = SOURCES.reduce((a, s) => a + s.conversions, 0)
-const totalSessions = SOURCES.reduce((a, s) => a + s.sessions, 0)
-const aiRevenue = SOURCES.filter(s => ['perplexity', 'chatgpt', 'gemini', 'claude', 'grok'].includes(s.source)).reduce((a, s) => a + s.revenue, 0)
+const LABELS: Record<string, string> = {
+  chatgpt: 'ChatGPT', perplexity: 'Perplexity', gemini: 'Gemini', claude: 'Claude', grok: 'Grok', copilot: 'Copilot',
+  google: 'Google (organic)', bing: 'Bing', paid_google: 'Google Ads', paid_meta: 'Meta Ads',
+  referral: 'Referral', direct: 'Direct',
+}
+const COLORS: Record<string, string> = {
+  chatgpt: 'bg-emerald-500', perplexity: 'bg-blue-500', gemini: 'bg-violet-500', claude: 'bg-orange-500',
+  grok: 'bg-slate-800', copilot: 'bg-cyan-500', google: 'bg-amber-500', bing: 'bg-teal-500',
+  paid_google: 'bg-red-400', paid_meta: 'bg-indigo-500', referral: 'bg-pink-400', direct: 'bg-gray-400',
+}
+const label = (s: string) => LABELS[s] ?? s
+const color = (s: string) => COLORS[s] ?? 'bg-gray-400'
+const money = (n: number) => `$${Math.round(n).toLocaleString()}`
+
+function StatCard({ icon: Icon, label, value, tint }: { icon: any; label: string; value: string; tint: string }) {
+  return (
+    <div className="bg-card rounded-xl border border-border p-4 shadow-card">
+      <div className={`w-8 h-8 rounded-lg ${tint} flex items-center justify-center mb-3`}><Icon className="w-4 h-4" /></div>
+      <p className="text-2xl font-bold nums">{value}</p>
+      <p className="text-xs text-muted-foreground">{label}</p>
+    </div>
+  )
+}
+
+function InstallSnippet({ siteKey }: { siteKey: string }) {
+  const [copied, setCopied] = useState(false)
+  const snippet = `<script async src="https://tracque.com/t.js" data-tracque="${siteKey}"></script>`
+  function copy() { navigator.clipboard.writeText(snippet); setCopied(true); setTimeout(() => setCopied(false), 1500) }
+  return (
+    <div className="bg-[#0A0A0A] rounded-xl p-4 text-white">
+      <div className="flex items-center justify-between mb-2">
+        <span className="font-mono text-[11px] uppercase tracking-wider text-white/50 flex items-center gap-1.5"><Code2 className="w-3.5 h-3.5" /> Install snippet</span>
+        <button onClick={copy} className="flex items-center gap-1.5 text-[11px] text-white/70 hover:text-white transition-colors">
+          {copied ? <><Check className="w-3.5 h-3.5 text-emerald-400" /> Copied</> : <><Copy className="w-3.5 h-3.5" /> Copy</>}
+        </button>
+      </div>
+      <code className="block font-mono text-[12px] text-emerald-300 break-all leading-relaxed">{snippet}</code>
+      <p className="text-[11px] text-white/45 mt-3 leading-relaxed">
+        Paste before <code className="text-white/70">&lt;/head&gt;</code> on the client's site. Then fire conversions with
+        <code className="text-white/70"> tracque('conversion', {'{'} value: 99 {'}'})</code>. If GA4 is installed, events mirror automatically.
+      </p>
+    </div>
+  )
+}
 
 export default function Attribution() {
+  const { data: rows = [], isLoading } = useAttributionBySource()
+  const { data: sites = [] } = useTrackingSites()
+  const createSite = useCreateTrackingSite()
+  const [domain, setDomain] = useState('')
+  const [ga4, setGa4] = useState('')
+
+  const site = sites[0]
+  const totalRevenue = rows.reduce((a, s) => a + Number(s.revenue), 0)
+  const totalConversions = rows.reduce((a, s) => a + Number(s.conversions), 0)
+  const totalSessions = rows.reduce((a, s) => a + Number(s.sessions), 0)
+  const aiRevenue = rows.filter(s => s.is_ai || AI_SOURCES.has(s.source)).reduce((a, s) => a + Number(s.revenue), 0)
+  const sorted = [...rows].sort((a, b) => Number(b.revenue) - Number(a.revenue) || Number(b.sessions) - Number(a.sessions))
+
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center gap-3">
-        <div className="w-8 h-8 rounded-lg bg-violet-500/10 flex items-center justify-center">
-          <BarChart3 className="w-4 h-4 text-violet-600" />
-        </div>
+        <div className="w-8 h-8 rounded-lg bg-violet-500/10 flex items-center justify-center"><BarChart3 className="w-4 h-4 text-violet-600" /></div>
         <div>
           <h1 className="text-xl font-semibold">Attribution</h1>
-          <p className="text-xs text-muted-foreground">Revenue from AI search, SEO, and paid ads — in one place</p>
+          <p className="text-xs text-muted-foreground">AI mention → click → conversion → revenue, in one place</p>
         </div>
       </div>
 
-      {/* Setup banner */}
-      <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 flex items-start gap-3">
-        <Zap className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-        <div>
-          <p className="text-sm font-semibold text-primary">Connect your data sources</p>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Run a Site Audit to install the Tracque tracking snippet, then connect Google Analytics, Meta Ads, and Google Ads to see revenue attribution across all channels.
-          </p>
-          <div className="flex gap-2 mt-2">
-            <a href="/app/site-audit" className="text-xs px-2.5 py-1 bg-primary text-white rounded-lg font-medium hover:bg-primary/90">
-              Run Site Audit
-            </a>
-            <a href="/app/settings" className="text-xs px-2.5 py-1 border border-border rounded-lg text-muted-foreground hover:text-foreground">
-              Connect Ad Accounts
-            </a>
-          </div>
-        </div>
-      </div>
-
-      {/* Summary stats */}
-      <div className="grid grid-cols-4 gap-4">
-        {[
-          { label: 'Total Revenue', value: `$${totalRevenue.toLocaleString()}`, icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-          { label: 'Total Conversions', value: totalConversions.toString(), icon: TrendingUp, color: 'text-blue-600', bg: 'bg-blue-50' },
-          { label: 'Total Sessions', value: totalSessions.toLocaleString(), icon: Users, color: 'text-violet-600', bg: 'bg-violet-50' },
-          { label: 'AI-Driven Revenue', value: `$${aiRevenue.toLocaleString()}`, icon: MousePointerClick, color: 'text-amber-600', bg: 'bg-amber-50' },
-        ].map(({ label, value, icon: Icon, color, bg }) => (
-          <div key={label} className="bg-card rounded-xl border border-border p-4 shadow-card">
-            <div className={`w-8 h-8 rounded-lg ${bg} flex items-center justify-center mb-3`}>
-              <Icon className={`w-4 h-4 ${color}`} />
+      {/* Setup / snippet */}
+      {!site ? (
+        <div className="bg-primary/5 border border-primary/20 rounded-xl p-5">
+          <p className="text-sm font-semibold text-primary mb-1">Set up conversion tracking</p>
+          <p className="text-xs text-muted-foreground mb-4">Generate a tracking snippet for this client. It captures which AI engine (or ad) sent each visitor, then ties it to conversions and revenue.</p>
+          <div className="flex flex-wrap items-end gap-3">
+            <div>
+              <label className="text-xs font-medium text-muted-foreground">Site domain (optional)</label>
+              <input value={domain} onChange={e => setDomain(e.target.value)} placeholder="acme.com" className="mt-1 w-44 px-3 py-2 text-sm border border-border rounded-lg bg-background" />
             </div>
-            <p className="text-2xl font-bold">{value}</p>
-            <p className="text-xs text-muted-foreground">{label}</p>
+            <div>
+              <label className="text-xs font-medium text-muted-foreground">GA4 ID (optional)</label>
+              <input value={ga4} onChange={e => setGa4(e.target.value)} placeholder="G-XXXXXXX" className="mt-1 w-40 px-3 py-2 text-sm border border-border rounded-lg bg-background" />
+            </div>
+            <button onClick={() => createSite.mutate({ domain: domain || undefined, ga4_id: ga4 || undefined })} disabled={createSite.isPending}
+              className="flex items-center gap-2 bg-foreground text-background px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50">
+              {createSite.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />} Generate snippet
+            </button>
           </div>
-        ))}
+        </div>
+      ) : (
+        <InstallSnippet siteKey={site.site_key} />
+      )}
+
+      {/* Summary */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <StatCard icon={DollarSign} label="Total revenue" value={money(totalRevenue)} tint="bg-emerald-50 text-emerald-600" />
+        <StatCard icon={MousePointerClick} label="AI-driven revenue" value={money(aiRevenue)} tint="bg-amber-50 text-amber-600" />
+        <StatCard icon={TrendingUp} label="Conversions" value={totalConversions.toLocaleString()} tint="bg-blue-50 text-blue-600" />
+        <StatCard icon={Users} label="Sessions" value={totalSessions.toLocaleString()} tint="bg-violet-50 text-violet-600" />
       </div>
 
-      {/* Revenue by source */}
-      <div className="bg-card rounded-xl border border-border shadow-card">
-        <div className="px-4 py-3 border-b border-border">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Revenue by Source</p>
+      {/* By source */}
+      {isLoading ? (
+        <div className="flex items-center justify-center py-16"><Loader2 className="w-5 h-5 animate-spin text-muted-foreground" /></div>
+      ) : rows.length === 0 ? (
+        <div className="text-center py-14 text-muted-foreground border border-dashed border-border rounded-xl">
+          <BarChart3 className="w-8 h-8 mx-auto mb-3 opacity-30" />
+          <p className="text-sm font-medium">No attribution data yet</p>
+          <p className="text-xs mt-1">{site ? 'Install the snippet above — visits and conversions will appear here.' : 'Generate a tracking snippet to start collecting data.'}</p>
         </div>
-        <table className="w-full">
-          <thead>
-            <tr className="border-b border-border">
-              {['Source', 'Sessions', 'Conversions', 'Conv. Rate', 'Revenue', '% of Total'].map(h => (
-                <th key={h} className="px-4 py-2 text-left text-xs font-semibold text-muted-foreground">{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {SOURCES.sort((a, b) => b.revenue - a.revenue).map((s) => {
-              const convRate = ((s.conversions / s.sessions) * 100).toFixed(1)
-              const revPct = ((s.revenue / totalRevenue) * 100).toFixed(1)
-              const isAI = ['perplexity', 'chatgpt', 'gemini', 'claude', 'grok'].includes(s.source)
-              return (
-                <tr key={s.source} className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors">
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-2">
-                      <div className={`w-2 h-2 rounded-full ${s.color}`} />
-                      <span className="text-sm font-medium">{s.label}</span>
-                      {isAI && <span className="text-xs px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded font-medium">AI</span>}
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 text-sm text-muted-foreground">{s.sessions.toLocaleString()}</td>
-                  <td className="px-4 py-3 text-sm text-muted-foreground">{s.conversions}</td>
-                  <td className="px-4 py-3 text-sm text-muted-foreground">{convRate}%</td>
-                  <td className="px-4 py-3 text-sm font-semibold">${s.revenue.toLocaleString()}</td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-2">
-                      <div className="w-20 h-1.5 bg-muted rounded-full overflow-hidden">
-                        <div className={`h-full ${s.color} rounded-full`} style={{ width: `${revPct}%` }} />
+      ) : (
+        <div className="bg-card rounded-xl border border-border shadow-card overflow-hidden">
+          <div className="px-4 py-3 border-b border-border"><p className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground">Revenue by source</p></div>
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-border bg-muted/30">
+                {['Source', 'Sessions', 'Conversions', 'Conv. rate', 'Revenue', '% of total'].map(h => (
+                  <th key={h} className="px-4 py-2.5 text-left text-[11px] font-mono uppercase tracking-wider text-muted-foreground">{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {sorted.map(s => {
+                const isAi = s.is_ai || AI_SOURCES.has(s.source)
+                const cr = s.sessions ? ((s.conversions / s.sessions) * 100).toFixed(1) : '0.0'
+                const pct = totalRevenue ? ((s.revenue / totalRevenue) * 100).toFixed(0) : '0'
+                return (
+                  <tr key={s.source} className="border-b border-border last:border-0 hover:bg-muted/20 transition-colors">
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-2">
+                        <span className={`w-2 h-2 rounded-full ${color(s.source)}`} />
+                        <span className="text-sm font-medium">{label(s.source)}</span>
+                        {isAi && <span className="text-[10px] font-mono px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded">AI</span>}
                       </div>
-                      <span className="text-xs text-muted-foreground">{revPct}%</span>
-                    </div>
-                  </td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
-      </div>
+                    </td>
+                    <td className="px-4 py-3 text-xs nums text-muted-foreground">{Number(s.sessions).toLocaleString()}</td>
+                    <td className="px-4 py-3 text-xs nums text-muted-foreground">{Number(s.conversions).toLocaleString()}</td>
+                    <td className="px-4 py-3 text-xs nums text-muted-foreground">{cr}%</td>
+                    <td className="px-4 py-3 text-sm font-semibold nums">{money(Number(s.revenue))}</td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-20 h-1.5 bg-muted rounded-full overflow-hidden"><div className={`h-full ${color(s.source)} rounded-full`} style={{ width: `${pct}%` }} /></div>
+                        <span className="text-xs text-muted-foreground nums">{pct}%</span>
+                      </div>
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
 
-      {/* AI vs Paid vs Organic breakdown */}
-      <div className="grid grid-cols-3 gap-4">
-        {[
-          { label: 'AI Search', sources: ['perplexity', 'chatgpt', 'gemini'], color: 'bg-blue-500' },
-          { label: 'Paid Ads', sources: ['google_ads', 'meta_ads'], color: 'bg-red-400' },
-          { label: 'Organic SEO', sources: ['google'], color: 'bg-amber-500' },
-        ].map(({ label, sources, color }) => {
-          const rev = SOURCES.filter(s => sources.includes(s.source)).reduce((a, s) => a + s.revenue, 0)
-          const conv = SOURCES.filter(s => sources.includes(s.source)).reduce((a, s) => a + s.conversions, 0)
-          const pct = ((rev / totalRevenue) * 100).toFixed(0)
-          return (
-            <div key={label} className="bg-card rounded-xl border border-border p-4 shadow-card">
-              <div className="flex items-center gap-2 mb-3">
-                <div className={`w-2.5 h-2.5 rounded-full ${color}`} />
-                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{label}</p>
+      {/* AI vs Paid vs Organic */}
+      {rows.length > 0 && (
+        <div className="grid grid-cols-3 gap-4">
+          {[
+            { label: 'AI Search', match: (s: SourceAttribution) => s.is_ai || AI_SOURCES.has(s.source), color: 'bg-blue-500' },
+            { label: 'Paid Ads', match: (s: SourceAttribution) => s.source.startsWith('paid_'), color: 'bg-red-400' },
+            { label: 'Organic / Direct', match: (s: SourceAttribution) => ['google', 'bing', 'referral', 'direct'].includes(s.source), color: 'bg-amber-500' },
+          ].map(g => {
+            const grp = rows.filter(g.match)
+            const rev = grp.reduce((a, s) => a + Number(s.revenue), 0)
+            const conv = grp.reduce((a, s) => a + Number(s.conversions), 0)
+            const pct = totalRevenue ? ((rev / totalRevenue) * 100).toFixed(0) : '0'
+            return (
+              <div key={g.label} className="bg-card rounded-xl border border-border p-4 shadow-card">
+                <div className="flex items-center gap-2 mb-3"><span className={`w-2.5 h-2.5 rounded-full ${g.color}`} /><p className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground">{g.label}</p></div>
+                <p className="text-2xl font-bold nums">{money(rev)}</p>
+                <p className="text-xs text-muted-foreground">{conv} conversions · {pct}% of revenue</p>
               </div>
-              <p className="text-2xl font-bold">${rev.toLocaleString()}</p>
-              <p className="text-xs text-muted-foreground">{conv} conversions · {pct}% of revenue</p>
-            </div>
-          )
-        })}
-      </div>
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }
