@@ -4,7 +4,8 @@ import { supabase } from '../integrations/supabase/client'
 
 interface AuditResult {
   url: string
-  events: { name: string; trigger: string; element: string; category: string }[]
+  business_type?: string
+  events: { name: string; trigger: string; element: string; category: string; is_key_event?: boolean }[]
   gtm_container: object
   guide: string
 }
@@ -125,7 +126,10 @@ export default function SiteAudit() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-              <p className="text-sm font-semibold">Audit complete — {result.events.length} events generated</p>
+              <p className="text-sm font-semibold">
+                {result.events.length} events generated
+                {result.business_type && <span className="text-muted-foreground font-normal"> · detected: {result.business_type}</span>}
+              </p>
             </div>
             <button
               onClick={downloadGTM}
@@ -150,7 +154,9 @@ export default function SiteAudit() {
               <tbody>
                 {result.events.map((ev, i) => (
                   <tr key={i} className="border-b border-border last:border-0 hover:bg-muted/30">
-                    <td className="px-4 py-2.5 text-xs font-mono text-foreground">{ev.name}</td>
+                    <td className="px-4 py-2.5 text-xs font-mono text-foreground">
+                      {ev.is_key_event && <span title="Key event (conversion)" className="text-amber-500 mr-1">★</span>}{ev.name}
+                    </td>
                     <td className="px-4 py-2.5">
                       <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${CATEGORY_COLORS[ev.category] ?? 'bg-muted text-muted-foreground'}`}>
                         {ev.category}
