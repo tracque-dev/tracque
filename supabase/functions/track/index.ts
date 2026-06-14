@@ -25,6 +25,11 @@ const AI_HOSTS: Record<string, string> = {
 }
 const AI_UTM = new Set(['chatgpt', 'openai', 'perplexity', 'gemini', 'bard', 'claude', 'grok', 'copilot', 'ai'])
 
+function host(s: string): string {
+  try { return new URL(s.startsWith('http') ? s : 'https://' + s).hostname.replace(/^www\./, '').toLowerCase() }
+  catch { return s.replace(/^www\./, '').toLowerCase() }
+}
+
 function classify(referrer = '', utm_source = '', utm_medium = '', gclid = '', fbclid = ''): { source: string; is_ai: boolean } {
   const us = utm_source.toLowerCase().trim()
   // Explicit UTM wins.
@@ -57,11 +62,26 @@ Deno.serve(async (req) => {
 
   // Resolve the site → owner + client. Unknown key = silently 204 (don't leak which keys exist).
   const { data: site } = await supabase
-    .from('tracking_sites').select('user_id, client_id').eq('site_key', body.site_key).single()
+    .from('tracking_sites').select('user_id, client_id, domain').eq('site_key', body.site_key).single()
   if (!site) return new Response(null, { status: 204, headers: cors })
+
+  // Origin binding: if the site has a registered domain, drop browser beacons
+  // coming from a different origin (stops casual cross-site key reuse). No
+  // Origin header (server-side) is allowed through; not bulletproof, but the
+  // common abuse vector is browser-originated and always sends Origin.
+  if (site.domain) {
+    const origin = req.headers.get('origin') || req.headers.get('referer') || ''
+    if (origin) {
+      const oh = host(origin), sh = host(site.domain)
+      if (oh && sh && oh !== sh && !oh.endsWith('.' + sh)) return new Response(null, { status: 204, headers: cors })
+    }
+  }
 
   const { source, is_ai } = classify(body.referrer, body.utm_source, body.utm_medium, body.gclid, body.fbclid)
   const scope = { user_id: site.user_id, client_id: site.client_id }
+  // Sanity-bound revenue so a spoofed beacon can't poison reports with absurd values.
+  let value: number | null = typeof body.value === 'number' && isFinite(body.value) ? body.value : null
+  if (value != null) value = Math.max(0, Math.min(value, 1_000_000))
 
   try {
     if (body.type === 'conversion') {
@@ -71,7 +91,7 @@ Deno.serve(async (req) => {
         source: body.source || source,            // snippet sends stored last-touch source if it has one
         is_ai: body.is_ai ?? is_ai,
         event_name: (body.event_name || 'conversion').slice(0, 64),
-        value: typeof body.value === 'number' ? body.value : null,
+        value,
         currency: (body.currency || 'USD').slice(0, 8),
       })
     } else {
