@@ -114,8 +114,10 @@ async function dfsDomainOverview(domain: string): Promise<{ organic_traffic: num
   const hit = await cacheGet(key)
   if (hit) return hit
   const result = await dfsPost('dataforseo_labs/google/domain_rank_overview/live', { target: root, ...US })
-  if (!result) return { organic_traffic: null, organic_keywords: null } // failed call — don't cache
-  const organic = result?.[0]?.items?.[0]?.metrics?.organic ?? {}
+  // Guard the actual data subtree — a 200-but-empty/partial response (result
+  // truthy, metrics absent) must NOT cache blank authority for 7 days.
+  const organic = result?.[0]?.items?.[0]?.metrics?.organic
+  if (!organic) return { organic_traffic: null, organic_keywords: null }
   const out = { organic_traffic: Math.round(organic.etv ?? 0) || null, organic_keywords: organic.count ?? null }
   await cachePut(key, out, 604800) // 7-day TTL (domain stats move slowly)
   return out
@@ -128,13 +130,15 @@ async function dfsBacklinkSummary(domain: string): Promise<{ referring_domains: 
   const hit = await cacheGet(key)
   if (hit) return hit
   const result = await dfsPost('backlinks/summary/live', { target: root, internal_list_limit: 10, backlinks_status_type: 'live' })
-  if (!result) return { referring_domains: null, backlinks_total: null, domain_rating: null } // failed call — don't cache
-  const r = result?.[0] ?? {}
+  const r = result?.[0]
+  if (!r) return { referring_domains: null, backlinks_total: null, domain_rating: null } // no data subtree — don't cache
   const out = {
     referring_domains: r.referring_domains ?? null,
     backlinks_total: r.backlinks ?? null,
     domain_rating: r.rank != null ? Math.round(r.rank / 10) : null, // DFS rank 0–1000 → 0–100
   }
+  // All-null = ambiguous/partial response → don't lock a blank into the 7-day shared cache.
+  if (out.referring_domains == null && out.backlinks_total == null && out.domain_rating == null) return out
   await cachePut(key, out, 604800)
   return out
 }
@@ -146,8 +150,9 @@ async function dfsBacklinks(domain: string): Promise<any[]> {
   const hit = await cacheGet(key)
   if (hit) return hit
   const result = await dfsPost('backlinks/backlinks/live', { target: root, limit: 25, mode: 'as_is', order_by: ['rank,desc'], backlinks_status_type: 'live' })
-  if (!result) return [] // failed call — don't cache an empty list for 7 days
-  const out = (result?.[0]?.items ?? []).map((b: any) => ({
+  const items = result?.[0]?.items
+  if (!items) return [] // no data subtree (partial/transient) — don't cache
+  const out = (items as any[]).map((b: any) => ({
     source_domain: b.domain_from ?? null,
     source_url: b.url_from ?? null,
     target_url: b.url_to ?? null,
@@ -156,7 +161,7 @@ async function dfsBacklinks(domain: string): Promise<any[]> {
     dofollow: b.dofollow ?? true,
     first_seen: b.first_seen ? b.first_seen.slice(0, 10) : null,
   }))
-  await cachePut(key, out, 604800)
+  await cachePut(key, out, out.length ? 604800 : 300) // genuine empty list → short TTL, not 7 days
   return out
 }
 
