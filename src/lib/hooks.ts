@@ -152,12 +152,13 @@ export function useDeleteKeyword() {
 
 export function useLatestScanResults() {
   const userId = useUserId()
+  const { clientId } = useSelectedClient()
   return useQuery({
-    queryKey: ['scan_results', 'latest', userId],
+    queryKey: ['scan_results', 'latest', userId, clientId],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('latest_scan_results').select('*')
-        .order('scanned_at', { ascending: false })
+      let q = supabase.from('latest_scan_results').select('*')
+      if (clientId !== 'all') q = q.eq('client_id', clientId)
+      const { data, error } = await q.order('scanned_at', { ascending: false })
       if (error) throw error
       return data as LatestScanResult[]
     },
@@ -166,11 +167,13 @@ export function useLatestScanResults() {
 
 export function useMentionRates() {
   const userId = useUserId()
+  const { clientId } = useSelectedClient()
   return useQuery({
-    queryKey: ['mention_rates', userId],
+    queryKey: ['mention_rates', userId, clientId],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('mention_rates').select('*').eq('user_id', userId)
+      let q = supabase.from('mention_rates').select('*').eq('user_id', userId)
+      if (clientId !== 'all') q = q.eq('client_id', clientId)
+      const { data, error } = await q
       if (error) throw error
       return data as MentionRate[]
     },
@@ -181,12 +184,13 @@ export function useMentionRates() {
 
 export function useLatestSeoResults() {
   const userId = useUserId()
+  const { clientId } = useSelectedClient()
   return useQuery({
-    queryKey: ['seo_results', 'latest', userId],
+    queryKey: ['seo_results', 'latest', userId, clientId],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('latest_seo_results').select('*')
-        .order('scanned_at', { ascending: false })
+      let q = supabase.from('latest_seo_results').select('*')
+      if (clientId !== 'all') q = q.eq('client_id', clientId)
+      const { data, error } = await q.order('scanned_at', { ascending: false })
       if (error) throw error
       return data as LatestSeoResult[]
     },
@@ -242,12 +246,13 @@ export interface Backlink {
 
 export function useDomainOverview() {
   const userId = useUserId()
+  const { clientId } = useSelectedClient()
   return useQuery({
-    queryKey: ['domain_overview', userId],
+    queryKey: ['domain_overview', userId, clientId],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('domain_overview').select('*').eq('user_id', userId)
-        .order('domain_rating', { ascending: false, nullsFirst: false })
+      let q = supabase.from('domain_overview').select('*').eq('user_id', userId)
+      if (clientId !== 'all') q = q.eq('client_id', clientId)
+      const { data, error } = await q.order('domain_rating', { ascending: false, nullsFirst: false })
       if (error) throw error
       return data as DomainOverview[]
     },

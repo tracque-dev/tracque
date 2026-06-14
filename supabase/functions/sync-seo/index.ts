@@ -47,10 +47,15 @@ async function serpOrganic(phrase: string): Promise<any[]> {
   if (cached) return cached as any[]
   const params = new URLSearchParams({ engine: 'google', q: phrase, num: '100', api_key: SERP_API_KEY, gl: 'us', hl: 'en' })
   const res = await fetch(`https://serpapi.com/search?${params}`)
-  if (!res.ok) return []
+  if (!res.ok) return [] // transient HTTP error — don't cache, retry next run
   const data = await res.json()
+  // SerpAPI can return 200 with an in-body error (quota/rate-limit). Never
+  // cache that — otherwise one blip locks in "not ranking" for every client.
+  if (data.error || (data.search_metadata?.status && data.search_metadata.status !== 'Success')) return []
   const organic = (data.organic_results ?? []).map((r: any) => ({ position: r.position ?? null, link: r.link ?? '' }))
-  await cachePut(key, organic, 86400) // 1-day TTL
+  // Real results cached a day; a genuine empty only briefly, so a transient
+  // blank can't poison a keyword's rank for 24h across the shared cache.
+  await cachePut(key, organic, organic.length ? 86400 : 300)
   return organic
 }
 
@@ -109,6 +114,7 @@ async function dfsDomainOverview(domain: string): Promise<{ organic_traffic: num
   const hit = await cacheGet(key)
   if (hit) return hit
   const result = await dfsPost('dataforseo_labs/google/domain_rank_overview/live', { target: root, ...US })
+  if (!result) return { organic_traffic: null, organic_keywords: null } // failed call — don't cache
   const organic = result?.[0]?.items?.[0]?.metrics?.organic ?? {}
   const out = { organic_traffic: Math.round(organic.etv ?? 0) || null, organic_keywords: organic.count ?? null }
   await cachePut(key, out, 604800) // 7-day TTL (domain stats move slowly)
@@ -122,6 +128,7 @@ async function dfsBacklinkSummary(domain: string): Promise<{ referring_domains: 
   const hit = await cacheGet(key)
   if (hit) return hit
   const result = await dfsPost('backlinks/summary/live', { target: root, internal_list_limit: 10, backlinks_status_type: 'live' })
+  if (!result) return { referring_domains: null, backlinks_total: null, domain_rating: null } // failed call — don't cache
   const r = result?.[0] ?? {}
   const out = {
     referring_domains: r.referring_domains ?? null,
@@ -139,6 +146,7 @@ async function dfsBacklinks(domain: string): Promise<any[]> {
   const hit = await cacheGet(key)
   if (hit) return hit
   const result = await dfsPost('backlinks/backlinks/live', { target: root, limit: 25, mode: 'as_is', order_by: ['rank,desc'], backlinks_status_type: 'live' })
+  if (!result) return [] // failed call — don't cache an empty list for 7 days
   const out = (result?.[0]?.items ?? []).map((b: any) => ({
     source_domain: b.domain_from ?? null,
     source_url: b.url_from ?? null,
