@@ -368,6 +368,54 @@ export function useLocalCompetitors(brandId?: string) {
   })
 }
 
+export interface Review {
+  id: string
+  brand_id: string
+  platform: string
+  author: string | null
+  rating: number | null
+  text: string | null
+  owner_answered: boolean
+  posted_at: string | null
+}
+
+export function useReviews(brandId?: string) {
+  return useQuery({
+    queryKey: ['reviews', brandId],
+    enabled: !!brandId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('reviews').select('*').eq('brand_id', brandId!)
+        .order('posted_at', { ascending: false, nullsFirst: false }).limit(30)
+      if (error) throw error
+      return data as Review[]
+    },
+  })
+}
+
+export function useRunReviewsSync() {
+  const userId = useUserId()
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async (brandId: string) => {
+      const { data, error } = await supabase.functions.invoke('reviews-sync', { body: { user_id: userId, brand_id: brandId } })
+      if (error) throw error
+      return data
+    },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['reviews'] }); qc.invalidateQueries({ queryKey: ['review_profiles'] }) },
+  })
+}
+
+export function useDraftReply() {
+  return useMutation({
+    mutationFn: async (opts: { review_text: string; rating?: number; business_name?: string }) => {
+      const { data, error } = await supabase.functions.invoke('review-reply', { body: opts })
+      if (error) throw error
+      return data.reply as string
+    },
+  })
+}
+
 export function useRunReputationSync() {
   const userId = useUserId()
   const qc = useQueryClient()

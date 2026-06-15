@@ -1,6 +1,47 @@
 import { useState } from 'react'
-import { Star, Loader2, RefreshCw, Trophy, MessageSquare, ShieldCheck, AlertTriangle } from 'lucide-react'
-import { useBrands, useReviewProfiles, useLocalCompetitors, useRunReputationSync } from '../lib/hooks'
+import { Star, Loader2, RefreshCw, Trophy, MessageSquare, ShieldCheck, AlertTriangle, Sparkles, Reply } from 'lucide-react'
+import { useBrands, useReviewProfiles, useLocalCompetitors, useRunReputationSync, useReviews, useRunReviewsSync, useDraftReply, type Review } from '../lib/hooks'
+
+function ReviewCard({ review, businessName }: { review: Review; businessName: string }) {
+  const draft = useDraftReply()
+  const [reply, setReply] = useState<string | null>(null)
+  async function generate() {
+    const r = await draft.mutateAsync({ review_text: review.text ?? '', rating: review.rating ?? undefined, business_name: businessName })
+    setReply(r)
+  }
+  return (
+    <div className="border border-border rounded-lg p-3">
+      <div className="flex items-center justify-between mb-1">
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium">{review.author ?? 'Anonymous'}</span>
+          <Stars rating={review.rating} size="w-3 h-3" />
+        </div>
+        <div className="flex items-center gap-2">
+          {review.owner_answered
+            ? <span className="text-[10px] font-mono px-1.5 py-0.5 bg-emerald-50 text-emerald-700 rounded">replied</span>
+            : <span className="text-[10px] font-mono px-1.5 py-0.5 bg-amber-50 text-amber-700 rounded">needs reply</span>}
+          <span className="text-xs text-muted-foreground">{review.posted_at}</span>
+        </div>
+      </div>
+      {review.text && <p className="text-sm text-muted-foreground">{review.text}</p>}
+      {!review.owner_answered && (
+        <div className="mt-2">
+          {!reply ? (
+            <button onClick={generate} disabled={draft.isPending} className="flex items-center gap-1.5 text-xs text-primary hover:underline disabled:opacity-50">
+              {draft.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />} Draft AI reply
+            </button>
+          ) : (
+            <div className="bg-muted/40 rounded-lg p-2.5 mt-1">
+              <p className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground mb-1">Suggested reply</p>
+              <p className="text-sm">{reply}</p>
+              <button onClick={() => navigator.clipboard.writeText(reply)} className="text-xs text-primary hover:underline mt-1">Copy</button>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
 
 const THRESHOLD = 4.3 // AI models favor ~4.3+ stars; exclude near 3.4
 const MIN_REVIEWS = 10
@@ -23,6 +64,8 @@ export default function Reputation() {
 
   const ownBrand = brands.find(b => b.type === 'own') ?? brands[0]
   const { data: competitors = [] } = useLocalCompetitors(ownBrand?.id)
+  const { data: reviews = [] } = useReviews(ownBrand?.id)
+  const runReviews = useRunReviewsSync()
   const google = profiles.find(p => p.brand_id === ownBrand?.id && p.platform === 'google')
 
   const [category, setCategory] = useState('')
@@ -118,6 +161,28 @@ export default function Reputation() {
               <span key={t.topic} className="text-xs px-2.5 py-1 rounded-full bg-muted text-foreground">{t.topic} <span className="text-muted-foreground nums">{t.count}</span></span>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* Reviews + AI-drafted replies */}
+      {google && (
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
+              Recent reviews{google.response_rate != null && <span className="text-foreground"> · {Math.round(google.response_rate * 100)}% response rate</span>}
+            </p>
+            <button onClick={() => ownBrand && runReviews.mutate(ownBrand.id)} disabled={runReviews.isPending}
+              className="flex items-center gap-1.5 text-xs border border-border rounded-lg px-3 py-1.5 hover:bg-muted/40 disabled:opacity-50">
+              {runReviews.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Reply className="w-3.5 h-3.5" />}
+              {runReviews.isPending ? 'Loading reviews…' : 'Load reviews'}
+            </button>
+          </div>
+          {(runReviews.data as any)?.pending && <p className="text-xs text-amber-600 mb-2">Reviews still processing — click again in a few seconds.</p>}
+          {reviews.length > 0 && (
+            <div className="space-y-2">
+              {reviews.map(r => <ReviewCard key={r.id} review={r} businessName={ownBrand?.name ?? google.brand_name} />)}
+            </div>
+          )}
         </div>
       )}
 
