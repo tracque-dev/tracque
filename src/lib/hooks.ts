@@ -273,6 +273,48 @@ export function useBacklinks(brandId?: string) {
   })
 }
 
+// ── Share-of-AI-Voice ─────────────────────────────────────
+
+export interface SaivResult {
+  id: string
+  brand_id: string
+  prompt: string
+  mentioned: boolean
+  position: number | null
+  competitors: string[] | null
+  excerpt: string | null
+  scanned_at: string
+  brand_name: string
+}
+
+export function useSaivResults() {
+  const userId = useUserId()
+  const { clientId } = useSelectedClient()
+  return useQuery({
+    queryKey: ['saiv', userId, clientId],
+    queryFn: async () => {
+      let q = supabase.from('saiv_results_scoped').select('*').eq('user_id', userId)
+      if (clientId !== 'all') q = q.eq('client_id', clientId)
+      const { data, error } = await q.order('scanned_at', { ascending: false })
+      if (error) throw error
+      return data as SaivResult[]
+    },
+  })
+}
+
+export function useRunSaivScan() {
+  const userId = useUserId()
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async (opts: { brand_id: string; prompts: string[] }) => {
+      const { data, error } = await supabase.functions.invoke('saiv-scan', { body: { user_id: userId, ...opts } })
+      if (error) throw error
+      return data
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['saiv'] }),
+  })
+}
+
 // ── Reputation (reviews + local competitors) ─────────────
 
 export interface ReviewProfile {
