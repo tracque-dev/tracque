@@ -179,7 +179,7 @@ export default function Compliance() {
             </div>
 
             {/* Live metrics at a glance */}
-            <div className="grid grid-cols-4 gap-3 py-5 border-b border-border">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 py-5 border-b border-border">
               {[
                 { k: 'Posture', v: g.letter, s: overall == null ? '' : `${Math.round(overall)}/100` },
                 { k: 'Rate accuracy', v: rateScore == null ? '—' : `${Math.round(rateScore)}%`, s: `${checked} checked` },
