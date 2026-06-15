@@ -152,6 +152,23 @@ export default function Reputation() {
         </div>
       )}
 
+      {/* Ratings across platforms */}
+      {ownBrand && profiles.filter(p => p.brand_id === ownBrand.id).length > 1 && (
+        <div>
+          <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-2">Across platforms</p>
+          <div className="flex flex-wrap gap-3">
+            {profiles.filter(p => p.brand_id === ownBrand.id).map(p => (
+              <div key={p.platform} className="flex items-center gap-2 bg-card border border-border rounded-lg px-3 py-2 shadow-card">
+                <span className="text-xs font-medium capitalize">{p.platform}</span>
+                <span className="text-sm font-bold nums">{p.rating?.toFixed(1) ?? '—'}</span>
+                <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
+                <span className="text-xs text-muted-foreground nums">({(p.reviews_count ?? 0).toLocaleString()})</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Aspect topics */}
       {google?.topics && google.topics.length > 0 && (
         <div className="bg-card rounded-xl border border-border p-4 shadow-card">

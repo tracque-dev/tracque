@@ -36,6 +36,32 @@ async function resolveLocation(input?: string): Promise<string> {
   return DEFAULT
 }
 
+// Trustpilot aggregate (task-based; best-effort — never blocks the Google sync).
+async function fetchTrustpilot(domain: string): Promise<{ rating: number | null; reviews_count: number | null } | null> {
+  const root = (domain || '').replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0].toLowerCase()
+  if (!root) return null
+  try {
+    const post = await fetch('https://api.dataforseo.com/v3/business_data/trustpilot/reviews/task_post', {
+      method: 'POST', headers: { Authorization: dfsAuth()!, 'Content-Type': 'application/json' },
+      body: JSON.stringify([{ domain: root, depth: 10 }]),
+    }).then(r => r.json()).catch(() => null)
+    const taskId = post?.tasks?.[0]?.id
+    if (!taskId) return null
+    for (let i = 0; i < 7; i++) {
+      await new Promise(r => setTimeout(r, 5000))
+      const got = await fetch(`https://api.dataforseo.com/v3/business_data/trustpilot/reviews/task_get/${taskId}`, {
+        headers: { Authorization: dfsAuth()! },
+      }).then(r => r.json()).catch(() => null)
+      const t = got?.tasks?.[0]
+      const res = t?.result?.[0]
+      if (t?.status_code === 20000 && res && (res.rating?.value != null || res.reviews_count != null)) {
+        return { rating: res.rating?.value ?? null, reviews_count: res.reviews_count ?? res.rating?.votes_count ?? null }
+      }
+    }
+  } catch { /* best-effort */ }
+  return null
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: cors })
   const { user_id, brand_id, category, location } = await req.json().catch(() => ({}))
@@ -43,7 +69,7 @@ Deno.serve(async (req) => {
   if (!dfsAuth()) return new Response(JSON.stringify({ error: 'DataForSEO not configured' }), { status: 400, headers: cors })
 
   // Brand must belong to the user.
-  const { data: brand } = await supabase.from('brands').select('id, name, user_id').eq('id', brand_id).eq('user_id', user_id).single()
+  const { data: brand } = await supabase.from('brands').select('id, name, domain, user_id').eq('id', brand_id).eq('user_id', user_id).single()
   if (!brand) return new Response(JSON.stringify({ error: 'brand not found' }), { status: 404, headers: cors })
 
   const loc = await resolveLocation(location) // accepts "Austin, TX" or "lat,lng,km"
@@ -56,8 +82,6 @@ Deno.serve(async (req) => {
   })
   const json = await res.json().catch(() => null)
   const items = json?.tasks?.[0]?.result?.[0]?.items ?? []
-  if (!items.length) return new Response(JSON.stringify({ ok: true, note: 'no listings found — check category/location', competitors: 0 }), { headers: cors })
-
   const target = norm(brand.name)
   let self: any = null
   const competitors = items.map((b: any) => {
@@ -74,7 +98,7 @@ Deno.serve(async (req) => {
 
   // Refresh the local grid snapshot.
   await supabase.from('local_competitors').delete().eq('brand_id', brand_id)
-  await supabase.from('local_competitors').insert(competitors)
+  if (competitors.length) await supabase.from('local_competitors').insert(competitors)
 
   // Store/refresh the brand's own Google rating profile (if found in the set).
   if (self) {
@@ -89,11 +113,25 @@ Deno.serve(async (req) => {
     })
   }
 
+  // Trustpilot — additional trust signal (CU/SaaS). Best-effort.
+  let trustpilot: { rating: number | null; reviews_count: number | null } | null = null
+  if (brand.domain) {
+    trustpilot = await fetchTrustpilot(brand.domain)
+    if (trustpilot && trustpilot.rating != null) {
+      await supabase.from('review_profiles').upsert({
+        brand_id, platform: 'trustpilot',
+        rating: trustpilot.rating, reviews_count: trustpilot.reviews_count,
+        updated_at: new Date().toISOString(),
+      })
+    }
+  }
+
   return new Response(JSON.stringify({
     ok: true,
     competitors: competitors.length,
     self_found: !!self,
     rating: self?.rating?.value ?? null,
     reviews: self?.rating?.votes_count ?? null,
+    trustpilot,
   }), { headers: { ...cors, 'Content-Type': 'application/json' } })
 })

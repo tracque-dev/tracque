@@ -50,7 +50,7 @@ IDs are stable; reference them in commits (`TRQ-33: ...`).
 | TRQ-40 | ✅ | Ratings + local grid + AI-recommendable gauge | DataForSEO Business Data; geocoded city input |
 | TRQ-41 | 🚧 | Individual reviews + response rate | `reviews-sync` (task-based) deployed; slow async path needs hardening/retry UX |
 | TRQ-42 | ✅ | AI-drafted review replies | Tone-aware (empathetic for low ratings); copyable |
-| TRQ-43 | 🔲 | Trustpilot / Yelp / Tripadvisor sources | Same Business Data API; add per-platform profiles |
+| TRQ-43 | 🚧 | Trustpilot / Yelp / Tripadvisor sources | ✅ Trustpilot live (verified monday.com 2.5★/3406); Yelp deferred (needs business id) |
 | TRQ-44 | 🔲 | Review-request workflow | SMS/email ask after a job → grow review volume (lifts AI-recommendability) |
 
 ## EPIC F — Attribution & Analytics
