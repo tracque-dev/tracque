@@ -39,7 +39,7 @@ IDs are stable; reference them in commits (`TRQ-33: ...`).
 | TRQ-31 | ✅ | Keyword metrics / DR / backlinks | DataForSEO (volume, KD, CPC, domain authority, backlinks) |
 | TRQ-32 | ✅ | Competitor comparison | Own vs competitors: DR / traffic / keywords / ref domains |
 | TRQ-33 | ✅ | Keyword Gap + competitor discovery | `competitors_domain` + `domain_intersection`; mega-domains filtered |
-| TRQ-34 | 🔲 | Keyword Explorer | Seed → `keyword_ideas`/`suggestions`/`related` with volume/KD; "track" button |
+| TRQ-34 | ✅ | Keyword Explorer | Seed → 50 ideas (volume/KD/CPC/intent) + track button. Verified: crm → 50 ideas |
 | TRQ-35 | 🔲 | Rank history charts | We store snapshots; plot position-over-time per keyword |
 | TRQ-36 | ⛔ | GSC integration (free first-party rank) | `sync-gsc` built; needs Google OAuth app (`GOOGLE_CLIENT_ID/SECRET`) + per-client connect flow |
 | TRQ-37 | 🔲 | Bing rank (Copilot proxy) | SerpAPI Bing engine → Bing position (predicts AI citation) |

@@ -1,5 +1,6 @@
-import { Search, TrendingUp, TrendingDown, Minus, Loader2, Link2, RefreshCw, Gauge, Users2, KeyRound, BarChart3, Target } from 'lucide-react'
-import { useLatestSeoResults, useDomainOverview, useBacklinks, useRunSeoSync, useKeywordGaps, useRunCompetitorIntel } from '../lib/hooks'
+import { useState } from 'react'
+import { Search, TrendingUp, TrendingDown, Minus, Loader2, Link2, RefreshCw, Gauge, Users2, KeyRound, BarChart3, Target, Lightbulb, Plus, Check } from 'lucide-react'
+import { useLatestSeoResults, useDomainOverview, useBacklinks, useRunSeoSync, useKeywordGaps, useRunCompetitorIntel, useKeywordIdeas, useRunKeywordExplorer, useAddKeyword } from '../lib/hooks'
 
 function fmt(n: number | null | undefined): string {
   if (n == null) return '—'
@@ -43,6 +44,53 @@ function StatCard({ icon: Icon, label, value, sub }: { icon: any; label: string;
       </div>
       <p className="text-2xl font-bold nums">{value}</p>
       {sub && <p className="text-xs text-muted-foreground mt-0.5">{sub}</p>}
+    </div>
+  )
+}
+
+function KeywordExplorer() {
+  const { data: ideas = [] } = useKeywordIdeas()
+  const explore = useRunKeywordExplorer()
+  const addKw = useAddKeyword()
+  const [seed, setSeed] = useState('')
+  const [tracked, setTracked] = useState<Set<string>>(new Set())
+  function track(kw: string) { addKw.mutate({ phrase: kw }); setTracked(s => new Set(s).add(kw)) }
+  return (
+    <div>
+      <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5"><Lightbulb className="w-3.5 h-3.5" /> Keyword explorer</p>
+      <div className="bg-card rounded-xl border border-border shadow-card overflow-hidden">
+        <form onSubmit={e => { e.preventDefault(); if (seed.trim()) explore.mutate(seed.trim()) }} className="flex items-center gap-2 p-3 border-b border-border bg-muted/20">
+          <input value={seed} onChange={e => setSeed(e.target.value)} placeholder="Seed keyword, e.g. crm" className="flex-1 px-3 py-1.5 text-sm border border-border rounded-lg bg-background" />
+          <button type="submit" disabled={explore.isPending || !seed.trim()} className="flex items-center gap-1.5 bg-foreground text-background px-3 py-1.5 rounded-lg text-sm font-medium disabled:opacity-50">
+            {explore.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Lightbulb className="w-3.5 h-3.5" />} Explore
+          </button>
+        </form>
+        {ideas.length === 0 ? (
+          <p className="px-4 py-6 text-center text-xs text-muted-foreground">Enter a seed keyword to get idea suggestions with volume + difficulty.</p>
+        ) : (
+          <table className="w-full">
+            <thead><tr className="border-b border-border bg-muted/30">
+              {['Keyword', 'Volume', 'KD', 'CPC', 'Intent', ''].map(h => <th key={h} className="px-4 py-2 text-left text-[11px] font-mono uppercase tracking-wider text-muted-foreground">{h}</th>)}
+            </tr></thead>
+            <tbody>
+              {ideas.map(k => (
+                <tr key={k.id} className="border-b border-border last:border-0 hover:bg-muted/20 transition-colors">
+                  <td className="px-4 py-2.5 text-sm font-medium max-w-[220px] truncate">{k.keyword}</td>
+                  <td className="px-4 py-2.5 text-xs nums text-muted-foreground">{fmt(k.search_volume)}</td>
+                  <td className="px-4 py-2.5"><KDBadge kd={k.difficulty} /></td>
+                  <td className="px-4 py-2.5 text-xs nums text-muted-foreground">{k.cpc != null ? `$${Number(k.cpc).toFixed(2)}` : '—'}</td>
+                  <td className="px-4 py-2.5 text-xs text-muted-foreground capitalize">{k.intent ?? '—'}</td>
+                  <td className="px-4 py-2.5 text-right">
+                    {tracked.has(k.keyword ?? '')
+                      ? <span className="text-xs text-emerald-600 inline-flex items-center gap-1"><Check className="w-3.5 h-3.5" /> tracked</span>
+                      : <button onClick={() => k.keyword && track(k.keyword)} className="text-xs text-primary hover:underline inline-flex items-center gap-1"><Plus className="w-3.5 h-3.5" /> track</button>}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
     </div>
   )
 }
@@ -169,6 +217,9 @@ export default function SEOResults() {
           )}
         </div>
       )}
+
+      {/* Keyword explorer */}
+      <KeywordExplorer />
 
       {/* Rank summary */}
       <div className="grid grid-cols-3 gap-4">

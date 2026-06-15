@@ -9,3 +9,8 @@ Autonomous loop working through SPECS.md. One ticket per iteration: build → ty
 - **e2e:** `monday.com` → Trustpilot **2.5★ (3,406 reviews)** stored alongside Google ✓
 - **Yelp:** deferred — Trustpilot is the higher-value CU/SaaS signal and resolves by domain; Yelp needs a business id/alias (not just a domain). Logged as a follow-up.
 - **Review:** low-risk extension (no new tables, multi-tenancy surface unchanged) → self-reviewed; reserved the heavy adversarial workflow for tickets that add new tables/multi-tenant surfaces.
+
+## ✅ TRQ-34 — Keyword Explorer
+- `keyword-explorer` edge fn (Labs `keyword_ideas`) + `keyword_ideas` table (022, RLS user-scoped + client filter). SEO page: seed input → idea table (volume/KD/CPC/intent) with a per-row "track" button (adds to keywords, client-scoped).
+- **e2e:** seed "crm" → **50 ideas** with volume/KD ✓ (salesforce 550k/KD85, etc.)
+- **Review:** self-reviewed — scoping identical to the already-verified keyword_gaps pattern (user_id RLS + client_id filter, no views/joins). Cost guard: capped at 50 ideas.

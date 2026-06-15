@@ -604,6 +604,45 @@ export function useKeywordGaps(brandId?: string) {
   })
 }
 
+export interface KeywordIdea {
+  id: string
+  seed: string | null
+  keyword: string | null
+  search_volume: number | null
+  difficulty: number | null
+  cpc: number | null
+  intent: string | null
+}
+
+export function useKeywordIdeas() {
+  const userId = useUserId()
+  const { clientId } = useSelectedClient()
+  return useQuery({
+    queryKey: ['keyword_ideas', userId, clientId],
+    queryFn: async () => {
+      let q = supabase.from('keyword_ideas').select('*').eq('user_id', userId)
+      q = clientId !== 'all' ? q.eq('client_id', clientId) : q.is('client_id', null)
+      const { data, error } = await q.order('search_volume', { ascending: false, nullsFirst: false }).limit(50)
+      if (error) throw error
+      return data as KeywordIdea[]
+    },
+  })
+}
+
+export function useRunKeywordExplorer() {
+  const userId = useUserId()
+  const { clientId } = useSelectedClient()
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async (seed: string) => {
+      const { data, error } = await supabase.functions.invoke('keyword-explorer', { body: { user_id: userId, client_id: clientId, seed } })
+      if (error) throw error
+      return data
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['keyword_ideas'] }),
+  })
+}
+
 export function useRunCompetitorIntel() {
   const userId = useUserId()
   const qc = useQueryClient()
