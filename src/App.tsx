@@ -9,6 +9,7 @@ import Brands from './pages/Brands'
 import Keywords from './pages/Keywords'
 import AIResults from './pages/AIResults'
 import SEOResults from './pages/SEOResults'
+import Reputation from './pages/Reputation'
 import PromptDiscovery from './pages/PromptDiscovery'
 import Recommendations from './pages/Recommendations'
 import SiteAudit from './pages/SiteAudit'
@@ -32,6 +33,7 @@ export default function App() {
         <Route path="keywords" element={<Keywords />} />
         <Route path="ai" element={<AIResults />} />
         <Route path="seo" element={<SEOResults />} />
+        <Route path="reputation" element={<Reputation />} />
         <Route path="prompts" element={<PromptDiscovery />} />
         <Route path="recommendations" element={<Recommendations />} />
         <Route path="site-audit" element={<SiteAudit />} />

@@ -273,6 +273,75 @@ export function useBacklinks(brandId?: string) {
   })
 }
 
+// ── Reputation (reviews + local competitors) ─────────────
+
+export interface ReviewProfile {
+  brand_id: string
+  platform: string
+  rating: number | null
+  reviews_count: number | null
+  response_rate: number | null
+  topics: { topic: string; count: number }[] | null
+  brand_name: string
+  client_id: string | null
+  type: 'own' | 'competitor'
+}
+
+export interface LocalCompetitor {
+  id: string
+  brand_id: string
+  name: string | null
+  rating: number | null
+  reviews_count: number | null
+  is_claimed: boolean | null
+  is_self: boolean
+}
+
+export function useReviewProfiles() {
+  const userId = useUserId()
+  const { clientId } = useSelectedClient()
+  return useQuery({
+    queryKey: ['review_profiles', userId, clientId],
+    queryFn: async () => {
+      let q = supabase.from('review_profiles_scoped').select('*').eq('user_id', userId)
+      if (clientId !== 'all') q = q.eq('client_id', clientId)
+      const { data, error } = await q
+      if (error) throw error
+      return data as ReviewProfile[]
+    },
+  })
+}
+
+export function useLocalCompetitors(brandId?: string) {
+  return useQuery({
+    queryKey: ['local_competitors', brandId],
+    enabled: !!brandId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('local_competitors').select('*').eq('brand_id', brandId!)
+        .order('rating', { ascending: false, nullsFirst: false })
+      if (error) throw error
+      return data as LocalCompetitor[]
+    },
+  })
+}
+
+export function useRunReputationSync() {
+  const userId = useUserId()
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async (opts: { brand_id: string; category?: string; location?: string }) => {
+      const { data, error } = await supabase.functions.invoke('reputation-sync', { body: { user_id: userId, ...opts } })
+      if (error) throw error
+      return data
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['review_profiles'] })
+      qc.invalidateQueries({ queryKey: ['local_competitors'] })
+    },
+  })
+}
+
 // ── Attribution (conversion tracking) ────────────────────
 
 export interface SourceAttribution {
