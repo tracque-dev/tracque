@@ -228,6 +228,8 @@ export interface DomainOverview {
   organic_keywords: number | null
   referring_domains: number | null
   backlinks_total: number | null
+  has_knowledge_panel: boolean | null
+  knowledge_type: string | null
   type: 'own' | 'competitor'
   updated_at: string
 }
@@ -705,6 +707,19 @@ export function useRunCompetitorIntel() {
       return data
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ['keyword_gaps'] }),
+  })
+}
+
+export function useRunKnowledgeCheck() {
+  const userId = useUserId()
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async (brandId: string) => {
+      const { data, error } = await supabase.functions.invoke('knowledge-check', { body: { user_id: userId, brand_id: brandId } })
+      if (error) throw error
+      return data
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['domain_overview'] }),
   })
 }
 

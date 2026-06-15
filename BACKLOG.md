@@ -30,7 +30,7 @@ IDs are stable; reference them in commits (`TRQ-33: ...`).
 | TRQ-22 | ⛔ | Light up all 5 models | Set `ANTHROPIC`, `GEMINI`, `PERPLEXITY`, `XAI` secrets → full multi-model visibility + recommendations |
 | TRQ-23 | ✅ | Geo-grid SAIV (local) | 3×3 geocoded heatmap of "near me" inclusion. Verified: Franklin BBQ/Austin → 78% coverage, invisible in 2 cells |
 | TRQ-24 | ⛔ | Frontend scraper farm | Rails built (Browserbase + scrape-task); set `BROWSERBASE_API_KEY`/`PROJECT_ID` to activate; ChatGPT adapter needs live-tuning |
-| TRQ-25 | 🔲 | Knowledge Panel detection | SerpAPI knowledge-graph → flag "no entity / get a knowledge panel" |
+| TRQ-25 | ✅ | Knowledge Panel detection | SerpAPI knowledge_graph → has_knowledge_panel on domain_metrics + SEO-page badge. Verified: Starbucks ✓ / obscure ✗ |
 
 ## EPIC D — SEO Suite
 | ID | Status | Title | Acceptance |

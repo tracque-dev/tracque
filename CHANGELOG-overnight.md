@@ -25,3 +25,8 @@ Autonomous loop working through SPECS.md. One ticket per iteration: build → ty
 - **Perf:** first e2e timed out (9 sequential AI calls); fixed by running the 9 AI checks in **parallel** (reverse-geocode stays sequential for Nominatim's rate limit) → 41s.
 - **e2e:** Franklin Barbecue / barbecue / Austin → **9 cells, 78% coverage**, #3-4 where recommended, invisible in 2 cells ✓
 - **Cost guard:** exactly 9 cells. **Review:** self-reviewed (saiv_grid scoping identical to verified saiv_results pattern; function e2e-verified).
+
+## ✅ TRQ-25 — Knowledge Panel detection
+- `knowledge-check` edge fn: SerpAPI `knowledge_graph` for the brand name → `domain_metrics.has_knowledge_panel` + `knowledge_type` (024, columns flow through the already-scoped `domain_overview` view). SEO page: green "Knowledge Panel detected" / amber "No panel — AI-citation gap" badge + a "Check now" button.
+- **e2e:** Starbucks → **detected**; "Zorblax Plumbing Widgets LLC" → **not** ✓
+- **Review:** self-reviewed (2 columns on existing table, no new multi-tenant surface).

@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { Search, TrendingUp, TrendingDown, Minus, Loader2, Link2, RefreshCw, Gauge, Users2, KeyRound, BarChart3, Target, Lightbulb, Plus, Check } from 'lucide-react'
-import { useLatestSeoResults, useDomainOverview, useBacklinks, useRunSeoSync, useKeywordGaps, useRunCompetitorIntel, useKeywordIdeas, useRunKeywordExplorer, useAddKeyword, useRankHistory } from '../lib/hooks'
+import { Search, TrendingUp, TrendingDown, Minus, Loader2, Link2, RefreshCw, Gauge, Users2, KeyRound, BarChart3, Target, Lightbulb, Plus, Check, BadgeCheck, AlertCircle } from 'lucide-react'
+import { useLatestSeoResults, useDomainOverview, useBacklinks, useRunSeoSync, useKeywordGaps, useRunCompetitorIntel, useKeywordIdeas, useRunKeywordExplorer, useAddKeyword, useRankHistory, useRunKnowledgeCheck } from '../lib/hooks'
 
 function fmt(n: number | null | undefined): string {
   if (n == null) return '—'
@@ -158,6 +158,7 @@ export default function SEOResults() {
   const { data: backlinks = [] } = useBacklinks(own?.brand_id)
   const { data: gaps = [] } = useKeywordGaps(own?.brand_id)
   const runIntel = useRunCompetitorIntel()
+  const runKnowledge = useRunKnowledgeCheck()
 
   const ranked = results.filter(r => r.position != null)
   const avgPos = ranked.length ? Math.round(ranked.reduce((a, r) => a + (r.position ?? 0), 0) / ranked.length * 10) / 10 : null
@@ -198,6 +199,18 @@ export default function SEOResults() {
             <StatCard icon={KeyRound}  label="Organic keywords" value={fmt(own.organic_keywords)} />
             <StatCard icon={Users2}    label="Ref. domains"    value={fmt(own.referring_domains)} />
             <StatCard icon={Link2}     label="Backlinks"       value={fmt(own.backlinks_total)} />
+          </div>
+          {/* Knowledge panel — a strong AI-citation signal */}
+          <div className="mt-3 flex items-center gap-3 flex-wrap">
+            {own.has_knowledge_panel === true
+              ? <span className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700"><BadgeCheck className="w-4 h-4" /> Google Knowledge Panel detected{own.knowledge_type ? ` · ${own.knowledge_type}` : ''}</span>
+              : own.has_knowledge_panel === false
+                ? <span className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg bg-amber-50 text-amber-700"><AlertCircle className="w-4 h-4" /> No Knowledge Panel — a strong AI-citation gap to close</span>
+                : <span className="text-xs text-muted-foreground">Knowledge Panel: not checked yet</span>}
+            <button onClick={() => own.brand_id && runKnowledge.mutate(own.brand_id)} disabled={runKnowledge.isPending}
+              className="text-xs text-primary hover:underline disabled:opacity-50 inline-flex items-center gap-1">
+              {runKnowledge.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : null}{runKnowledge.isPending ? 'Checking…' : 'Check now'}
+            </button>
           </div>
         </div>
       )}
