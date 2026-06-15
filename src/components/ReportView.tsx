@@ -20,14 +20,14 @@ const MODEL_LABEL: Record<string, string> = {
 const fmt = (n: number) => n.toLocaleString()
 const money = (n: number) => '$' + Math.round(n).toLocaleString()
 
-function Section({ icon: Icon, title, accent, children }: { icon: typeof Bot; title: string; accent: string; children: React.ReactNode }) {
+function Section({ icon: Icon, title, children }: { icon: typeof Bot; title: string; children: React.ReactNode }) {
   return (
-    <div className="bg-card rounded-xl border border-border shadow-card p-5 break-inside-avoid">
-      <div className="flex items-center gap-2 mb-3">
-        <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: `${accent}1A` }}>
-          <Icon className="w-4 h-4" style={{ color: accent }} />
+    <div className="bg-card rounded-2xl border border-border shadow-card p-5 break-inside-avoid">
+      <div className="flex items-center gap-2 mb-4">
+        <div className="w-8 h-8 rounded-xl bg-muted flex items-center justify-center">
+          <Icon className="w-4 h-4 text-foreground" />
         </div>
-        <h3 className="text-sm font-semibold">{title}</h3>
+        <p className="eyebrow text-muted-foreground">{title}</p>
       </div>
       {children}
     </div>
@@ -37,8 +37,8 @@ function Section({ icon: Icon, title, accent, children }: { icon: typeof Bot; ti
 function Stat({ label, value, sub }: { label: string; value: string; sub?: string }) {
   return (
     <div>
-      <p className="text-2xl font-bold nums">{value}</p>
-      <p className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground">{label}</p>
+      <p className="text-2xl font-display font-bold nums tracking-tight">{value}</p>
+      <p className="eyebrow text-muted-foreground mt-1">{label}</p>
       {sub && <p className="text-[11px] text-muted-foreground mt-0.5">{sub}</p>}
     </div>
   )
@@ -46,35 +46,35 @@ function Stat({ label, value, sub }: { label: string; value: string; sub?: strin
 
 export default function ReportView({ data }: { data: ReportData }) {
   const { brand, ai, seo, reputation, attribution } = data
-  const accent = brand.color || '#3B82F6'
+  const accent = brand.color || '#7C3AED'
   const date = new Date(data.generated_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
 
   return (
     <div id="report-doc" className="space-y-4">
       {/* Branded header */}
-      <div className="bg-card rounded-xl border border-border shadow-card p-6 flex items-center justify-between break-inside-avoid"
+      <div className="bg-card rounded-2xl border border-border shadow-card p-6 flex items-center justify-between break-inside-avoid"
         style={{ borderTopWidth: 3, borderTopColor: accent }}>
         <div className="flex items-center gap-3">
           {brand.logo_url
-            ? <img src={brand.logo_url} alt="" className="w-11 h-11 rounded-lg object-contain bg-muted" />
-            : <div className="w-11 h-11 rounded-lg flex items-center justify-center text-lg font-bold text-white" style={{ background: accent }}>{brand.name.charAt(0).toUpperCase()}</div>}
+            ? <img src={brand.logo_url} alt="" className="w-11 h-11 rounded-xl object-contain bg-muted" />
+            : <div className="w-11 h-11 rounded-xl flex items-center justify-center text-lg font-display font-bold text-white" style={{ background: accent }}>{brand.name.charAt(0).toUpperCase()}</div>}
           <div>
-            <h1 className="text-xl font-bold">{brand.name}</h1>
+            <h1 className="text-xl font-display font-bold tracking-tight">{brand.name}</h1>
             <p className="text-xs text-muted-foreground">{brand.domain ?? 'AI visibility & growth report'}</p>
           </div>
         </div>
         <div className="text-right">
-          <p className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground">Performance report</p>
-          <p className="text-sm font-medium">{date}</p>
+          <p className="eyebrow text-violet-600">Performance report</p>
+          <p className="text-sm font-medium mt-1">{date}</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* AI Visibility */}
-        <Section icon={Bot} title="AI Visibility" accent="#8B5CF6">
+        <Section icon={Bot} title="AI Visibility">
           <div className="flex items-baseline gap-1">
-            <span className="text-4xl font-bold nums">{ai.mention_rate == null ? '—' : ai.mention_rate}</span>
-            {ai.mention_rate != null && <span className="text-lg text-muted-foreground">%</span>}
+            <span className="text-4xl font-display font-bold nums tracking-tight">{ai.mention_rate == null ? '—' : ai.mention_rate}</span>
+            {ai.mention_rate != null && <span className="text-lg font-display text-muted-foreground">%</span>}
           </div>
           <p className="text-xs text-muted-foreground">mention rate across {fmt(ai.scans)} AI scans</p>
           {ai.models.length > 0 && (
@@ -83,7 +83,7 @@ export default function ReportView({ data }: { data: ReportData }) {
                 <div key={m.model} className="flex items-center gap-2">
                   <span className="text-xs w-20 text-muted-foreground">{MODEL_LABEL[m.model] ?? m.model}</span>
                   <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
-                    <div className="h-full rounded-full" style={{ width: `${m.rate}%`, background: '#8B5CF6' }} />
+                    <div className="h-full rounded-full bg-violet-500" style={{ width: `${m.rate}%` }} />
                   </div>
                   <span className="text-xs nums w-8 text-right">{m.rate}%</span>
                 </div>
@@ -93,7 +93,7 @@ export default function ReportView({ data }: { data: ReportData }) {
         </Section>
 
         {/* SEO */}
-        <Section icon={Search} title="SEO Rankings" accent="#2563EB">
+        <Section icon={Search} title="SEO Rankings">
           <div className="grid grid-cols-3 gap-3">
             <Stat label="Tracked" value={fmt(seo.tracked)} />
             <Stat label="Avg pos" value={seo.avg_position == null ? '—' : `${seo.avg_position}`} />
@@ -103,16 +103,16 @@ export default function ReportView({ data }: { data: ReportData }) {
         </Section>
 
         {/* Reputation */}
-        <Section icon={Star} title="Reputation" accent="#F59E0B">
+        <Section icon={Star} title="Reputation">
           <div className="flex items-baseline gap-1.5">
-            <span className="text-4xl font-bold nums">{reputation.rating == null ? '—' : reputation.rating.toFixed(1)}</span>
+            <span className="text-4xl font-display font-bold nums tracking-tight">{reputation.rating == null ? '—' : reputation.rating.toFixed(1)}</span>
             <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
           </div>
           <p className="text-xs text-muted-foreground">avg rating · {fmt(reputation.reviews)} reviews</p>
           {reputation.platforms.length > 0 && (
             <div className="mt-3 flex flex-wrap gap-1.5">
               {reputation.platforms.map(p => (
-                <span key={p.platform} className="text-[11px] px-2 py-0.5 rounded bg-muted capitalize">
+                <span key={p.platform} className="text-[11px] px-2 py-0.5 rounded-md bg-muted text-foreground capitalize">
                   {p.platform} {p.rating != null ? `${p.rating.toFixed(1)}★` : ''} <span className="text-muted-foreground">({fmt(p.count)})</span>
                 </span>
               ))}
@@ -121,7 +121,7 @@ export default function ReportView({ data }: { data: ReportData }) {
         </Section>
 
         {/* Attribution */}
-        <Section icon={BarChart3} title="Revenue Attribution" accent="#059669">
+        <Section icon={BarChart3} title="Revenue Attribution">
           <div className="grid grid-cols-3 gap-3">
             <Stat label="Visitors" value={fmt(attribution.visitors)} />
             <Stat label="Conversions" value={fmt(attribution.conversions)} />
@@ -137,7 +137,7 @@ export default function ReportView({ data }: { data: ReportData }) {
 
       {/* Footer */}
       <div className="flex items-center justify-center gap-1.5 pt-2 text-[11px] text-muted-foreground">
-        <Mark className="w-3.5 h-3.5" badge="#3B82F6" rail="#fff" node="#3B82F6" />
+        <Mark className="w-3.5 h-3.5" badge="#7C3AED" rail="#fff" node="#7C3AED" />
         Powered by Tracque
       </div>
     </div>

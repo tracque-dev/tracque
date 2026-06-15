@@ -20,10 +20,10 @@ const money = (n: number) => `$${Math.round(n).toLocaleString()}`
 
 function StatCard({ icon: Icon, label, value, tint }: { icon: any; label: string; value: string; tint: string }) {
   return (
-    <div className="bg-card rounded-xl border border-border p-4 shadow-card">
-      <div className={`w-8 h-8 rounded-lg ${tint} flex items-center justify-center mb-3`}><Icon className="w-4 h-4" /></div>
-      <p className="text-2xl font-bold nums">{value}</p>
-      <p className="text-xs text-muted-foreground">{label}</p>
+    <div className="bg-card rounded-2xl border border-border p-5 shadow-card">
+      <div className={`w-9 h-9 rounded-xl ${tint} flex items-center justify-center mb-3`}><Icon className="w-4 h-4" /></div>
+      <p className="text-2xl font-display font-bold nums tracking-tight">{value}</p>
+      <p className="eyebrow text-muted-foreground mt-1">{label}</p>
     </div>
   )
 }
@@ -33,9 +33,9 @@ function InstallSnippet({ siteKey }: { siteKey: string }) {
   const snippet = `<script async src="https://tracque.com/t.js" data-tracque="${siteKey}"></script>`
   function copy() { navigator.clipboard.writeText(snippet); setCopied(true); setTimeout(() => setCopied(false), 1500) }
   return (
-    <div className="bg-[#0A0A0A] rounded-xl p-4 text-white">
+    <div className="bg-ink-grad rounded-2xl p-5 text-white shadow-lg">
       <div className="flex items-center justify-between mb-2">
-        <span className="font-mono text-[11px] uppercase tracking-wider text-white/50 flex items-center gap-1.5"><Code2 className="w-3.5 h-3.5" /> Install snippet</span>
+        <span className="eyebrow text-white/50 flex items-center gap-1.5"><Code2 className="w-3.5 h-3.5" /> Install snippet</span>
         <button onClick={copy} className="flex items-center gap-1.5 text-[11px] text-white/70 hover:text-white transition-colors">
           {copied ? <><Check className="w-3.5 h-3.5 text-emerald-400" /> Copied</> : <><Copy className="w-3.5 h-3.5" /> Copy</>}
         </button>
@@ -64,31 +64,31 @@ export default function Attribution() {
   const sorted = [...rows].sort((a, b) => Number(b.revenue) - Number(a.revenue) || Number(b.sessions) - Number(a.sessions))
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center gap-3">
-        <div className="w-8 h-8 rounded-lg bg-violet-500/10 flex items-center justify-center"><BarChart3 className="w-4 h-4 text-violet-600" /></div>
+    <div className="p-7 space-y-6 max-w-[1400px]">
+      <div className="flex items-end justify-between">
         <div>
-          <h1 className="text-xl font-semibold">Attribution</h1>
-          <p className="text-xs text-muted-foreground">AI mention → click → conversion → revenue, in one place</p>
+          <p className="eyebrow text-violet-600">Revenue</p>
+          <h1 className="text-2xl font-display font-bold tracking-tight mt-1">Attribution</h1>
+          <p className="text-sm text-muted-foreground mt-1">AI mention → click → conversion → revenue, in one place</p>
         </div>
       </div>
 
       {/* Setup / snippet */}
       {!site ? (
-        <div className="bg-primary/5 border border-primary/20 rounded-xl p-5">
-          <p className="text-sm font-semibold text-primary mb-1">Set up conversion tracking</p>
+        <div className="bg-violet-50 border border-violet-200 rounded-2xl p-5">
+          <p className="text-sm font-display font-semibold text-violet-700 mb-1">Set up conversion tracking</p>
           <p className="text-xs text-muted-foreground mb-4">Generate a tracking snippet for this client. It captures which AI engine (or ad) sent each visitor, then ties it to conversions and revenue.</p>
           <div className="flex flex-wrap items-end gap-3">
             <div>
               <label className="text-xs font-medium text-muted-foreground">Site domain (optional)</label>
-              <input value={domain} onChange={e => setDomain(e.target.value)} placeholder="acme.com" className="mt-1 w-44 px-3 py-2 text-sm border border-border rounded-lg bg-background" />
+              <input value={domain} onChange={e => setDomain(e.target.value)} placeholder="acme.com" className="mt-1 w-44 px-3 py-2 text-sm border border-border rounded-xl bg-background focus:ring-violet-500" />
             </div>
             <div>
               <label className="text-xs font-medium text-muted-foreground">GA4 ID (optional)</label>
-              <input value={ga4} onChange={e => setGa4(e.target.value)} placeholder="G-XXXXXXX" className="mt-1 w-40 px-3 py-2 text-sm border border-border rounded-lg bg-background" />
+              <input value={ga4} onChange={e => setGa4(e.target.value)} placeholder="G-XXXXXXX" className="mt-1 w-40 px-3 py-2 text-sm border border-border rounded-xl bg-background focus:ring-violet-500" />
             </div>
             <button onClick={() => createSite.mutate({ domain: domain || undefined, ga4_id: ga4 || undefined })} disabled={createSite.isPending}
-              className="flex items-center gap-2 bg-foreground text-background px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50">
+              className="flex items-center gap-2 bg-foreground text-background px-4 py-2.5 rounded-xl text-sm font-medium hover:opacity-90 disabled:opacity-40 transition-all">
               {createSite.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />} Generate snippet
             </button>
           </div>
@@ -99,29 +99,29 @@ export default function Attribution() {
 
       {/* Summary */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <StatCard icon={DollarSign} label="Total revenue" value={money(totalRevenue)} tint="bg-emerald-50 text-emerald-600" />
-        <StatCard icon={MousePointerClick} label="AI-driven revenue" value={money(aiRevenue)} tint="bg-amber-50 text-amber-600" />
-        <StatCard icon={TrendingUp} label="Conversions" value={totalConversions.toLocaleString()} tint="bg-blue-50 text-blue-600" />
-        <StatCard icon={Users} label="Sessions" value={totalSessions.toLocaleString()} tint="bg-violet-50 text-violet-600" />
+        <StatCard icon={DollarSign} label="Total revenue" value={money(totalRevenue)} tint="bg-muted text-foreground" />
+        <StatCard icon={MousePointerClick} label="AI-driven revenue" value={money(aiRevenue)} tint="bg-violet-50 text-violet-600" />
+        <StatCard icon={TrendingUp} label="Conversions" value={totalConversions.toLocaleString()} tint="bg-muted text-foreground" />
+        <StatCard icon={Users} label="Sessions" value={totalSessions.toLocaleString()} tint="bg-muted text-foreground" />
       </div>
 
       {/* By source */}
       {isLoading ? (
         <div className="flex items-center justify-center py-16"><Loader2 className="w-5 h-5 animate-spin text-muted-foreground" /></div>
       ) : rows.length === 0 ? (
-        <div className="text-center py-14 text-muted-foreground border border-dashed border-border rounded-xl">
+        <div className="text-center py-14 text-muted-foreground border border-dashed border-border rounded-2xl">
           <BarChart3 className="w-8 h-8 mx-auto mb-3 opacity-30" />
-          <p className="text-sm font-medium">No attribution data yet</p>
+          <p className="text-sm font-display font-semibold">No attribution data yet</p>
           <p className="text-xs mt-1">{site ? 'Install the snippet above — visits and conversions will appear here.' : 'Generate a tracking snippet to start collecting data.'}</p>
         </div>
       ) : (
-        <div className="bg-card rounded-xl border border-border shadow-card overflow-hidden">
-          <div className="px-4 py-3 border-b border-border"><p className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground">Revenue by source</p></div>
+        <div className="bg-card rounded-2xl border border-border shadow-card overflow-hidden">
+          <div className="px-5 py-4 border-b border-border"><p className="eyebrow text-muted-foreground">Revenue by source</p></div>
           <table className="w-full">
             <thead>
-              <tr className="border-b border-border bg-muted/30">
+              <tr className="border-b border-border">
                 {['Source', 'Sessions', 'Conversions', 'Conv. rate', 'Revenue', '% of total'].map(h => (
-                  <th key={h} className="px-4 py-2.5 text-left text-[11px] font-mono uppercase tracking-wider text-muted-foreground">{h}</th>
+                  <th key={h} className="px-5 py-3 text-left eyebrow text-muted-foreground font-normal">{h}</th>
                 ))}
               </tr>
             </thead>
@@ -131,19 +131,19 @@ export default function Attribution() {
                 const cr = s.sessions ? ((s.conversions / s.sessions) * 100).toFixed(1) : '0.0'
                 const pct = totalRevenue ? ((s.revenue / totalRevenue) * 100).toFixed(0) : '0'
                 return (
-                  <tr key={s.source} className="border-b border-border last:border-0 hover:bg-muted/20 transition-colors">
-                    <td className="px-4 py-3">
+                  <tr key={s.source} className="border-b border-border last:border-0 hover:bg-muted/40 transition-colors">
+                    <td className="px-5 py-3">
                       <div className="flex items-center gap-2">
                         <span className={`w-2 h-2 rounded-full ${color(s.source)}`} />
                         <span className="text-sm font-medium">{label(s.source)}</span>
-                        {isAi && <span className="text-[10px] font-mono px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded">AI</span>}
+                        {isAi && <span className="text-[10px] font-mono px-1.5 py-0.5 bg-violet-50 text-violet-700 rounded-md">AI</span>}
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-xs nums text-muted-foreground">{Number(s.sessions).toLocaleString()}</td>
-                    <td className="px-4 py-3 text-xs nums text-muted-foreground">{Number(s.conversions).toLocaleString()}</td>
-                    <td className="px-4 py-3 text-xs nums text-muted-foreground">{cr}%</td>
-                    <td className="px-4 py-3 text-sm font-semibold nums">{money(Number(s.revenue))}</td>
-                    <td className="px-4 py-3">
+                    <td className="px-5 py-3 text-sm nums text-muted-foreground">{Number(s.sessions).toLocaleString()}</td>
+                    <td className="px-5 py-3 text-sm nums text-muted-foreground">{Number(s.conversions).toLocaleString()}</td>
+                    <td className="px-5 py-3 text-sm nums text-muted-foreground">{cr}%</td>
+                    <td className="px-5 py-3 text-sm font-display font-semibold nums">{money(Number(s.revenue))}</td>
+                    <td className="px-5 py-3">
                       <div className="flex items-center gap-2">
                         <div className="w-20 h-1.5 bg-muted rounded-full overflow-hidden"><div className={`h-full ${color(s.source)} rounded-full`} style={{ width: `${pct}%` }} /></div>
                         <span className="text-xs text-muted-foreground nums">{pct}%</span>
@@ -161,19 +161,19 @@ export default function Attribution() {
       {rows.length > 0 && (
         <div className="grid grid-cols-3 gap-4">
           {[
-            { label: 'AI Search', match: (s: SourceAttribution) => s.is_ai || AI_SOURCES.has(s.source), color: 'bg-blue-500' },
-            { label: 'Paid Ads', match: (s: SourceAttribution) => s.source.startsWith('paid_'), color: 'bg-red-400' },
-            { label: 'Organic / Direct', match: (s: SourceAttribution) => ['google', 'bing', 'referral', 'direct'].includes(s.source), color: 'bg-amber-500' },
+            { label: 'AI Search', match: (s: SourceAttribution) => s.is_ai || AI_SOURCES.has(s.source), color: 'bg-violet-600' },
+            { label: 'Paid Ads', match: (s: SourceAttribution) => s.source.startsWith('paid_'), color: 'bg-violet-300' },
+            { label: 'Organic / Direct', match: (s: SourceAttribution) => ['google', 'bing', 'referral', 'direct'].includes(s.source), color: 'bg-slate-300' },
           ].map(g => {
             const grp = rows.filter(g.match)
             const rev = grp.reduce((a, s) => a + Number(s.revenue), 0)
             const conv = grp.reduce((a, s) => a + Number(s.conversions), 0)
             const pct = totalRevenue ? ((rev / totalRevenue) * 100).toFixed(0) : '0'
             return (
-              <div key={g.label} className="bg-card rounded-xl border border-border p-4 shadow-card">
-                <div className="flex items-center gap-2 mb-3"><span className={`w-2.5 h-2.5 rounded-full ${g.color}`} /><p className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground">{g.label}</p></div>
-                <p className="text-2xl font-bold nums">{money(rev)}</p>
-                <p className="text-xs text-muted-foreground">{conv} conversions · {pct}% of revenue</p>
+              <div key={g.label} className="bg-card rounded-2xl border border-border p-5 shadow-card">
+                <div className="flex items-center gap-2 mb-3"><span className={`w-2.5 h-2.5 rounded-full ${g.color}`} /><p className="eyebrow text-muted-foreground">{g.label}</p></div>
+                <p className="text-2xl font-display font-bold nums tracking-tight">{money(rev)}</p>
+                <p className="text-xs text-muted-foreground mt-1">{conv} conversions · {pct}% of revenue</p>
               </div>
             )
           })}

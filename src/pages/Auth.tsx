@@ -45,106 +45,116 @@ export default function Auth() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF9F7] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-background flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="flex items-center justify-center gap-2 mb-8">
           <Mark className="w-8 h-8" />
-          <span className="text-xl font-bold tracking-tight">Tracque</span>
+          <span className="text-xl font-display font-bold tracking-tight">Tracque</span>
         </div>
 
-        <div className="bg-white border border-[#E8E4DF] rounded-2xl p-8">
-          <h1 className="text-xl font-bold mb-1">
-            {mode === 'signin' ? 'Welcome back' : mode === 'signup' ? 'Create your account' : 'Reset password'}
-          </h1>
-          <p className="text-sm text-[#888] mb-6">
-            {mode === 'signin' ? 'Sign in to your Tracque account' :
-             mode === 'signup' ? 'Start tracking your AI visibility' :
-             "We'll send you a reset link"}
-          </p>
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="text-xs font-medium text-[#4a4a4a] block mb-1">Email</label>
-              <input
-                type="email"
-                required
-                autoFocus
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                placeholder="you@company.com"
-                className="w-full text-sm border border-[#E8E4DF] rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#1a1a1a]/10 focus:border-[#1a1a1a] bg-white transition-colors"
-              />
+        <div className="relative overflow-hidden bg-card border border-border rounded-2xl shadow-card">
+          {/* Ink-grad accent panel */}
+          <div className="relative overflow-hidden bg-ink-grad text-white px-8 py-6">
+            <div className="absolute inset-0 rails opacity-60 pointer-events-none" />
+            <div className="absolute -right-10 -top-10 w-44 h-44 rounded-full bg-violet-600/30 blur-3xl pointer-events-none" />
+            <div className="relative">
+              <p className="eyebrow text-white/50">Auth</p>
+              <h1 className="text-2xl font-display font-bold tracking-tight mt-1">
+                {mode === 'signin' ? 'Welcome back' : mode === 'signup' ? 'Create your account' : 'Reset password'}
+              </h1>
+              <p className="text-sm text-white/55 mt-1">
+                {mode === 'signin' ? 'Sign in to your Tracque account' :
+                 mode === 'signup' ? 'Start tracking your AI visibility' :
+                 "We'll send you a reset link"}
+              </p>
             </div>
+          </div>
 
-            {mode !== 'reset' && (
+          <div className="p-8">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="text-xs font-medium text-[#4a4a4a] block mb-1">Password</label>
+                <label className="eyebrow text-muted-foreground block mb-1.5">Email</label>
                 <input
-                  type="password"
+                  type="email"
                   required
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  minLength={6}
-                  className="w-full text-sm border border-[#E8E4DF] rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#1a1a1a]/10 focus:border-[#1a1a1a] bg-white transition-colors"
+                  autoFocus
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  placeholder="you@company.com"
+                  className="w-full text-sm border border-border rounded-xl px-3 py-2.5 bg-background focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-colors"
                 />
               </div>
-            )}
 
-            {error && (
-              <p className="text-xs text-red-500 bg-red-50 border border-red-100 rounded-xl px-3 py-2">{error}</p>
-            )}
-            {success && (
-              <p className="text-xs text-emerald-600 bg-emerald-50 border border-emerald-100 rounded-xl px-3 py-2">{success}</p>
-            )}
+              {mode !== 'reset' && (
+                <div>
+                  <label className="eyebrow text-muted-foreground block mb-1.5">Password</label>
+                  <input
+                    type="password"
+                    required
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    minLength={6}
+                    className="w-full text-sm border border-border rounded-xl px-3 py-2.5 bg-background focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-colors"
+                  />
+                </div>
+              )}
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full flex items-center justify-center gap-2 bg-[#1a1a1a] text-white py-2.5 rounded-xl text-sm font-semibold hover:bg-[#333] disabled:opacity-50 transition-colors"
-            >
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : (
+              {error && (
+                <p className="text-xs text-destructive bg-red-50 border border-red-100 rounded-md px-3 py-2">{error}</p>
+              )}
+              {success && (
+                <p className="text-xs text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-md px-3 py-2">{success}</p>
+              )}
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full flex items-center justify-center gap-2 bg-violet-600 text-white py-2.5 rounded-xl text-sm font-medium hover:bg-violet-700 disabled:opacity-50 transition-colors"
+              >
+                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : (
+                  <>
+                    {mode === 'signin' ? 'Sign in' : mode === 'signup' ? 'Create account' : 'Send reset link'}
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </>
+                )}
+              </button>
+            </form>
+
+            {/* Mode switchers */}
+            <div className="mt-5 space-y-2 text-center">
+              {mode === 'signin' && (
                 <>
-                  {mode === 'signin' ? 'Sign in' : mode === 'signup' ? 'Create account' : 'Send reset link'}
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  <button onClick={() => setMode('reset')} className="text-xs text-muted-foreground hover:text-foreground block w-full">
+                    Forgot password?
+                  </button>
+                  <p className="text-xs text-muted-foreground">
+                    No account?{' '}
+                    <button onClick={() => setMode('signup')} className="text-violet-600 font-medium hover:underline">
+                      Sign up free
+                    </button>
+                  </p>
                 </>
               )}
-            </button>
-          </form>
-
-          {/* Mode switchers */}
-          <div className="mt-5 space-y-2 text-center">
-            {mode === 'signin' && (
-              <>
-                <button onClick={() => setMode('reset')} className="text-xs text-[#888] hover:text-[#1a1a1a] block w-full">
-                  Forgot password?
-                </button>
-                <p className="text-xs text-[#888]">
-                  No account?{' '}
-                  <button onClick={() => setMode('signup')} className="text-[#1a1a1a] font-medium hover:underline">
-                    Sign up free
+              {mode === 'signup' && (
+                <p className="text-xs text-muted-foreground">
+                  Already have an account?{' '}
+                  <button onClick={() => setMode('signin')} className="text-violet-600 font-medium hover:underline">
+                    Sign in
                   </button>
                 </p>
-              </>
-            )}
-            {mode === 'signup' && (
-              <p className="text-xs text-[#888]">
-                Already have an account?{' '}
-                <button onClick={() => setMode('signin')} className="text-[#1a1a1a] font-medium hover:underline">
-                  Sign in
+              )}
+              {mode === 'reset' && (
+                <button onClick={() => setMode('signin')} className="text-xs text-muted-foreground hover:text-foreground">
+                  Back to sign in
                 </button>
-              </p>
-            )}
-            {mode === 'reset' && (
-              <button onClick={() => setMode('signin')} className="text-xs text-[#888] hover:text-[#1a1a1a]">
-                Back to sign in
-              </button>
-            )}
+              )}
+            </div>
           </div>
         </div>
 
-        <p className="text-center text-xs text-[#aaa] mt-4">
+        <p className="text-center text-xs text-muted-foreground mt-4">
           By signing up you agree to our Terms and Privacy Policy.
         </p>
       </div>

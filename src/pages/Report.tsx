@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { FileBarChart, Printer, Link2, Copy, Check, Loader2, Eye, EyeOff } from 'lucide-react'
+import { Printer, Link2, Copy, Check, Loader2, Eye, EyeOff } from 'lucide-react'
 import { useClients, useMentionRates, useLatestSeoResults, useReviewProfiles, useAttributionBySource, useShareLink, useCreateShareLink, useToggleShareLink } from '../lib/hooks'
 import { useSelectedClient } from '../lib/clientContext'
 import ReportView, { type ReportData } from '../components/ReportView'
@@ -89,7 +89,7 @@ export default function Report() {
   }
 
   return (
-    <div className="p-6 space-y-5">
+    <div className="p-7 space-y-6 max-w-[1400px]">
       <style>{`@media print {
         body * { visibility: hidden; }
         #report-doc, #report-doc * { visibility: visible; }
@@ -98,50 +98,48 @@ export default function Report() {
       }`}</style>
 
       {/* Header / actions */}
-      <div className="flex items-center justify-between print:hidden">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center"><FileBarChart className="w-4 h-4 text-indigo-600" /></div>
-          <div>
-            <h1 className="text-xl font-semibold">Client Report</h1>
-            <p className="text-xs text-muted-foreground">Branded, shareable scorecard — AI visibility, SEO, reputation &amp; revenue</p>
-          </div>
+      <div className="flex items-end justify-between print:hidden">
+        <div>
+          <p className="eyebrow text-violet-600">Reporting</p>
+          <h1 className="text-2xl font-display font-bold tracking-tight mt-1">Client Report</h1>
+          <p className="text-sm text-muted-foreground mt-1">Branded, shareable scorecard — AI visibility, SEO, reputation &amp; revenue</p>
         </div>
-        <button onClick={() => window.print()} className="flex items-center gap-2 bg-foreground text-background px-4 py-2 rounded-lg text-sm font-medium">
+        <button onClick={() => window.print()} className="flex items-center gap-2 bg-foreground text-background px-4 py-2.5 rounded-xl text-sm font-medium hover:opacity-90 transition-all">
           <Printer className="w-4 h-4" /> Print / PDF
         </button>
       </div>
 
       {/* Share-link manager (per specific client only) */}
       {specific ? (
-        <div className="bg-card rounded-xl border border-border shadow-card p-4 print:hidden">
-          <div className="flex items-center gap-2 mb-2">
+        <div className="bg-card rounded-2xl border border-border shadow-card p-5 print:hidden">
+          <div className="flex items-center gap-2 mb-4">
             <Link2 className="w-4 h-4 text-muted-foreground" />
-            <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground">Public share link</span>
+            <span className="eyebrow text-muted-foreground">Public share link</span>
           </div>
           {!link ? (
             <div className="flex items-center justify-between">
               <p className="text-sm text-muted-foreground">Generate a read-only link to hand this client — no login required.</p>
               <button onClick={() => createLink.mutate(clientId)} disabled={createLink.isPending}
-                className="flex items-center gap-2 bg-foreground text-background px-3 py-1.5 rounded-lg text-sm font-medium disabled:opacity-50">
+                className="flex items-center gap-2 bg-violet-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-violet-700 disabled:opacity-50 transition-all">
                 {createLink.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Link2 className="w-3.5 h-3.5" />} Generate link
               </button>
             </div>
           ) : (
             <div className="flex items-center gap-2 flex-wrap">
               <input readOnly value={link.enabled ? shareUrl : 'Link disabled'} onFocus={e => e.target.select()}
-                className={`flex-1 min-w-[260px] px-3 py-1.5 text-sm border border-border rounded-lg bg-muted/30 font-mono ${link.enabled ? '' : 'text-muted-foreground line-through'}`} />
-              <button onClick={copy} disabled={!link.enabled} className="flex items-center gap-1.5 border border-border px-3 py-1.5 rounded-lg text-sm font-medium disabled:opacity-40 hover:bg-muted">
+                className={`flex-1 min-w-[260px] px-3 py-2.5 text-sm border border-border rounded-xl bg-background font-mono focus:ring-violet-500 ${link.enabled ? '' : 'text-muted-foreground line-through'}`} />
+              <button onClick={copy} disabled={!link.enabled} className="flex items-center gap-1.5 border border-border px-4 py-2.5 rounded-xl text-sm font-medium disabled:opacity-40 hover:bg-muted transition-all">
                 {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />} {copied ? 'Copied' : 'Copy'}
               </button>
               <button onClick={() => toggleLink.mutate({ id: link.id, enabled: !link.enabled })} disabled={toggleLink.isPending}
-                className="flex items-center gap-1.5 border border-border px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-muted disabled:opacity-50">
+                className="flex items-center gap-1.5 border border-border px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-muted disabled:opacity-50 transition-all">
                 {link.enabled ? <><EyeOff className="w-3.5 h-3.5" /> Disable</> : <><Eye className="w-3.5 h-3.5" /> Enable</>}
               </button>
             </div>
           )}
         </div>
       ) : (
-        <div className="bg-muted/40 border border-border rounded-xl p-3 text-xs text-muted-foreground print:hidden">
+        <div className="bg-muted/40 border border-border rounded-2xl p-4 text-sm text-muted-foreground print:hidden">
           Showing an aggregate across all clients. Select a specific client in the switcher to apply its branding and create a shareable link.
         </div>
       )}

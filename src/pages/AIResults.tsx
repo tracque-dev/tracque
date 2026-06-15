@@ -6,7 +6,7 @@ const MODEL_LABELS: Record<string, string> = {
 }
 const MODEL_COLORS: Record<string, string> = {
   chatgpt: 'bg-emerald-50 text-emerald-700',
-  perplexity: 'bg-blue-50 text-blue-700',
+  perplexity: 'bg-violet-50 text-violet-700',
   gemini: 'bg-violet-50 text-violet-700',
   claude: 'bg-amber-50 text-amber-700',
   grok: 'bg-slate-100 text-slate-700',
@@ -33,25 +33,21 @@ export default function AIResults() {
   })
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
-            <Bot className="w-4 h-4 text-blue-600" />
-          </div>
-          <div>
-            <h1 className="text-xl font-semibold">AI Visibility</h1>
-            <p className="text-xs text-muted-foreground">How AI models mention your brands</p>
-          </div>
+    <div className="p-7 space-y-6 max-w-[1400px]">
+      <div className="flex items-end justify-between">
+        <div>
+          <p className="eyebrow text-violet-600">Visibility</p>
+          <h1 className="text-2xl font-display font-bold tracking-tight mt-1">AI Visibility</h1>
+          <p className="text-sm text-muted-foreground mt-1">How AI models mention your brands</p>
         </div>
         <button
           onClick={() => runScan.mutate()}
           disabled={runScan.isPending || brands.length === 0 || keywords.length === 0}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-sm border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-primary disabled:opacity-50 transition-colors"
+          className="flex items-center gap-2 px-4 py-2.5 text-sm bg-foreground text-background rounded-xl font-medium hover:opacity-90 disabled:opacity-40 transition-all"
         >
           {runScan.isPending
-            ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Scanning…</>
-            : <><RefreshCw className="w-3.5 h-3.5" /> Re-scan</>}
+            ? <><Loader2 className="w-4 h-4 animate-spin" /> Scanning…</>
+            : <><RefreshCw className="w-4 h-4" /> Re-scan</>}
         </button>
       </div>
 
@@ -65,17 +61,17 @@ export default function AIResults() {
               : null
             const webGrounded = scans.filter(s => s.model === model).some(s => s.web_grounded)
             return (
-              <div key={model} className="bg-card rounded-xl border border-border p-3 shadow-card text-center">
-                <div className="flex items-center justify-center gap-1 mb-1">
-                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${MODEL_COLORS[model] ?? 'bg-muted text-muted-foreground'}`}>
+              <div key={model} className="bg-card rounded-2xl border border-border p-5 shadow-card text-center">
+                <div className="flex items-center justify-center gap-1 mb-2">
+                  <span className={`text-xs px-2 py-0.5 rounded-md font-medium ${MODEL_COLORS[model] ?? 'bg-muted text-foreground'}`}>
                     {MODEL_LABELS[model] ?? model}
                   </span>
                   {webGrounded && <span title="Web grounded — live data" className="text-emerald-500 text-xs">⚡</span>}
                 </div>
-                <p className="text-2xl font-bold mt-1">{rate}%</p>
-                <p className="text-xs text-muted-foreground">mention rate</p>
+                <p className="text-3xl font-display font-bold nums tracking-tight mt-1">{rate}%</p>
+                <p className="eyebrow text-muted-foreground mt-1">mention rate</p>
                 {avgConf != null && (
-                  <p className="text-xs text-muted-foreground mt-0.5">{avgConf}% confidence</p>
+                  <p className="text-xs text-muted-foreground mt-1 nums">{avgConf}% confidence</p>
                 )}
               </div>
             )
@@ -88,23 +84,23 @@ export default function AIResults() {
           <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
         </div>
       ) : byKeyword.length === 0 ? (
-        <div className="text-center py-16 text-muted-foreground">
-          <Bot className="w-8 h-8 mx-auto mb-3 opacity-30" />
-          <p className="text-sm font-medium">No scan results yet</p>
-          <p className="text-xs mt-1">Add brands + keywords, then run a scan from the Dashboard</p>
+        <div className="bg-card rounded-2xl border border-border p-10 text-center shadow-card text-muted-foreground">
+          <Bot className="w-8 h-8 mx-auto mb-3 opacity-30 text-foreground" />
+          <p className="text-base font-display font-semibold text-foreground">No scan results yet</p>
+          <p className="text-sm mt-1">Add brands + keywords, then run a scan from the Dashboard</p>
         </div>
       ) : (
         <div className="space-y-4">
           {byKeyword.map(({ keyword, entries }) => (
-            <div key={keyword.id} className="bg-card rounded-xl border border-border shadow-card">
-              <div className="px-4 py-3 border-b border-border">
-                <p className="text-sm font-semibold">"{keyword.phrase}"</p>
+            <div key={keyword.id} className="bg-card rounded-2xl border border-border shadow-card overflow-hidden">
+              <div className="px-5 py-4 border-b border-border">
+                <p className="text-sm font-display font-semibold">"{keyword.phrase}"</p>
               </div>
               <div className="divide-y divide-border">
                 {entries.map((entry) => (
-                  <div key={entry.id} className="px-4 py-3 flex items-start gap-4">
+                  <div key={entry.id} className="px-5 py-3 flex items-start gap-4 hover:bg-muted/40 transition-colors">
                     <div className="w-24 shrink-0 pt-0.5">
-                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${MODEL_COLORS[entry.model] ?? 'bg-muted text-muted-foreground'}`}>
+                      <span className={`text-xs px-2 py-0.5 rounded-md font-medium ${MODEL_COLORS[entry.model] ?? 'bg-muted text-foreground'}`}>
                         {MODEL_LABELS[entry.model] ?? entry.model}
                       </span>
                     </div>
@@ -120,15 +116,15 @@ export default function AIResults() {
                       {entry.mentioned ? (
                         <>
                           <div className="flex items-center flex-wrap gap-2 mb-1">
-                            {entry.position && <span className="text-xs text-muted-foreground">#{entry.position}</span>}
+                            {entry.position && <span className="text-xs text-muted-foreground nums">#{entry.position}</span>}
                             {entry.confidence_pct != null && (
-                              <span className="text-xs text-muted-foreground">{entry.confidence_pct}% confidence</span>
+                              <span className="text-xs text-muted-foreground nums">{entry.confidence_pct}% confidence</span>
                             )}
                             {entry.runs_total > 1 && (
-                              <span className="text-xs text-muted-foreground">{entry.runs_mentioned}/{entry.runs_total} runs</span>
+                              <span className="text-xs text-muted-foreground nums">{entry.runs_mentioned}/{entry.runs_total} runs</span>
                             )}
                             {entry.sentiment && (
-                              <span className={`text-xs px-1.5 py-0.5 rounded font-medium ${
+                              <span className={`text-xs px-1.5 py-0.5 rounded-md font-medium ${
                                 entry.sentiment === 'positive' ? 'bg-emerald-50 text-emerald-700' :
                                 entry.sentiment === 'neutral' ? 'bg-amber-50 text-amber-700' :
                                 'bg-red-50 text-red-700'
@@ -138,7 +134,7 @@ export default function AIResults() {
                               <span className="text-xs text-emerald-600 font-medium">⚡ live web</span>
                             )}
                             {(entry.citation_urls ?? entry.sources)?.slice(0, 3).map((s: string) => (
-                              <span key={s} className="text-xs px-1.5 py-0.5 bg-muted rounded text-muted-foreground">{s}</span>
+                              <span key={s} className="text-xs px-1.5 py-0.5 bg-muted rounded-md text-muted-foreground">{s}</span>
                             ))}
                           </div>
                           {entry.excerpt && (

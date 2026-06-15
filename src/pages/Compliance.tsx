@@ -37,16 +37,16 @@ function ScoreCard({ icon: Icon, label, score, detail, foot }: {
   const tone = pct == null ? 'bg-muted-foreground/30'
     : pct >= 80 ? 'bg-emerald-500' : pct >= 60 ? 'bg-amber-500' : 'bg-red-500'
   return (
-    <div className="bg-card rounded-xl border border-border shadow-card p-4">
+    <div className="bg-card rounded-2xl border border-border shadow-card p-5">
       <div className="flex items-center gap-2 text-muted-foreground">
         <Icon className="w-4 h-4" />
-        <span className="text-[11px] font-mono uppercase tracking-wider">{label}</span>
+        <span className="eyebrow">{label}</span>
       </div>
-      <div className="mt-2 flex items-baseline gap-1.5">
-        <span className="text-3xl font-bold nums">{pct == null ? '—' : `${pct}`}</span>
+      <div className="mt-3 flex items-baseline gap-1.5">
+        <span className="text-3xl font-display font-bold nums tracking-tight">{pct == null ? '—' : `${pct}`}</span>
         {pct != null && <span className="text-sm text-muted-foreground">%</span>}
       </div>
-      <p className="text-xs text-muted-foreground mt-0.5">{detail}</p>
+      <p className="text-xs text-muted-foreground mt-1">{detail}</p>
       <div className="mt-3 h-1.5 rounded-full bg-muted overflow-hidden">
         <div className={`h-full rounded-full ${tone}`} style={{ width: `${bar}%` }} />
       </div>
@@ -93,7 +93,7 @@ export default function Compliance() {
   const respPct = responseScore == null ? null : Math.round(responseScore)
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-7 space-y-6 max-w-[1400px]">
       {/* Print rule: only the one-pager prints */}
       <style>{`@media print {
         body * { visibility: hidden; }
@@ -103,34 +103,32 @@ export default function Compliance() {
       }`}</style>
 
       {/* Header */}
-      <div className="flex items-center justify-between print:hidden">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center"><ShieldCheck className="w-4 h-4 text-emerald-600" /></div>
-          <div>
-            <h1 className="text-xl font-semibold">Compliance</h1>
-            <p className="text-xs text-muted-foreground">Vendor-risk scorecard + printable one-pager for procurement &amp; exam files</p>
-          </div>
+      <div className="flex items-end justify-between print:hidden">
+        <div>
+          <p className="eyebrow text-violet-600">Compliance</p>
+          <h1 className="text-2xl font-display font-bold tracking-tight mt-1">Compliance</h1>
+          <p className="text-sm text-muted-foreground mt-1">Vendor-risk scorecard + printable one-pager for procurement &amp; exam files</p>
         </div>
         <button onClick={() => window.print()}
-          className="flex items-center gap-2 bg-foreground text-background px-4 py-2 rounded-lg text-sm font-medium">
+          className="flex items-center gap-2 bg-foreground text-background px-4 py-2.5 rounded-xl text-sm font-medium hover:opacity-90 transition-all">
           <Printer className="w-4 h-4" /> Print one-pager
         </button>
       </div>
 
       {!ownBrand ? (
-        <div className="bg-card rounded-xl border border-border shadow-card p-8 text-center print:hidden">
+        <div className="bg-card rounded-2xl border border-border shadow-card p-10 text-center print:hidden">
           <p className="text-sm text-muted-foreground">Add your institution under <span className="font-medium text-foreground">Brands</span> to generate a compliance scorecard.</p>
         </div>
       ) : (
         <>
           {/* Overall grade banner */}
-          <div className="bg-card rounded-xl border border-border shadow-card p-5 flex items-center gap-5 print:hidden">
+          <div className="bg-card rounded-2xl border border-border shadow-card p-5 flex items-center gap-5 print:hidden">
             <div className="w-20 h-20 rounded-xl bg-muted/50 border border-border flex items-center justify-center shrink-0">
-              <span className={`text-5xl font-bold ${g.color}`}>{g.letter}</span>
+              <span className={`text-5xl font-display font-bold nums tracking-tight ${g.color}`}>{g.letter}</span>
             </div>
             <div className="flex-1">
-              <p className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground">Overall AI-compliance posture</p>
-              <p className="text-lg font-semibold mt-0.5">
+              <p className="eyebrow text-muted-foreground">Overall AI-compliance posture</p>
+              <p className="text-lg font-display font-semibold mt-1">
                 {overall == null ? 'Not enough data yet' : `${Math.round(overall)} / 100 — ${ownBrand.name}`}
               </p>
               <p className="text-xs text-muted-foreground mt-1">
@@ -161,17 +159,17 @@ export default function Compliance() {
           )}
 
           {/* ── Printable vendor-risk one-pager ─────────────── */}
-          <div id="vendor-onepager" className="bg-card rounded-xl border border-border shadow-card p-8 max-w-3xl mx-auto print:border-0 print:shadow-none print:max-w-none">
+          <div id="vendor-onepager" className="bg-card rounded-2xl border border-border shadow-card p-8 max-w-3xl mx-auto print:border-0 print:shadow-none print:max-w-none">
             <div className="flex items-start justify-between border-b border-border pb-4">
               <div>
-                <p className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground">Vendor Risk Summary</p>
-                <h2 className="text-2xl font-bold mt-1">{ownBrand.name}</h2>
+                <p className="eyebrow text-muted-foreground">Vendor Risk Summary</p>
+                <h2 className="text-2xl font-display font-bold tracking-tight mt-1">{ownBrand.name}</h2>
                 {ownBrand.domain && <p className="text-sm text-muted-foreground">{ownBrand.domain}</p>}
               </div>
               <div className="text-right">
                 <div className="flex items-center gap-1.5 justify-end text-foreground">
                   <ShieldCheck className="w-5 h-5 text-emerald-600" />
-                  <span className="font-semibold">Tracque</span>
+                  <span className="font-display font-semibold">Tracque</span>
                 </div>
                 <p className="text-[11px] text-muted-foreground mt-1">AI-visibility &amp; rate-accuracy monitoring</p>
                 <p className="text-[11px] text-muted-foreground">Prepared {today}</p>
@@ -187,8 +185,8 @@ export default function Compliance() {
                 { k: 'Evidence age', v: staleDays == null ? '—' : `${staleDays}d`, s: 'last scan' },
               ].map(m => (
                 <div key={m.k}>
-                  <p className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">{m.k}</p>
-                  <p className="text-xl font-bold mt-0.5">{m.v}</p>
+                  <p className="eyebrow text-muted-foreground">{m.k}</p>
+                  <p className="text-xl font-display font-bold nums tracking-tight mt-1">{m.v}</p>
                   <p className="text-[10px] text-muted-foreground">{m.s}</p>
                 </div>
               ))}
@@ -219,7 +217,7 @@ export default function Compliance() {
                     <s.icon className="w-3.5 h-3.5 text-foreground" />
                   </div>
                   <div>
-                    <p className="font-semibold">{s.title}</p>
+                    <p className="font-display font-semibold">{s.title}</p>
                     <p className="text-muted-foreground mt-0.5">{s.body}</p>
                   </div>
                 </div>

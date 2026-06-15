@@ -9,14 +9,14 @@ import { supabase } from '../integrations/supabase/client'
 import { useBrands, USER_ID } from '../lib/hooks'
 
 const CATEGORY_META: Record<string, { label: string; color: string }> = {
-  citation_source:  { label: 'Citation Source',   color: 'bg-blue-50 text-blue-700' },
+  citation_source:  { label: 'Citation Source',   color: 'bg-violet-50 text-violet-700' },
   content_gap:      { label: 'Content Gap',        color: 'bg-violet-50 text-violet-700' },
-  competitor_gap:   { label: 'Competitor Gap',     color: 'bg-red-50 text-red-700' },
-  site_structure:   { label: 'Site Structure',     color: 'bg-amber-50 text-amber-700' },
-  review_platform:  { label: 'Review Platform',    color: 'bg-emerald-50 text-emerald-700' },
-  community:        { label: 'Community',          color: 'bg-orange-50 text-orange-700' },
-  pr_coverage:      { label: 'PR Coverage',        color: 'bg-pink-50 text-pink-700' },
-  keyword_coverage: { label: 'Keyword Coverage',   color: 'bg-slate-100 text-slate-700' },
+  competitor_gap:   { label: 'Competitor Gap',     color: 'bg-muted text-foreground' },
+  site_structure:   { label: 'Site Structure',     color: 'bg-muted text-foreground' },
+  review_platform:  { label: 'Review Platform',    color: 'bg-muted text-foreground' },
+  community:        { label: 'Community',          color: 'bg-muted text-foreground' },
+  pr_coverage:      { label: 'PR Coverage',        color: 'bg-muted text-foreground' },
+  keyword_coverage: { label: 'Keyword Coverage',   color: 'bg-muted text-foreground' },
 }
 
 const EFFORT_META: Record<string, { label: string; color: string }> = {
@@ -54,7 +54,7 @@ function CopyButton({ text }: { text: string }) {
         setCopied(true)
         setTimeout(() => setCopied(false), 2000)
       }}
-      className="flex items-center gap-1 text-xs px-2 py-1 border border-border rounded hover:border-primary hover:text-primary transition-colors text-muted-foreground"
+      className="flex items-center gap-1 text-xs px-2 py-1 border border-border rounded-md hover:bg-muted hover:text-foreground transition-colors text-muted-foreground"
     >
       {copied ? <><Check className="w-3 h-3 text-emerald-500" /> Copied</> : <><Copy className="w-3 h-3" /> Copy</>}
     </button>
@@ -73,23 +73,23 @@ function RecommendationCard({ rec, onStatusChange }: {
     rec.impact_score >= 5 ? 'border-l-amber-400' : 'border-l-red-400'
 
   return (
-    <div className={`bg-card rounded-xl border border-border border-l-4 ${borderColor} shadow-card ${
+    <div className={`bg-card rounded-2xl border border-border border-l-4 ${borderColor} shadow-card ${
       rec.status === 'done' ? 'opacity-60' : ''
     }`}>
       {/* Header */}
       <div
-        className="px-4 py-3 cursor-pointer select-none"
+        className="px-5 py-4 cursor-pointer select-none"
         onClick={() => setExpanded(e => !e)}
       >
         <div className="flex items-start gap-3">
           {/* Priority rank */}
-          <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center shrink-0 mt-0.5">
-            <span className="text-xs font-bold text-muted-foreground">#{rec.priority_rank}</span>
+          <div className="w-7 h-7 rounded-xl bg-muted flex items-center justify-center shrink-0 mt-0.5">
+            <span className="text-xs font-display font-bold nums text-foreground">#{rec.priority_rank}</span>
           </div>
 
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap mb-1">
-              <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${catMeta.color}`}>
+              <span className={`text-xs px-2 py-0.5 rounded-md font-medium ${catMeta.color}`}>
                 {catMeta.label}
               </span>
               <span className={`text-xs font-medium ${effortMeta.color}`}>
@@ -106,7 +106,7 @@ function RecommendationCard({ rec, onStatusChange }: {
                 </span>
               )}
             </div>
-            <p className="text-sm font-semibold text-foreground">{rec.title}</p>
+            <p className="text-sm font-display font-semibold text-foreground">{rec.title}</p>
             <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{rec.why}</p>
           </div>
 
@@ -121,10 +121,10 @@ function RecommendationCard({ rec, onStatusChange }: {
 
       {/* Expanded content */}
       {expanded && (
-        <div className="px-4 pb-4 space-y-4 border-t border-border pt-4">
+        <div className="px-5 pb-5 space-y-4 border-t border-border pt-4">
           {/* Why */}
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1">Why this matters</p>
+            <p className="eyebrow text-muted-foreground mb-1.5">Why this matters</p>
             <p className="text-sm text-foreground">{rec.why}</p>
           </div>
 
@@ -132,27 +132,27 @@ function RecommendationCard({ rec, onStatusChange }: {
           {rec.data_evidence && Object.keys(rec.data_evidence).some(k => rec.data_evidence[k] != null) && (
             <div className="flex flex-wrap gap-2">
               {rec.data_evidence.current_rate != null && (
-                <span className="text-xs px-2 py-1 bg-red-50 text-red-700 rounded-lg font-medium">
+                <span className="text-xs px-2 py-1 bg-red-50 text-red-700 rounded-md font-medium nums">
                   Current: {rec.data_evidence.current_rate}% mention rate
                 </span>
               )}
               {rec.data_evidence.competitor_rate != null && (
-                <span className="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded-lg font-medium">
+                <span className="text-xs px-2 py-1 bg-muted text-foreground rounded-md font-medium nums">
                   Competitor: {rec.data_evidence.competitor_rate}%
                 </span>
               )}
               {rec.data_evidence.target_rate != null && (
-                <span className="text-xs px-2 py-1 bg-emerald-50 text-emerald-700 rounded-lg font-medium">
+                <span className="text-xs px-2 py-1 bg-emerald-50 text-emerald-700 rounded-md font-medium nums">
                   Target: {rec.data_evidence.target_rate}%
                 </span>
               )}
               {rec.data_evidence.domain && (
-                <span className="text-xs px-2 py-1 bg-violet-50 text-violet-700 rounded-lg font-medium">
+                <span className="text-xs px-2 py-1 bg-violet-50 text-violet-700 rounded-md font-medium">
                   {rec.data_evidence.domain}
                 </span>
               )}
               {rec.data_evidence.keyword && (
-                <span className="text-xs px-2 py-1 bg-amber-50 text-amber-700 rounded-lg font-medium">
+                <span className="text-xs px-2 py-1 bg-muted text-foreground rounded-md font-medium">
                   "{rec.data_evidence.keyword}"
                 </span>
               )}
@@ -161,25 +161,25 @@ function RecommendationCard({ rec, onStatusChange }: {
 
           {/* Specific action */}
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1">Exact action</p>
+            <p className="eyebrow text-muted-foreground mb-1.5">Exact action</p>
             <p className="text-sm text-foreground">{rec.action}</p>
           </div>
 
           {/* Template */}
           {rec.template && (
             <div>
-              <div className="flex items-center justify-between mb-1">
-                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Ready-to-use template</p>
+              <div className="flex items-center justify-between mb-1.5">
+                <p className="eyebrow text-muted-foreground">Ready-to-use template</p>
                 <CopyButton text={rec.template} />
               </div>
-              <pre className="text-xs text-foreground bg-muted/50 rounded-lg p-3 whitespace-pre-wrap font-sans border border-border overflow-auto max-h-48">
+              <pre className="text-xs text-foreground bg-muted/50 rounded-xl p-3 whitespace-pre-wrap font-sans border border-border overflow-auto max-h-48">
                 {rec.template}
               </pre>
             </div>
           )}
 
           {/* Expected result */}
-          <div className="flex items-center gap-2 p-3 bg-emerald-50 rounded-lg">
+          <div className="flex items-center gap-2 p-3 bg-emerald-50 rounded-xl">
             <TrendingUp className="w-4 h-4 text-emerald-600 shrink-0" />
             <p className="text-xs text-emerald-700 font-medium">{rec.expected_result}</p>
           </div>
@@ -190,7 +190,7 @@ function RecommendationCard({ rec, onStatusChange }: {
               {rec.status === 'pending' && (
                 <button
                   onClick={() => onStatusChange(rec.id, 'in_progress')}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-primary text-white rounded-lg font-medium hover:bg-primary/90"
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-violet-600 text-white rounded-xl font-medium hover:bg-violet-700"
                 >
                   <ArrowRight className="w-3 h-3" /> Start working on this
                 </button>
@@ -198,14 +198,14 @@ function RecommendationCard({ rec, onStatusChange }: {
               {rec.status === 'in_progress' && (
                 <button
                   onClick={() => onStatusChange(rec.id, 'done')}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-emerald-500 text-white rounded-lg font-medium hover:bg-emerald-600"
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-emerald-500 text-white rounded-xl font-medium hover:bg-emerald-600"
                 >
                   <CheckCircle2 className="w-3 h-3" /> Mark as done
                 </button>
               )}
               <button
                 onClick={() => onStatusChange(rec.id, 'dismissed')}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-border rounded-lg text-muted-foreground hover:text-foreground"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-border rounded-xl text-muted-foreground hover:bg-muted hover:text-foreground"
               >
                 <XCircle className="w-3 h-3" /> Dismiss
               </button>
@@ -269,22 +269,18 @@ export default function Recommendations() {
   const inProgressCount = recommendations.filter(r => r.status === 'in_progress').length
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-7 space-y-6 max-w-[1400px]">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
-            <Zap className="w-4 h-4 text-amber-600" />
-          </div>
-          <div>
-            <h1 className="text-xl font-semibold">Recommendations</h1>
-            <p className="text-xs text-muted-foreground">Specific actions to improve your AI visibility — ranked by impact</p>
-          </div>
+      <div className="flex items-end justify-between">
+        <div>
+          <p className="eyebrow text-violet-600">Actions</p>
+          <h1 className="text-2xl font-display font-bold tracking-tight mt-1">Recommendations</h1>
+          <p className="text-sm text-muted-foreground mt-1">Specific actions to improve your AI visibility — ranked by impact</p>
         </div>
         <div className="flex items-center gap-2">
           {brands.length > 1 && (
             <select
-              className="text-sm border border-border rounded-lg px-3 py-1.5 bg-background focus:outline-none focus:ring-1 focus:ring-primary"
+              className="text-sm border border-border rounded-xl px-3 py-2.5 bg-background focus:outline-none focus:ring-1 focus:ring-violet-500"
               value={activeBrandId}
               onChange={e => setSelectedBrandId(e.target.value)}
             >
@@ -296,11 +292,11 @@ export default function Recommendations() {
           <button
             onClick={() => generate.mutate()}
             disabled={generate.isPending || !activeBrandId}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-primary text-white rounded-lg font-medium hover:bg-primary/90 disabled:opacity-50"
+            className="flex items-center gap-2 px-4 py-2.5 text-sm bg-foreground text-background rounded-xl font-medium hover:opacity-90 disabled:opacity-40 transition-all"
           >
             {generate.isPending
-              ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Analyzing…</>
-              : <><RefreshCw className="w-3.5 h-3.5" /> Generate</>}
+              ? <><Loader2 className="w-4 h-4 animate-spin" /> Analyzing…</>
+              : <><RefreshCw className="w-4 h-4" /> Generate</>}
           </button>
         </div>
       </div>
@@ -308,20 +304,20 @@ export default function Recommendations() {
       {/* Progress summary */}
       {recommendations.length > 0 && (
         <div className="grid grid-cols-3 gap-4">
-          <div className="bg-card rounded-xl border border-border p-4 shadow-card">
-            <p className="text-2xl font-bold">{recommendations.length}</p>
-            <p className="text-xs text-muted-foreground">Total recommendations</p>
+          <div className="bg-card rounded-2xl border border-border p-5 shadow-card">
+            <p className="text-3xl font-display font-bold nums tracking-tight">{recommendations.length}</p>
+            <p className="eyebrow text-muted-foreground mt-1">Total recommendations</p>
           </div>
-          <div className="bg-card rounded-xl border border-border p-4 shadow-card">
-            <p className="text-2xl font-bold text-amber-600">{inProgressCount}</p>
-            <p className="text-xs text-muted-foreground">In progress</p>
+          <div className="bg-card rounded-2xl border border-border p-5 shadow-card">
+            <p className="text-3xl font-display font-bold nums tracking-tight text-amber-600">{inProgressCount}</p>
+            <p className="eyebrow text-muted-foreground mt-1">In progress</p>
           </div>
-          <div className="bg-card rounded-xl border border-border p-4 shadow-card">
+          <div className="bg-card rounded-2xl border border-border p-5 shadow-card">
             <div className="flex items-center gap-2">
-              <p className="text-2xl font-bold text-emerald-600">{doneCount}</p>
+              <p className="text-3xl font-display font-bold nums tracking-tight text-emerald-600">{doneCount}</p>
               {doneCount > 0 && <Star className="w-4 h-4 text-emerald-500" />}
             </div>
-            <p className="text-xs text-muted-foreground">Completed</p>
+            <p className="eyebrow text-muted-foreground mt-1">Completed</p>
           </div>
         </div>
       )}
@@ -338,10 +334,10 @@ export default function Recommendations() {
             <button
               key={value}
               onClick={() => setStatusFilter(value)}
-              className={`text-xs px-3 py-1 rounded-full border font-medium transition-colors ${
+              className={`text-xs px-3 py-1.5 rounded-md border font-medium transition-colors ${
                 statusFilter === value
-                  ? 'bg-primary text-white border-primary'
-                  : 'border-border text-muted-foreground hover:border-primary hover:text-primary'
+                  ? 'bg-violet-600 text-white border-violet-600'
+                  : 'border-border text-muted-foreground hover:bg-muted hover:text-foreground'
               }`}
             >
               {label}
@@ -352,28 +348,26 @@ export default function Recommendations() {
 
       {/* Empty / loading states */}
       {!activeBrandId ? (
-        <div className="text-center py-16 text-muted-foreground">
-          <Zap className="w-8 h-8 mx-auto mb-3 opacity-30" />
-          <p className="text-sm font-medium">No brands yet</p>
-          <p className="text-xs mt-1">Add a brand first, then run scans to generate recommendations</p>
+        <div className="bg-card rounded-2xl border border-border p-10 text-center shadow-card">
+          <p className="text-base font-display font-semibold mb-1">No brands yet</p>
+          <p className="text-sm text-muted-foreground">Add a brand first, then run scans to generate recommendations</p>
         </div>
       ) : isLoading ? (
         <div className="flex items-center justify-center py-16">
           <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
         </div>
       ) : recommendations.length === 0 ? (
-        <div className="text-center py-16 text-muted-foreground bg-card rounded-xl border border-border">
-          <Zap className="w-10 h-10 mx-auto mb-3 opacity-30" />
-          <p className="text-sm font-semibold mb-1">No recommendations yet</p>
-          <p className="text-xs mb-4">Run at least one scan, then click Generate to get specific actions ranked by impact</p>
+        <div className="bg-card rounded-2xl border border-border p-10 text-center shadow-card">
+          <p className="text-base font-display font-semibold mb-1">No recommendations yet</p>
+          <p className="text-sm text-muted-foreground mb-5">Run at least one scan, then click Generate to get specific actions ranked by impact</p>
           <button
             onClick={() => generate.mutate()}
             disabled={generate.isPending}
-            className="flex items-center gap-1.5 px-4 py-2 text-sm bg-primary text-white rounded-lg font-medium hover:bg-primary/90 mx-auto"
+            className="flex items-center gap-2 px-4 py-2.5 text-sm bg-violet-600 text-white rounded-xl font-medium hover:bg-violet-700 disabled:opacity-40 mx-auto"
           >
             {generate.isPending
-              ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Analyzing your data…</>
-              : <><Zap className="w-3.5 h-3.5" /> Generate Recommendations</>}
+              ? <><Loader2 className="w-4 h-4 animate-spin" /> Analyzing your data…</>
+              : <><Zap className="w-4 h-4" /> Generate Recommendations</>}
           </button>
           {generate.isPending && (
             <p className="text-xs text-muted-foreground mt-3">

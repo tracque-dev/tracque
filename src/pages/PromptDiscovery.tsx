@@ -6,12 +6,12 @@ import { useAddKeyword } from '../lib/hooks'
 import { USER_ID } from '../lib/hooks'
 
 const SOURCE_META: Record<string, { label: string; icon: typeof Sparkles; color: string; desc: string }> = {
-  people_also_ask:    { label: 'People Also Ask', icon: Search,        color: 'text-blue-600 bg-blue-50',    desc: 'Real Google questions' },
+  people_also_ask:    { label: 'People Also Ask', icon: Search,        color: 'text-foreground bg-muted',    desc: 'Real Google questions' },
   autocomplete:       { label: 'Autocomplete',    icon: Search,        color: 'text-violet-600 bg-violet-50', desc: 'Google suggestions' },
-  perplexity_related: { label: 'Perplexity AI',   icon: Sparkles,      color: 'text-emerald-600 bg-emerald-50', desc: 'AI-related questions' },
-  google_trends:      { label: 'Trending',        icon: TrendingUp,    color: 'text-amber-600 bg-amber-50',  desc: 'Rising queries' },
-  reddit:             { label: 'Reddit',          icon: MessageSquare, color: 'text-orange-600 bg-orange-50', desc: 'Real user questions' },
-  gsc:                { label: 'Your Site',       icon: BarChart2,     color: 'text-pink-600 bg-pink-50',    desc: 'Your actual traffic' },
+  perplexity_related: { label: 'Perplexity AI',   icon: Sparkles,      color: 'text-foreground bg-muted',    desc: 'AI-related questions' },
+  google_trends:      { label: 'Trending',        icon: TrendingUp,    color: 'text-foreground bg-muted',    desc: 'Rising queries' },
+  reddit:             { label: 'Reddit',          icon: MessageSquare, color: 'text-foreground bg-muted',    desc: 'Real user questions' },
+  gsc:                { label: 'Your Site',       icon: BarChart2,     color: 'text-foreground bg-muted',    desc: 'Your actual traffic' },
 }
 
 export default function PromptDiscovery() {
@@ -70,34 +70,30 @@ export default function PromptDiscovery() {
   }), {} as Record<string, number>)
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-violet-500/10 flex items-center justify-center">
-            <Sparkles className="w-4 h-4 text-violet-600" />
-          </div>
-          <div>
-            <h1 className="text-xl font-semibold">Prompt Discovery</h1>
-            <p className="text-xs text-muted-foreground">Real questions people ask AI — sourced from Google, Perplexity, Reddit</p>
-          </div>
+    <div className="p-7 space-y-6 max-w-[1400px]">
+      <div className="flex items-end justify-between">
+        <div>
+          <p className="eyebrow text-violet-600">Discovery</p>
+          <h1 className="text-2xl font-display font-bold tracking-tight mt-1">Prompt Discovery</h1>
+          <p className="text-sm text-muted-foreground mt-1">Real questions people ask AI — sourced from Google, Perplexity, Reddit</p>
         </div>
         <button
           onClick={() => syncGSC.mutate()}
           disabled={syncGSC.isPending}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-sm border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-primary disabled:opacity-50 transition-colors"
+          className="flex items-center gap-2 px-4 py-2.5 text-sm border border-border rounded-xl text-foreground hover:bg-muted disabled:opacity-40 transition-all"
         >
-          {syncGSC.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Globe className="w-3.5 h-3.5" />}
+          {syncGSC.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Globe className="w-4 h-4" />}
           Sync Google Search Console
         </button>
       </div>
 
       {/* Discover form */}
-      <div className="bg-card rounded-xl border border-border p-4 shadow-card space-y-3">
-        <p className="text-sm font-semibold">Discover prompts for your industry</p>
-        <p className="text-xs text-muted-foreground">Enter 1–5 seed keywords. Tracque pulls real questions from Google PAA, autocomplete, Perplexity, Reddit, and Google Trends.</p>
+      <div className="bg-card rounded-2xl border border-border p-5 shadow-card space-y-3">
+        <p className="eyebrow text-muted-foreground">Discover prompts for your industry</p>
+        <p className="text-sm text-muted-foreground">Enter 1–5 seed keywords. Tracque pulls real questions from Google PAA, autocomplete, Perplexity, Reddit, and Google Trends.</p>
         <div className="flex gap-3">
           <input
-            className="flex-1 text-sm border border-border rounded-lg px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary bg-background"
+            className="flex-1 text-sm border border-border rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-violet-500 bg-background"
             placeholder="e.g. project management software, CRM tools, email marketing"
             value={seeds}
             onChange={e => setSeeds(e.target.value)}
@@ -106,9 +102,9 @@ export default function PromptDiscovery() {
           <button
             onClick={() => discover.mutate(seeds.split(',').map(s => s.trim()).filter(Boolean))}
             disabled={discover.isPending || !seeds.trim()}
-            className="flex items-center gap-1.5 px-4 py-1.5 text-sm bg-primary text-white rounded-lg font-medium hover:bg-primary/90 disabled:opacity-50"
+            className="flex items-center gap-2 px-4 py-2.5 text-sm bg-violet-600 text-white rounded-xl font-medium hover:bg-violet-700 disabled:opacity-40 transition-all"
           >
-            {discover.isPending ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Discovering…</> : <><RefreshCw className="w-3.5 h-3.5" /> Discover</>}
+            {discover.isPending ? <><Loader2 className="w-4 h-4 animate-spin" /> Discovering…</> : <><RefreshCw className="w-4 h-4" /> Discover</>}
           </button>
         </div>
         {discover.isSuccess && (
@@ -123,7 +119,7 @@ export default function PromptDiscovery() {
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setActiveSource(null)}
-            className={`text-xs px-3 py-1 rounded-full border font-medium transition-colors ${!activeSource ? 'bg-primary text-white border-primary' : 'border-border text-muted-foreground hover:border-primary hover:text-primary'}`}
+            className={`text-xs px-3 py-1.5 rounded-md border font-medium transition-colors ${!activeSource ? 'bg-foreground text-background border-foreground' : 'border-border text-muted-foreground hover:bg-muted hover:text-foreground'}`}
           >
             All ({prompts.length})
           </button>
@@ -134,7 +130,7 @@ export default function PromptDiscovery() {
               <button
                 key={source}
                 onClick={() => setActiveSource(activeSource === source ? null : source)}
-                className={`flex items-center gap-1.5 text-xs px-3 py-1 rounded-full border font-medium transition-colors ${activeSource === source ? 'bg-primary text-white border-primary' : 'border-border text-muted-foreground hover:border-primary hover:text-primary'}`}
+                className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md border font-medium transition-colors ${activeSource === source ? 'bg-foreground text-background border-foreground' : 'border-border text-muted-foreground hover:bg-muted hover:text-foreground'}`}
               >
                 <Icon className="w-3 h-3" />
                 {meta?.label ?? source} ({sourceCounts[source]})
@@ -150,15 +146,15 @@ export default function PromptDiscovery() {
           <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
         </div>
       ) : filtered.length === 0 ? (
-        <div className="text-center py-16 text-muted-foreground">
-          <Sparkles className="w-8 h-8 mx-auto mb-3 opacity-30" />
-          <p className="text-sm font-medium">No prompts discovered yet</p>
-          <p className="text-xs mt-1">Enter seed keywords above to find real questions people ask AI</p>
+        <div className="bg-card rounded-2xl border border-border p-10 text-center shadow-card">
+          <Sparkles className="w-8 h-8 mx-auto mb-3 text-muted-foreground opacity-40" />
+          <p className="text-base font-display font-semibold mb-1">No prompts discovered yet</p>
+          <p className="text-sm text-muted-foreground">Enter seed keywords above to find real questions people ask AI</p>
         </div>
       ) : (
-        <div className="bg-card rounded-xl border border-border shadow-card">
-          <div className="px-4 py-3 border-b border-border flex items-center justify-between">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        <div className="bg-card rounded-2xl border border-border shadow-card overflow-hidden">
+          <div className="px-5 py-4 border-b border-border flex items-center justify-between">
+            <p className="eyebrow text-muted-foreground">
               {filtered.length} prompts discovered
             </p>
             <p className="text-xs text-muted-foreground">Click + to add to your tracked keywords</p>
@@ -168,9 +164,9 @@ export default function PromptDiscovery() {
               const meta = SOURCE_META[prompt.source]
               const Icon = meta?.icon ?? Sparkles
               return (
-                <div key={prompt.id} className="px-4 py-3 flex items-center gap-4 hover:bg-muted/30 transition-colors">
-                  <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${meta?.color ?? 'bg-muted text-muted-foreground'}`}>
-                    <Icon className="w-3.5 h-3.5" />
+                <div key={prompt.id} className="px-5 py-3 flex items-center gap-4 hover:bg-muted/40 transition-colors">
+                  <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${meta?.color ?? 'bg-muted text-muted-foreground'}`}>
+                    <Icon className="w-4 h-4" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-foreground">{prompt.phrase}</p>
@@ -178,22 +174,22 @@ export default function PromptDiscovery() {
                   </div>
                   {prompt.estimated_volume > 0 && (
                     <div className="text-right shrink-0">
-                      <p className="text-xs font-semibold text-foreground">{prompt.estimated_volume.toLocaleString()}</p>
-                      <p className="text-xs text-muted-foreground">vol</p>
+                      <p className="text-sm font-display font-bold nums tracking-tight text-foreground">{prompt.estimated_volume.toLocaleString()}</p>
+                      <p className="eyebrow text-muted-foreground">vol</p>
                     </div>
                   )}
                   {prompt.trend_score > 0 && (
                     <div className="flex items-center gap-1 shrink-0">
                       <TrendingUp className="w-3 h-3 text-emerald-500" />
-                      <span className="text-xs text-emerald-600 font-medium">{Math.round(prompt.trend_score * 100)}%</span>
+                      <span className="text-xs text-emerald-600 font-medium nums">{Math.round(prompt.trend_score * 100)}%</span>
                     </div>
                   )}
                   {prompt.already_tracked ? (
-                    <span className="text-xs text-muted-foreground px-2 py-0.5 bg-muted rounded shrink-0">Tracking</span>
+                    <span className="text-xs text-muted-foreground px-2 py-0.5 bg-muted rounded-md shrink-0">Tracking</span>
                   ) : (
                     <button
                       onClick={() => addToKeywords(prompt.phrase, prompt.id)}
-                      className="flex items-center gap-1 text-xs px-2 py-1 bg-primary/10 text-primary rounded-lg hover:bg-primary hover:text-white transition-colors shrink-0 font-medium"
+                      className="flex items-center gap-1 text-xs px-2.5 py-1 bg-violet-50 text-violet-700 rounded-md hover:bg-violet-600 hover:text-white transition-colors shrink-0 font-medium"
                     >
                       <Plus className="w-3 h-3" /> Track
                     </button>

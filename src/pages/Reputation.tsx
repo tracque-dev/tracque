@@ -10,31 +10,31 @@ function ReviewCard({ review, businessName }: { review: Review; businessName: st
     setReply(r)
   }
   return (
-    <div className="border border-border rounded-lg p-3">
-      <div className="flex items-center justify-between mb-1">
+    <div className="border border-border rounded-2xl p-4 bg-card shadow-card">
+      <div className="flex items-center justify-between mb-1.5">
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium">{review.author ?? 'Anonymous'}</span>
           <Stars rating={review.rating} size="w-3 h-3" />
         </div>
         <div className="flex items-center gap-2">
           {review.owner_answered
-            ? <span className="text-[10px] font-mono px-1.5 py-0.5 bg-emerald-50 text-emerald-700 rounded">replied</span>
-            : <span className="text-[10px] font-mono px-1.5 py-0.5 bg-amber-50 text-amber-700 rounded">needs reply</span>}
+            ? <span className="text-[10px] font-mono px-1.5 py-0.5 bg-emerald-50 text-emerald-700 rounded-md">replied</span>
+            : <span className="text-[10px] font-mono px-1.5 py-0.5 bg-amber-50 text-amber-700 rounded-md">needs reply</span>}
           <span className="text-xs text-muted-foreground">{review.posted_at}</span>
         </div>
       </div>
       {review.text && <p className="text-sm text-muted-foreground">{review.text}</p>}
       {!review.owner_answered && (
-        <div className="mt-2">
+        <div className="mt-2.5">
           {!reply ? (
-            <button onClick={generate} disabled={draft.isPending} className="flex items-center gap-1.5 text-xs text-primary hover:underline disabled:opacity-50">
+            <button onClick={generate} disabled={draft.isPending} className="flex items-center gap-1.5 text-xs font-medium text-violet-600 hover:text-violet-700 disabled:opacity-50">
               {draft.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />} Draft AI reply
             </button>
           ) : (
-            <div className="bg-muted/40 rounded-lg p-2.5 mt-1">
-              <p className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground mb-1">Suggested reply</p>
+            <div className="bg-muted/40 rounded-xl p-3 mt-1">
+              <p className="eyebrow text-muted-foreground mb-1.5">Suggested reply</p>
               <p className="text-sm">{reply}</p>
-              <button onClick={() => navigator.clipboard.writeText(reply)} className="text-xs text-primary hover:underline mt-1">Copy</button>
+              <button onClick={() => navigator.clipboard.writeText(reply)} className="text-xs font-medium text-violet-600 hover:text-violet-700 mt-1.5">Copy</button>
             </div>
           )}
         </div>
@@ -78,32 +78,30 @@ export default function Reputation() {
   const rank = competitors.length ? competitors.findIndex(c => c.is_self) + 1 : 0
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center"><Star className="w-4 h-4 text-amber-600" /></div>
-          <div>
-            <h1 className="text-xl font-semibold">Reputation</h1>
-            <p className="text-xs text-muted-foreground">Reviews drive what AI recommends — track your rating vs the local field</p>
-          </div>
+    <div className="p-7 space-y-6 max-w-[1400px]">
+      <div className="flex items-end justify-between">
+        <div>
+          <p className="eyebrow text-violet-600">Reputation</p>
+          <h1 className="text-2xl font-display font-bold tracking-tight mt-1">Reputation</h1>
+          <p className="text-sm text-muted-foreground mt-1">Reviews drive what AI recommends — track your rating vs the local field</p>
         </div>
       </div>
 
       {/* Scan controls */}
-      <div className="bg-card rounded-xl border border-border p-4 shadow-card">
+      <div className="bg-card rounded-2xl border border-border p-5 shadow-card">
         <div className="flex flex-wrap items-end gap-3">
           <div>
             <label className="text-xs font-medium text-muted-foreground">Category</label>
-            <input value={category} onChange={e => setCategory(e.target.value)} placeholder="plumber, credit union…" className="mt-1 w-48 px-3 py-2 text-sm border border-border rounded-lg bg-background" />
+            <input value={category} onChange={e => setCategory(e.target.value)} placeholder="plumber, credit union…" className="mt-1 w-48 px-3 py-2 text-sm border border-border rounded-xl bg-background focus:ring-violet-500" />
           </div>
           <div>
             <label className="text-xs font-medium text-muted-foreground">City or address</label>
-            <input value={location} onChange={e => setLocation(e.target.value)} placeholder="Austin, TX" className="mt-1 w-44 px-3 py-2 text-sm border border-border rounded-lg bg-background" />
+            <input value={location} onChange={e => setLocation(e.target.value)} placeholder="Austin, TX" className="mt-1 w-44 px-3 py-2 text-sm border border-border rounded-xl bg-background focus:ring-violet-500" />
           </div>
           <button
             onClick={() => ownBrand && runSync.mutate({ brand_id: ownBrand.id, category: category || undefined, location: location || undefined })}
             disabled={runSync.isPending || !ownBrand}
-            className="flex items-center gap-2 bg-foreground text-background px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50">
+            className="flex items-center gap-2 bg-foreground text-background px-4 py-2.5 rounded-xl text-sm font-medium hover:opacity-90 disabled:opacity-40 transition-all">
             {runSync.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
             {runSync.isPending ? 'Scanning…' : 'Run reputation scan'}
           </button>
@@ -114,19 +112,19 @@ export default function Reputation() {
       {/* Score + AI-recommendable gauge */}
       {google && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-card rounded-xl border border-border p-5 shadow-card">
-            <p className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground mb-2">Google rating</p>
+          <div className="bg-card rounded-2xl border border-border p-5 shadow-card">
+            <p className="eyebrow text-muted-foreground mb-3">Google rating</p>
             <div className="flex items-end gap-2">
-              <p className="text-3xl font-bold nums">{rating?.toFixed(1) ?? '—'}</p>
+              <p className="text-3xl font-display font-bold nums tracking-tight">{rating?.toFixed(1) ?? '—'}</p>
               <div className="mb-1"><Stars rating={rating} /></div>
             </div>
-            <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1"><MessageSquare className="w-3 h-3" /> {reviews.toLocaleString()} reviews</p>
+            <p className="text-xs text-muted-foreground mt-1.5 flex items-center gap-1"><MessageSquare className="w-3 h-3" /> {reviews.toLocaleString()} reviews</p>
           </div>
 
-          <div className={`rounded-xl border p-5 shadow-card ${recommendable ? 'bg-emerald-50 border-emerald-200' : 'bg-amber-50 border-amber-200'}`}>
-            <p className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground mb-2">AI-recommendable?</p>
+          <div className={`rounded-2xl border p-5 shadow-card ${recommendable ? 'bg-emerald-50 border-emerald-200' : 'bg-amber-50 border-amber-200'}`}>
+            <p className="eyebrow text-muted-foreground mb-3">AI-recommendable?</p>
             {recommendable ? (
-              <div className="flex items-center gap-2 text-emerald-700"><ShieldCheck className="w-5 h-5" /><p className="font-semibold">Yes — above threshold</p></div>
+              <div className="flex items-center gap-2 text-emerald-700"><ShieldCheck className="w-5 h-5" /><p className="font-display font-semibold">Yes — above threshold</p></div>
             ) : (
               <div className="flex items-start gap-2 text-amber-700">
                 <AlertTriangle className="w-5 h-5 shrink-0" />
@@ -138,16 +136,16 @@ export default function Reputation() {
                 </p>
               </div>
             )}
-            <p className="text-[11px] text-muted-foreground mt-2">AI engines favor ~{THRESHOLD}★ with {MIN_REVIEWS}+ reviews; they exclude near 3.4★.</p>
+            <p className="text-[11px] text-muted-foreground mt-2.5">AI engines favor ~{THRESHOLD}★ with {MIN_REVIEWS}+ reviews; they exclude near 3.4★.</p>
           </div>
 
-          <div className="bg-card rounded-xl border border-border p-5 shadow-card">
-            <p className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground mb-2">Local rank</p>
+          <div className="bg-card rounded-2xl border border-border p-5 shadow-card">
+            <p className="eyebrow text-muted-foreground mb-3">Local rank</p>
             <div className="flex items-end gap-2">
-              <p className="text-3xl font-bold nums">{rank ? `#${rank}` : '—'}</p>
+              <p className="text-3xl font-display font-bold nums tracking-tight">{rank ? `#${rank}` : '—'}</p>
               <p className="text-xs text-muted-foreground mb-1">of {competitors.length}</p>
             </div>
-            <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1"><Trophy className="w-3 h-3" /> by rating in your area</p>
+            <p className="text-xs text-muted-foreground mt-1.5 flex items-center gap-1"><Trophy className="w-3 h-3" /> by rating in your area</p>
           </div>
         </div>
       )}
@@ -155,12 +153,12 @@ export default function Reputation() {
       {/* Ratings across platforms */}
       {ownBrand && profiles.filter(p => p.brand_id === ownBrand.id).length > 1 && (
         <div>
-          <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-2">Across platforms</p>
+          <p className="eyebrow text-muted-foreground mb-3">Across platforms</p>
           <div className="flex flex-wrap gap-3">
             {profiles.filter(p => p.brand_id === ownBrand.id).map(p => (
-              <div key={p.platform} className="flex items-center gap-2 bg-card border border-border rounded-lg px-3 py-2 shadow-card">
+              <div key={p.platform} className="flex items-center gap-2 bg-card border border-border rounded-xl px-3 py-2 shadow-card">
                 <span className="text-xs font-medium capitalize">{p.platform}</span>
-                <span className="text-sm font-bold nums">{p.rating?.toFixed(1) ?? '—'}</span>
+                <span className="text-sm font-display font-bold nums">{p.rating?.toFixed(1) ?? '—'}</span>
                 <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
                 <span className="text-xs text-muted-foreground nums">({(p.reviews_count ?? 0).toLocaleString()})</span>
               </div>
@@ -171,11 +169,11 @@ export default function Reputation() {
 
       {/* Aspect topics */}
       {google?.topics && google.topics.length > 0 && (
-        <div className="bg-card rounded-xl border border-border p-4 shadow-card">
-          <p className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground mb-3">What customers mention</p>
+        <div className="bg-card rounded-2xl border border-border p-5 shadow-card">
+          <p className="eyebrow text-muted-foreground mb-4">What customers mention</p>
           <div className="flex flex-wrap gap-2">
             {google.topics.map(t => (
-              <span key={t.topic} className="text-xs px-2.5 py-1 rounded-full bg-muted text-foreground">{t.topic} <span className="text-muted-foreground nums">{t.count}</span></span>
+              <span key={t.topic} className="text-xs px-2.5 py-1 rounded-md bg-muted text-foreground">{t.topic} <span className="text-muted-foreground nums">{t.count}</span></span>
             ))}
           </div>
         </div>
@@ -184,19 +182,19 @@ export default function Reputation() {
       {/* Reviews + AI-drafted replies */}
       {google && (
         <div>
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
+          <div className="flex items-center justify-between mb-3">
+            <p className="eyebrow text-muted-foreground">
               Recent reviews{google.response_rate != null && <span className="text-foreground"> · {Math.round(google.response_rate * 100)}% response rate</span>}
             </p>
             <button onClick={() => ownBrand && runReviews.mutate(ownBrand.id)} disabled={runReviews.isPending}
-              className="flex items-center gap-1.5 text-xs border border-border rounded-lg px-3 py-1.5 hover:bg-muted/40 disabled:opacity-50">
+              className="flex items-center gap-1.5 text-xs font-medium border border-border rounded-xl px-3 py-2 hover:bg-muted disabled:opacity-50">
               {runReviews.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Reply className="w-3.5 h-3.5" />}
               {runReviews.isPending ? 'Loading reviews…' : 'Load reviews'}
             </button>
           </div>
           {(runReviews.data as any)?.pending && <p className="text-xs text-amber-600 mb-2">Reviews still processing — click again in a few seconds.</p>}
           {reviewList.length > 0 && (
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               {reviewList.map(r => <ReviewCard key={r.id} review={r} businessName={ownBrand?.name ?? google.brand_name} />)}
             </div>
           )}
@@ -206,29 +204,29 @@ export default function Reputation() {
       {/* Local competitor grid */}
       {competitors.length > 0 && (
         <div>
-          <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-2">Share of local voice · {competitors.length} businesses</p>
-          <div className="bg-card rounded-xl border border-border shadow-card overflow-hidden">
+          <p className="eyebrow text-muted-foreground mb-3">Share of local voice · {competitors.length} businesses</p>
+          <div className="bg-card rounded-2xl border border-border shadow-card overflow-hidden">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-border bg-muted/30">
+                <tr className="border-b border-border">
                   {['#', 'Business', 'Rating', 'Reviews', 'Claimed'].map(h => (
-                    <th key={h} className="px-4 py-2.5 text-left text-[11px] font-mono uppercase tracking-wider text-muted-foreground">{h}</th>
+                    <th key={h} className="px-5 py-3 text-left eyebrow text-muted-foreground font-normal">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {competitors.map((c, i) => (
-                  <tr key={c.id} className={`border-b border-border last:border-0 transition-colors ${c.is_self ? 'bg-blue-50/50' : 'hover:bg-muted/20'}`}>
-                    <td className="px-4 py-2.5 text-xs nums text-muted-foreground">{i + 1}</td>
-                    <td className="px-4 py-2.5">
+                  <tr key={c.id} className={`border-b border-border last:border-0 transition-colors ${c.is_self ? 'bg-violet-50/60' : 'hover:bg-muted/40'}`}>
+                    <td className="px-5 py-3 text-sm nums text-muted-foreground">{i + 1}</td>
+                    <td className="px-5 py-3">
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-medium truncate max-w-[260px]">{c.name}</span>
-                        {c.is_self && <span className="text-[10px] font-mono px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded">YOU</span>}
+                        {c.is_self && <span className="text-[10px] font-mono px-1.5 py-0.5 bg-violet-100 text-violet-700 rounded-md">YOU</span>}
                       </div>
                     </td>
-                    <td className="px-4 py-2.5"><div className="flex items-center gap-1.5"><span className="text-sm font-semibold nums">{c.rating?.toFixed(1) ?? '—'}</span><Star className="w-3 h-3 text-amber-400 fill-amber-400" /></div></td>
-                    <td className="px-4 py-2.5 text-xs nums text-muted-foreground">{c.reviews_count?.toLocaleString() ?? '—'}</td>
-                    <td className="px-4 py-2.5">{c.is_claimed ? <span className="text-[10px] font-mono px-1.5 py-0.5 bg-emerald-50 text-emerald-700 rounded">claimed</span> : <span className="text-xs text-muted-foreground">—</span>}</td>
+                    <td className="px-5 py-3"><div className="flex items-center gap-1.5"><span className="text-sm font-display font-semibold nums">{c.rating?.toFixed(1) ?? '—'}</span><Star className="w-3 h-3 text-amber-400 fill-amber-400" /></div></td>
+                    <td className="px-5 py-3 text-sm nums text-muted-foreground">{c.reviews_count?.toLocaleString() ?? '—'}</td>
+                    <td className="px-5 py-3">{c.is_claimed ? <span className="text-[10px] font-mono px-1.5 py-0.5 bg-emerald-50 text-emerald-700 rounded-md">claimed</span> : <span className="text-sm text-muted-foreground">—</span>}</td>
                   </tr>
                 ))}
               </tbody>
@@ -238,9 +236,9 @@ export default function Reputation() {
       )}
 
       {!google && competitors.length === 0 && (
-        <div className="text-center py-14 text-muted-foreground border border-dashed border-border rounded-xl">
+        <div className="text-center py-14 text-muted-foreground border border-dashed border-border rounded-2xl">
           <Star className="w-8 h-8 mx-auto mb-3 opacity-30" />
-          <p className="text-sm font-medium">No reputation data yet</p>
+          <p className="text-sm font-display font-semibold text-foreground">No reputation data yet</p>
           <p className="text-xs mt-1">Run a scan with your category + location to pull ratings and the local competitive set.</p>
         </div>
       )}

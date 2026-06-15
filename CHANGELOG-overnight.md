@@ -47,3 +47,12 @@ Autonomous loop working through SPECS.md. One ticket per iteration: build → ty
   - **e2e #2 (RLS, two real auth users):** as a non-owner, the `client_reports` squat AND the `brands` squat are both **rejected by RLS**; legitimate owner writes (own link, own brand, unassigned brand) and the victim's own link all still succeed ✓
   - **LOW (consistency):** authed preview counted competitor review profiles while the public fn was own-only → aligned `Report.tsx` to own-only so preview == client report.
 - **Verified live in preview:** owner "Generate link" works under the new RLS; `/r/:token` renders the branded report with no app chrome.
+
+---
+
+## ⏹ Loop stopped (by user) — 2026-06-15
+
+Autonomous loop ended early at user request. Final tally:
+- **Shipped to prod (7):** TRQ-43 (Trustpilot), TRQ-34 (Keyword Explorer), TRQ-35 (rank history), TRQ-23 (geo-grid SAIV), TRQ-25 (Knowledge Panel), TRQ-71 (Compliance scorecard), TRQ-12 (white-label client reports + security-hardened share links).
+- **Not built:** TRQ-ONB (segmented onboarding) — deferred.
+- **TRQ-D1/D2/D3 (design tickets):** superseded by the full "Tracque OS" violet redesign now in progress (in-app rollout running; landing + deploy to follow).

@@ -4,7 +4,7 @@ export function Mark({
   className = 'w-7 h-7',
   badge = '#0A0A0A',
   rail = '#ffffff',
-  node = '#3B82F6',
+  node = '#7B5BF5',
 }: { className?: string; badge?: string; rail?: string; node?: string }) {
   return (
     <div className={`${className} rounded-[28%] flex items-center justify-center`} style={{ background: badge }}>
