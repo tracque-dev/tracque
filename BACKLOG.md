@@ -73,7 +73,7 @@ IDs are stable; reference them in commits (`TRQ-33: ...`).
 ## EPIC H — Credit-union / compliance wedge
 | ID | Status | Title | Acceptance |
 |----|--------|-------|------------|
-| TRQ-70 | 🔲 | AI Rate-Accuracy Monitor | Probe engines on rates/fees/hours; diff vs version-controlled ground-truth sheet; alert on wrong APR (<24h) |
+| TRQ-70 | ✅ | AI Rate-Accuracy Monitor | Ground-truth sheet → probe AI per fact → judge accurate/wrong/not-stated → compliance-risk alert. Monitoring only (no auto-publish). Verified: caught a planted wrong APY |
 | TRQ-71 | 🔲 | Compliance scorecard + vendor one-pager | Citation accuracy, freshness lag; NCUA examiner doc; human-approval gate before any rate publishes; no PII/decisioning |
 
 ## EPIC I — Billing & Plans
