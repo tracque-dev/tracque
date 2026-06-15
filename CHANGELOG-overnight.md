@@ -19,3 +19,9 @@ Autonomous loop working through SPECS.md. One ticket per iteration: build → ty
 - SEO keyword rows are now click-to-expand → inline SVG sparkline of position-over-time (green=improved, red=dropped), with a scan count + delta. `useRankHistory` reads existing `seo_results` snapshots (RLS owner-scoped). No new tables/deps.
 - **e2e:** seeded snapshots [8 → 3] → history query returns them ordered; sparkline charts the improving trend ✓
 - **Review:** self-reviewed (frontend-only, RLS-safe direct query).
+
+## ✅ TRQ-23 — Geo-grid SAIV heatmap
+- `saiv-grid` edge fn: geocode a center → 3×3 grid (~±5km) → reverse-geocode each cell → web-grounded "best [category] in [locality]" → brand inclusion + heuristic position. `saiv_grid` table (023, security_invoker view + brand-owner RLS). SAIV page: a 3×3 color heatmap (green=recommended, red=invisible) + coverage %.
+- **Perf:** first e2e timed out (9 sequential AI calls); fixed by running the 9 AI checks in **parallel** (reverse-geocode stays sequential for Nominatim's rate limit) → 41s.
+- **e2e:** Franklin Barbecue / barbecue / Austin → **9 cells, 78% coverage**, #3-4 where recommended, invisible in 2 cells ✓
+- **Cost guard:** exactly 9 cells. **Review:** self-reviewed (saiv_grid scoping identical to verified saiv_results pattern; function e2e-verified).

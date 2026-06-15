@@ -1,6 +1,62 @@
 import { useState, useMemo } from 'react'
-import { LayoutGrid, Loader2, Play, Check, X, Trophy } from 'lucide-react'
-import { useBrands, useKeywords, useSaivResults, useRunSaivScan } from '../lib/hooks'
+import { LayoutGrid, Loader2, Play, Check, X, Trophy, MapPin } from 'lucide-react'
+import { useBrands, useKeywords, useSaivResults, useRunSaivScan, useSaivGrid, useRunSaivGrid, type Brand } from '../lib/hooks'
+
+// Local geo-grid: 3x3 heatmap of AI inclusion across nearby localities.
+function GeoGrid({ ownBrand }: { ownBrand?: Brand }) {
+  const { data: cells = [] } = useSaivGrid()
+  const run = useRunSaivGrid()
+  const [category, setCategory] = useState('')
+  const [location, setLocation] = useState('')
+  const hits = cells.filter(c => c.mentioned).length
+  const coverage = cells.length ? Math.round((hits / cells.length) * 100) : 0
+  // arrange into 3 rows of 3 (already ordered lat desc, lng asc)
+  const rows3 = [cells.slice(0, 3), cells.slice(3, 6), cells.slice(6, 9)].filter(r => r.length)
+
+  return (
+    <div>
+      <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5" /> Local geo-grid — "near me" coverage</p>
+      <div className="bg-card rounded-xl border border-border p-4 shadow-card">
+        <div className="flex flex-wrap items-end gap-2 mb-4">
+          <div>
+            <label className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">Category</label>
+            <input value={category} onChange={e => setCategory(e.target.value)} placeholder="credit union, plumber…" className="mt-0.5 w-44 px-3 py-1.5 text-sm border border-border rounded-lg bg-background" />
+          </div>
+          <div>
+            <label className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">City</label>
+            <input value={location} onChange={e => setLocation(e.target.value)} placeholder="Austin, TX" className="mt-0.5 w-40 px-3 py-1.5 text-sm border border-border rounded-lg bg-background" />
+          </div>
+          <button onClick={() => ownBrand && category && location && run.mutate({ brand_id: ownBrand.id, category, location })}
+            disabled={run.isPending || !ownBrand || !category || !location}
+            className="flex items-center gap-2 bg-foreground text-background px-3 py-1.5 rounded-lg text-sm font-medium disabled:opacity-50">
+            {run.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <MapPin className="w-4 h-4" />} {run.isPending ? 'Mapping…' : 'Map the grid'}
+          </button>
+          {run.isPending && <span className="text-xs text-muted-foreground">9 cells × a web-grounded query — ~1 min…</span>}
+        </div>
+        {cells.length === 0 ? (
+          <p className="text-center text-xs text-muted-foreground py-6">Enter a category + city to map where AI does (and doesn't) recommend you across the area.</p>
+        ) : (
+          <div className="flex items-start gap-6">
+            <div className="grid grid-cols-3 gap-1.5">
+              {rows3.flat().map(c => (
+                <div key={c.id} title={`${c.label ?? ''}${c.position ? ` · #${c.position}` : ''}`}
+                  className={`w-24 h-16 rounded-lg flex flex-col items-center justify-center text-center px-1 ${c.mentioned ? (c.position && c.position <= 3 ? 'bg-emerald-500 text-white' : 'bg-emerald-200 text-emerald-900') : 'bg-red-100 text-red-700'}`}>
+                  <span className="text-[10px] font-medium leading-tight line-clamp-2">{c.label}</span>
+                  {c.mentioned ? <span className="text-[10px] font-mono mt-0.5">{c.position ? `#${c.position}` : '✓'}</span> : <span className="text-[10px] font-mono mt-0.5">—</span>}
+                </div>
+              ))}
+            </div>
+            <div>
+              <p className="text-3xl font-bold nums">{coverage}%</p>
+              <p className="text-xs text-muted-foreground">recommended in {hits}/{cells.length} areas</p>
+              <p className="text-[11px] text-muted-foreground mt-2 max-w-[180px]">Green = recommended, red = invisible. Local AI answers vary by area — red cells are where to focus.</p>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
 
 export default function Saiv() {
   const { data: brands = [] } = useBrands()
@@ -80,6 +136,9 @@ export default function Saiv() {
           </div>
         </div>
       )}
+
+      {/* Local geo-grid heatmap */}
+      <GeoGrid ownBrand={ownBrand} />
 
       {/* Grid */}
       {isLoading ? (

@@ -383,6 +383,43 @@ export function useSaivResults() {
   })
 }
 
+export interface SaivGridCell {
+  id: string
+  label: string | null
+  lat: number | null
+  lng: number | null
+  mentioned: boolean
+  position: number | null
+}
+
+export function useSaivGrid() {
+  const userId = useUserId()
+  const { clientId } = useSelectedClient()
+  return useQuery({
+    queryKey: ['saiv_grid', userId, clientId],
+    queryFn: async () => {
+      let q = supabase.from('saiv_grid_scoped').select('*').eq('user_id', userId)
+      if (clientId !== 'all') q = q.eq('client_id', clientId)
+      const { data, error } = await q.order('lat', { ascending: false }).order('lng', { ascending: true })
+      if (error) throw error
+      return data as SaivGridCell[]
+    },
+  })
+}
+
+export function useRunSaivGrid() {
+  const userId = useUserId()
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async (opts: { brand_id: string; category: string; location: string }) => {
+      const { data, error } = await supabase.functions.invoke('saiv-grid', { body: { user_id: userId, ...opts } })
+      if (error) throw error
+      return data
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['saiv_grid'] }),
+  })
+}
+
 export function useRunSaivScan() {
   const userId = useUserId()
   const qc = useQueryClient()
