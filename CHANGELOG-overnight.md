@@ -14,3 +14,8 @@ Autonomous loop working through SPECS.md. One ticket per iteration: build → ty
 - `keyword-explorer` edge fn (Labs `keyword_ideas`) + `keyword_ideas` table (022, RLS user-scoped + client filter). SEO page: seed input → idea table (volume/KD/CPC/intent) with a per-row "track" button (adds to keywords, client-scoped).
 - **e2e:** seed "crm" → **50 ideas** with volume/KD ✓ (salesforce 550k/KD85, etc.)
 - **Review:** self-reviewed — scoping identical to the already-verified keyword_gaps pattern (user_id RLS + client_id filter, no views/joins). Cost guard: capped at 50 ideas.
+
+## ✅ TRQ-35 — Rank history charts
+- SEO keyword rows are now click-to-expand → inline SVG sparkline of position-over-time (green=improved, red=dropped), with a scan count + delta. `useRankHistory` reads existing `seo_results` snapshots (RLS owner-scoped). No new tables/deps.
+- **e2e:** seeded snapshots [8 → 3] → history query returns them ordered; sparkline charts the improving trend ✓
+- **Review:** self-reviewed (frontend-only, RLS-safe direct query).

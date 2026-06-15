@@ -604,6 +604,21 @@ export function useKeywordGaps(brandId?: string) {
   })
 }
 
+export function useRankHistory(keywordId?: string, brandId?: string, enabled = false) {
+  return useQuery({
+    queryKey: ['rank_history', keywordId, brandId],
+    enabled: enabled && !!keywordId && !!brandId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('seo_results').select('position, scanned_at')
+        .eq('keyword_id', keywordId!).eq('brand_id', brandId!)
+        .order('scanned_at', { ascending: true }).limit(60)
+      if (error) throw error
+      return data as { position: number | null; scanned_at: string }[]
+    },
+  })
+}
+
 export interface KeywordIdea {
   id: string
   seed: string | null

@@ -40,7 +40,7 @@ IDs are stable; reference them in commits (`TRQ-33: ...`).
 | TRQ-32 | ✅ | Competitor comparison | Own vs competitors: DR / traffic / keywords / ref domains |
 | TRQ-33 | ✅ | Keyword Gap + competitor discovery | `competitors_domain` + `domain_intersection`; mega-domains filtered |
 | TRQ-34 | ✅ | Keyword Explorer | Seed → 50 ideas (volume/KD/CPC/intent) + track button. Verified: crm → 50 ideas |
-| TRQ-35 | 🔲 | Rank history charts | We store snapshots; plot position-over-time per keyword |
+| TRQ-35 | ✅ | Rank history charts | Click-to-expand keyword row → inline SVG sparkline of position-over-time. Verified: 8→3 trend |
 | TRQ-36 | ⛔ | GSC integration (free first-party rank) | `sync-gsc` built; needs Google OAuth app (`GOOGLE_CLIENT_ID/SECRET`) + per-client connect flow |
 | TRQ-37 | 🔲 | Bing rank (Copilot proxy) | SerpAPI Bing engine → Bing position (predicts AI citation) |
 

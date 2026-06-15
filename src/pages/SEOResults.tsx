@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Search, TrendingUp, TrendingDown, Minus, Loader2, Link2, RefreshCw, Gauge, Users2, KeyRound, BarChart3, Target, Lightbulb, Plus, Check } from 'lucide-react'
-import { useLatestSeoResults, useDomainOverview, useBacklinks, useRunSeoSync, useKeywordGaps, useRunCompetitorIntel, useKeywordIdeas, useRunKeywordExplorer, useAddKeyword } from '../lib/hooks'
+import { useLatestSeoResults, useDomainOverview, useBacklinks, useRunSeoSync, useKeywordGaps, useRunCompetitorIntel, useKeywordIdeas, useRunKeywordExplorer, useAddKeyword, useRankHistory } from '../lib/hooks'
 
 function fmt(n: number | null | undefined): string {
   if (n == null) return '—'
@@ -45,6 +45,60 @@ function StatCard({ icon: Icon, label, value, sub }: { icon: any; label: string;
       <p className="text-2xl font-bold nums">{value}</p>
       {sub && <p className="text-xs text-muted-foreground mt-0.5">{sub}</p>}
     </div>
+  )
+}
+
+// Rank position over time — inline SVG sparkline (lower position = better, drawn higher).
+function RankSparkline({ points }: { points: { position: number | null; scanned_at: string }[] }) {
+  const pts = points.filter(p => p.position != null) as { position: number; scanned_at: string }[]
+  if (pts.length < 2) return <p className="text-xs text-muted-foreground">Not enough history yet — needs ≥2 scans to chart a trend.</p>
+  const W = 320, H = 56, pad = 6
+  const positions = pts.map(p => p.position)
+  const min = Math.min(...positions), max = Math.max(...positions)
+  const range = Math.max(1, max - min)
+  const xy = pts.map((p, i) => [
+    pad + (i / (pts.length - 1)) * (W - 2 * pad),
+    pad + ((p.position - min) / range) * (H - 2 * pad), // worse (higher #) → lower on chart
+  ])
+  const d = xy.map(([x, y], i) => `${i ? 'L' : 'M'}${x.toFixed(1)} ${y.toFixed(1)}`).join(' ')
+  const delta = pts[pts.length - 1].position - pts[0].position // negative = improved
+  const color = delta <= 0 ? '#10b981' : '#ef4444'
+  return (
+    <div>
+      <svg viewBox={`0 0 ${W} ${H}`} className="w-full max-w-[320px]" preserveAspectRatio="none">
+        <path d={d} fill="none" stroke={color} strokeWidth="2" strokeLinejoin="round" />
+        {xy.map(([x, y], i) => <circle key={i} cx={x} cy={y} r="2.5" fill={color} />)}
+      </svg>
+      <p className="text-xs text-muted-foreground mt-1 nums">
+        {pts.length} scans · {delta < 0 ? `▲ improved ${-delta}` : delta > 0 ? `▼ dropped ${delta}` : 'flat'} (#{pts[0].position} → #{pts[pts.length - 1].position})
+      </p>
+    </div>
+  )
+}
+
+function KeywordRow({ row }: { row: any }) {
+  const [open, setOpen] = useState(false)
+  const { data: hist = [], isLoading } = useRankHistory(row.keyword_id, row.brand_id, open)
+  return (
+    <>
+      <tr onClick={() => setOpen(o => !o)} className="border-b border-border last:border-0 hover:bg-muted/20 transition-colors cursor-pointer">
+        <td className="px-4 py-2.5 text-sm max-w-[200px] truncate font-medium">{row.phrase}</td>
+        <td className="px-4 py-2.5 text-xs text-muted-foreground">{row.brand_name}</td>
+        <td className="px-4 py-2.5">{row.position ? <PositionBadge pos={row.position} /> : <span className="text-xs text-muted-foreground">Not in top 100</span>}</td>
+        <td className="px-4 py-2.5"><KDBadge kd={row.difficulty ?? null} /></td>
+        <td className="px-4 py-2.5 text-xs nums text-muted-foreground">{fmt(row.search_volume)}</td>
+        <td className="px-4 py-2.5 text-xs nums text-muted-foreground">{row.cpc != null ? `$${Number(row.cpc).toFixed(2)}` : '—'}</td>
+        <td className="px-4 py-2.5 text-xs text-muted-foreground truncate max-w-[180px]">{row.url ?? '—'}</td>
+      </tr>
+      {open && (
+        <tr className="bg-muted/10 border-b border-border">
+          <td colSpan={7} className="px-4 py-3">
+            <p className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground mb-2">Rank history</p>
+            {isLoading ? <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" /> : <RankSparkline points={hist} />}
+          </td>
+        </tr>
+      )}
+    </>
   )
 }
 
@@ -248,17 +302,7 @@ export default function SEOResults() {
               </tr>
             </thead>
             <tbody>
-              {results.map((row) => (
-                <tr key={row.id} className="border-b border-border last:border-0 hover:bg-muted/20 transition-colors">
-                  <td className="px-4 py-2.5 text-sm max-w-[200px] truncate font-medium">{row.phrase}</td>
-                  <td className="px-4 py-2.5 text-xs text-muted-foreground">{row.brand_name}</td>
-                  <td className="px-4 py-2.5">{row.position ? <PositionBadge pos={row.position} /> : <span className="text-xs text-muted-foreground">Not in top 100</span>}</td>
-                  <td className="px-4 py-2.5"><KDBadge kd={(row as any).difficulty ?? null} /></td>
-                  <td className="px-4 py-2.5 text-xs nums text-muted-foreground">{fmt(row.search_volume)}</td>
-                  <td className="px-4 py-2.5 text-xs nums text-muted-foreground">{(row as any).cpc != null ? `$${Number((row as any).cpc).toFixed(2)}` : '—'}</td>
-                  <td className="px-4 py-2.5 text-xs text-muted-foreground truncate max-w-[180px]">{row.url ?? '—'}</td>
-                </tr>
-              ))}
+              {results.map((row) => <KeywordRow key={row.id} row={row} />)}
             </tbody>
           </table>
         </div>
