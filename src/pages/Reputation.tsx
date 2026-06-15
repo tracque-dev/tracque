@@ -64,7 +64,7 @@ export default function Reputation() {
 
   const ownBrand = brands.find(b => b.type === 'own') ?? brands[0]
   const { data: competitors = [] } = useLocalCompetitors(ownBrand?.id)
-  const { data: reviews = [] } = useReviews(ownBrand?.id)
+  const { data: reviewList = [] } = useReviews(ownBrand?.id)
   const runReviews = useRunReviewsSync()
   const google = profiles.find(p => p.brand_id === ownBrand?.id && p.platform === 'google')
 
@@ -178,9 +178,9 @@ export default function Reputation() {
             </button>
           </div>
           {(runReviews.data as any)?.pending && <p className="text-xs text-amber-600 mb-2">Reviews still processing — click again in a few seconds.</p>}
-          {reviews.length > 0 && (
+          {reviewList.length > 0 && (
             <div className="space-y-2">
-              {reviews.map(r => <ReviewCard key={r.id} review={r} businessName={ownBrand?.name ?? google.brand_name} />)}
+              {reviewList.map(r => <ReviewCard key={r.id} review={r} businessName={ownBrand?.name ?? google.brand_name} />)}
             </div>
           )}
         </div>
