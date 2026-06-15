@@ -74,36 +74,43 @@ export default function Layout() {
 
   return (
     <div className="flex h-screen bg-background">
-      <aside className="w-56 flex flex-col bg-[hsl(var(--sidebar))] shrink-0">
+      <aside className="w-60 flex flex-col bg-sidebar shrink-0 relative">
+        {/* rail motif top strip */}
+        <div className="absolute top-0 inset-x-0 h-24 rails pointer-events-none" />
+
         {/* Brand */}
-        <div className="flex items-center gap-2.5 px-4 py-5 border-b border-white/5">
-          <Mark className="w-7 h-7" badge="hsl(var(--sidebar-primary))" rail="#0A0A0A" node="#ffffff" />
-          <span className="text-white font-semibold text-base tracking-tight">Tracque</span>
+        <div className="relative flex items-center gap-2.5 px-5 pt-6 pb-5">
+          <div className="w-9 h-9 rounded-xl bg-violet-600 flex items-center justify-center shadow-violet">
+            <Mark className="w-5 h-5" badge="transparent" rail="#ffffff" node="#ffffff" />
+          </div>
+          <span className="text-white font-display font-semibold text-lg tracking-tight">Tracque</span>
         </div>
 
         {/* Client workspace switcher */}
-        <div className="pt-2">
+        <div className="relative">
           <ClientSwitcher />
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 px-2 py-3 space-y-0.5">
+        <nav className="relative flex-1 px-3 py-3 space-y-0.5 overflow-y-auto">
+          <p className="eyebrow text-white/30 px-2 pb-2 pt-1">Workspace</p>
           {nav.map(({ to, icon: Icon, label }) => (
             <NavLink
               key={to}
               to={to}
               className={({ isActive }) =>
                 cn(
-                  'flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors',
+                  'group relative flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-all',
                   isActive
-                    ? 'bg-[hsl(var(--sidebar-accent))] text-white'
-                    : 'text-[hsl(var(--sidebar-foreground))] hover:bg-[hsl(var(--sidebar-accent))] hover:text-white'
+                    ? 'bg-white/[0.07] text-white'
+                    : 'text-sidebar-foreground hover:bg-white/[0.04] hover:text-white'
                 )
               }
             >
               {({ isActive }) => (
                 <>
-                  <Icon className={cn('w-4 h-4', isActive ? 'text-[hsl(var(--sidebar-primary))]' : '')} />
+                  {isActive && <span className="absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-full bg-violet-500" />}
+                  <Icon className={cn('w-4 h-4 shrink-0 transition-colors', isActive ? 'text-violet-400' : 'text-white/40 group-hover:text-white/70')} />
                   {label}
                 </>
               )}
@@ -112,27 +119,27 @@ export default function Layout() {
         </nav>
 
         {/* Footer */}
-        <div className="px-2 py-3 border-t border-white/5">
+        <div className="relative px-3 py-3 border-t border-white/[0.06]">
           <NavLink
             to="/app/settings"
             className={({ isActive }) =>
               cn(
-                'flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors',
+                'flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
                 isActive
-                  ? 'bg-[hsl(var(--sidebar-accent))] text-white'
-                  : 'text-[hsl(var(--sidebar-foreground))] hover:bg-[hsl(var(--sidebar-accent))] hover:text-white'
+                  ? 'bg-white/[0.07] text-white'
+                  : 'text-sidebar-foreground hover:bg-white/[0.04] hover:text-white'
               )
             }
           >
-            <Settings className="w-4 h-4" />
+            <Settings className="w-4 h-4 text-white/40" />
             Settings
           </NavLink>
           {user && (
-            <div className="px-3 pt-2">
-              <p className="text-[10px] text-[hsl(var(--sidebar-foreground))] opacity-50 truncate">{user.email}</p>
+            <div className="px-3 pt-2.5">
+              <p className="text-[10px] text-white/35 truncate">{user.email}</p>
               <button
                 onClick={handleSignOut}
-                className="flex items-center gap-1.5 mt-1.5 text-[10px] text-[hsl(var(--sidebar-foreground))] opacity-50 hover:opacity-100 transition-opacity"
+                className="flex items-center gap-1.5 mt-1.5 text-[10px] text-white/35 hover:text-white/70 transition-colors"
               >
                 <LogOut className="w-3 h-3" /> Sign out
               </button>

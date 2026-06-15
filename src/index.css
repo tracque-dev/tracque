@@ -4,38 +4,49 @@
 
 @layer base {
   :root {
-    --background: 220 16% 97%;
-    --foreground: 224 71% 4%;
+    /* ── Tracque OS — bold high-contrast, violet-native ──────
+       Light canvas + violet-black ink blocks + one electric
+       violet accent. High contrast, oversized type, no pastel. */
+    --background: 252 30% 98%;        /* whisper-violet off-white */
+    --foreground: 252 30% 8%;         /* violet-near-black ink */
     --card: 0 0% 100%;
-    --card-foreground: 224 71% 4%;
+    --card-foreground: 252 30% 8%;
     --popover: 0 0% 100%;
-    --popover-foreground: 224 71% 4%;
-    --primary: 221 83% 53%;
+    --popover-foreground: 252 30% 8%;
+    --primary: 252 90% 62%;           /* electric violet-indigo #7B5BF5 */
     --primary-foreground: 0 0% 100%;
-    --secondary: 220 14% 95%;
-    --secondary-foreground: 224 71% 4%;
-    --muted: 220 14% 95%;
-    --muted-foreground: 220 9% 46%;
-    --accent: 220 14% 95%;
-    --accent-foreground: 224 71% 4%;
-    --destructive: 0 84% 60%;
+    --secondary: 252 24% 95%;
+    --secondary-foreground: 252 30% 8%;
+    --muted: 252 24% 96%;
+    --muted-foreground: 252 8% 44%;
+    --accent: 252 90% 96%;            /* faint violet wash for hovers */
+    --accent-foreground: 252 80% 40%;
+    --destructive: 351 83% 58%;
     --destructive-foreground: 0 0% 100%;
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 221 83% 53%;
-    --radius: 0.625rem;
-    --success: 142 71% 45%;
-    --warning: 38 92% 50%;
+    --border: 252 22% 91%;
+    --input: 252 22% 91%;
+    --ring: 252 90% 62%;
+    --radius: 0.875rem;               /* bolder corners */
+    --success: 158 75% 40%;
+    --warning: 32 95% 52%;
 
-    --sidebar: 222 47% 11%;
-    --sidebar-foreground: 215 25% 72%;
-    --sidebar-accent: 217 33% 17%;
-    --sidebar-primary: 213 94% 68%;
+    /* Ink — the near-black violet block used for the sidebar,
+       hero metrics, and high-contrast inverted panels. */
+    --ink: 252 32% 9%;
+    --ink-foreground: 252 20% 96%;
+    --ink-muted: 252 14% 62%;
 
-    --shadow-sm: 0 1px 2px hsl(224 71% 4% / 0.05);
-    --shadow: 0 1px 3px hsl(224 71% 4% / 0.08), 0 1px 2px -1px hsl(224 71% 4% / 0.06);
-    --shadow-md: 0 4px 6px -1px hsl(224 71% 4% / 0.07), 0 2px 4px -2px hsl(224 71% 4% / 0.05);
-    --shadow-lg: 0 10px 15px -3px hsl(224 71% 4% / 0.08), 0 4px 6px -4px hsl(224 71% 4% / 0.05);
+    /* Sidebar = ink */
+    --sidebar: 252 32% 9%;
+    --sidebar-foreground: 252 14% 64%;
+    --sidebar-accent: 252 28% 16%;
+    --sidebar-primary: 252 95% 72%;
+
+    --shadow-sm: 0 1px 2px hsl(252 40% 12% / 0.06);
+    --shadow: 0 2px 8px -2px hsl(252 40% 12% / 0.08), 0 1px 2px -1px hsl(252 40% 12% / 0.05);
+    --shadow-md: 0 8px 24px -6px hsl(252 40% 12% / 0.10), 0 2px 6px -2px hsl(252 40% 12% / 0.06);
+    --shadow-lg: 0 20px 40px -12px hsl(252 45% 14% / 0.16), 0 6px 12px -6px hsl(252 40% 12% / 0.08);
+    --shadow-violet: 0 12px 32px -8px hsl(252 90% 62% / 0.35);
   }
 }
 
@@ -54,9 +65,29 @@
   .shadow-card { box-shadow: var(--shadow); }
   .shadow-card-md { box-shadow: var(--shadow-md); }
   .shadow-card-lg { box-shadow: var(--shadow-lg); }
+  .shadow-violet { box-shadow: var(--shadow-violet); }
 
   .font-mono { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace; }
+  /* Space Grotesk — the display face for headers + big numbers */
+  .font-display { font-family: 'Space Grotesk', 'Inter', sans-serif; letter-spacing: -0.02em; }
   .nums { font-variant-numeric: tabular-nums; }
+
+  /* Ink — high-contrast inverted block (sidebar / hero metric / panels) */
+  .bg-ink { background-color: hsl(var(--ink)); }
+  .text-ink { color: hsl(var(--ink)); }
+  .bg-violet-grad { background-image: linear-gradient(135deg, hsl(252 90% 64%), hsl(266 85% 56%)); }
+  .bg-ink-grad { background-image: linear-gradient(150deg, hsl(252 32% 12%), hsl(252 40% 7%)); }
+
+  /* Eyebrow micro-label */
+  .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 0.6875rem; letter-spacing: 0.12em; text-transform: uppercase; }
+
+  /* Signature "rail" motif — diagonal up-right lines from the logo */
+  .rails {
+    background-image: repeating-linear-gradient(115deg, hsl(0 0% 100% / 0.06) 0 1px, transparent 1px 18px);
+  }
+  .rails-violet {
+    background-image: repeating-linear-gradient(115deg, hsl(252 90% 62% / 0.10) 0 1px, transparent 1px 16px);
+  }
 
   /* Line-grid + dotted textures for section backdrops */
   .bg-grid {
@@ -71,7 +102,7 @@
   }
   /* Soft radial spotlight behind hero product */
   .glow-radial {
-    background: radial-gradient(60% 60% at 50% 40%, rgba(37,99,235,0.10), transparent 70%);
+    background: radial-gradient(60% 60% at 50% 40%, rgba(123,91,245,0.16), transparent 70%);
   }
   .mask-fade-edges {
     -webkit-mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
