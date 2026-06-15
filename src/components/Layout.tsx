@@ -1,5 +1,5 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom'
-import { LayoutDashboard, Building2, Hash, Bot, Search, Globe, BarChart3, Sparkles, Zap, Settings, LogOut, Users2, ChevronsUpDown, Check, Star, LayoutGrid, ShieldAlert } from 'lucide-react'
+import { LayoutDashboard, Building2, Hash, Bot, Search, Globe, BarChart3, Sparkles, Zap, Settings, LogOut, Users2, ChevronsUpDown, Check, Star, LayoutGrid, ShieldAlert, ShieldCheck } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from '../lib/utils'
 import { useAuth } from '../lib/auth'
@@ -18,6 +18,7 @@ const nav = [
   { to: '/app/seo',             icon: Search,          label: 'SEO Rankings' },
   { to: '/app/reputation',      icon: Star,            label: 'Reputation' },
   { to: '/app/rate-monitor',    icon: ShieldAlert,     label: 'AI Rate Accuracy' },
+  { to: '/app/compliance',      icon: ShieldCheck,     label: 'Compliance' },
   { to: '/app/recommendations', icon: Zap,             label: 'Recommendations' },
   { to: '/app/site-audit',      icon: Globe,           label: 'Site Audit' },
   { to: '/app/attribution',     icon: BarChart3,       label: 'Attribution' },

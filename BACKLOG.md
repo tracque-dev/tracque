@@ -74,7 +74,7 @@ IDs are stable; reference them in commits (`TRQ-33: ...`).
 | ID | Status | Title | Acceptance |
 |----|--------|-------|------------|
 | TRQ-70 | ✅ | AI Rate-Accuracy Monitor | Ground-truth sheet → probe AI per fact → judge accurate/wrong/not-stated → compliance-risk alert. Monitoring only (no auto-publish). Verified: caught a planted wrong APY |
-| TRQ-71 | 🔲 | Compliance scorecard + vendor one-pager | Citation accuracy, freshness lag; NCUA examiner doc; human-approval gate before any rate publishes; no PII/decisioning |
+| TRQ-71 | ✅ | Compliance scorecard + vendor one-pager | Citation accuracy, freshness lag; NCUA examiner doc; human-approval gate before any rate publishes; no PII/decisioning. Verified: scorecard pulls live rate_checks/review_profiles/scan freshness; printable one-pager |
 
 ## EPIC I — Billing & Plans
 | ID | Status | Title | Acceptance |

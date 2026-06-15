@@ -12,6 +12,7 @@ import SEOResults from './pages/SEOResults'
 import Reputation from './pages/Reputation'
 import Saiv from './pages/Saiv'
 import RateMonitor from './pages/RateMonitor'
+import Compliance from './pages/Compliance'
 import PromptDiscovery from './pages/PromptDiscovery'
 import Recommendations from './pages/Recommendations'
 import SiteAudit from './pages/SiteAudit'
@@ -38,6 +39,7 @@ export default function App() {
         <Route path="reputation" element={<Reputation />} />
         <Route path="saiv" element={<Saiv />} />
         <Route path="rate-monitor" element={<RateMonitor />} />
+        <Route path="compliance" element={<Compliance />} />
         <Route path="prompts" element={<PromptDiscovery />} />
         <Route path="recommendations" element={<Recommendations />} />
         <Route path="site-audit" element={<SiteAudit />} />

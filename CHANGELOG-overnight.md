@@ -30,3 +30,9 @@ Autonomous loop working through SPECS.md. One ticket per iteration: build → ty
 - `knowledge-check` edge fn: SerpAPI `knowledge_graph` for the brand name → `domain_metrics.has_knowledge_panel` + `knowledge_type` (024, columns flow through the already-scoped `domain_overview` view). SEO page: green "Knowledge Panel detected" / amber "No panel — AI-citation gap" badge + a "Check now" button.
 - **e2e:** Starbucks → **detected**; "Zorblax Plumbing Widgets LLC" → **not** ✓
 - **Review:** self-reviewed (2 columns on existing table, no new multi-tenant surface).
+
+## ✅ TRQ-71 — Compliance scorecard + vendor-risk one-pager
+- New `Compliance` page (`/app/compliance`, nav + route): an overall AI-compliance grade (A–F) blending three live sub-scores — **AI rate accuracy** (accurate ÷ checked from `rate_checks`), **review response rate** (volume-weighted from `review_profiles`), **citation freshness** (days since most recent `latest_scan_results` scan). Plus a printable **vendor-risk one-pager** (model ownership, no-decisioning/out-of-model-risk-scope, accuracy methodology, data-handling/PII) that embeds the client's live metrics — the artifact that gets Tracque through CU/lender procurement & exam files.
+- UI-only: no new tables/migration. Reads existing client-scoped hooks (`useBrands`/`useRateFacts`/`useRateChecks`/`useReviewProfiles`/`useLatestScanResults`), all RLS-verified. `window.print()` with a scoped `@media print` rule that isolates `#vendor-onepager`.
+- **e2e (live, demo = Summit Credit Union):** scorecard pulled real data — **67% rate accuracy** (2/3 facts correct, the planted wrong CD APY flagged), **42% review response** (1 platform), **100% freshness** (scanned today) → overall **70/100, grade D**; one-pager rendered with institution name/domain/prepared-date + all 4 vendor-risk sections ✓
+- **Review:** self-reviewed (frontend-only, no new multi-tenant surface; reuses hooks verified clean 3×).
