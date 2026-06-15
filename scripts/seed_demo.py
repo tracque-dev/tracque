@@ -2,7 +2,7 @@
 """Seed a fully-populated demo account (a credit union — shows every feature).
 Run: SVC=<service_role_key> python3 scripts/seed_demo.py
 Creates demo@tracque.com / TracqueDemo2026! with data across all pages."""
-import os, json, urllib.request, sys
+import os, json, urllib.request, sys, hashlib
 
 URL = "https://poarbxoeswwxexwnrugp.supabase.co"
 SVC = os.environ["SVC"]
@@ -55,18 +55,30 @@ kws = insert("keywords", [{"user_id": uid, "client_id": cid, "phrase": p, "inten
 ]])
 
 # ── 3. AI visibility (scan_results across models) ─────────
+# Vary runs/mentions per (keyword, model) so confidence SPREADS realistically.
+# (A flat 80% on every mention screams "seed data" — real scans run N times
+#  per model and confidence = runs_mentioned / runs_total, which scatters.)
+def _h(s): return int(hashlib.md5(s.encode()).hexdigest()[:6], 16)
 models = ["chatgpt", "claude", "perplexity", "gemini", "grok"]
 rates = {"chatgpt": .8, "claude": .9, "perplexity": .7, "gemini": .6, "grok": .4}
 sr = []
 for k in kws:
     for m in models:
-        mn = (hash(k["id"] + m) % 100) / 100 < rates[m]
-        runs = 5; mentioned_runs = (4 if mn else 1)
+        seed = _h(k["id"] + m)
+        mn = (seed % 100) / 100 < rates[m]
+        runs = 4 + (seed % 3)                          # 4–6 runs per model
+        if mn:
+            mentioned_runs = max(2, runs - (seed % 3))  # mentioned in most runs → 50–100%
+        else:
+            mentioned_runs = (seed >> 5) % 2            # 0 or 1 stray mention → 0–25%
+        conf = int(round(mentioned_runs / runs * 100))
+        pos = (1 + (seed % 5)) if mn else None          # vary position 1–5
+        sent = None if not mn else ("neutral" if seed % 5 == 0 else "positive")
         sr.append({"keyword_id": k["id"], "brand_id": own_id, "model": m, "mentioned": mn,
-                   "sentiment": "positive" if mn else None, "position": (2 if mn else None),
+                   "sentiment": sent, "position": pos,
                    "runs_total": runs, "runs_mentioned": mentioned_runs,
-                   "confidence_pct": int(mentioned_runs/runs*100), "web_grounded": True,
-                   "all_sentiments": ["positive"] if mn else [],
+                   "confidence_pct": conf, "web_grounded": True,
+                   "all_sentiments": [sent] if sent else [],
                    "excerpt": f"Summit Credit Union is a strong option for {k['phrase']}." if mn else None,
                    "raw_response": "..."})
 insert("scan_results", sr)
