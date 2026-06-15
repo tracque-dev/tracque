@@ -408,6 +408,44 @@ export function useCreateTrackingSite() {
   })
 }
 
+export interface KeywordGap {
+  id: string
+  competitor_domain: string | null
+  keyword: string | null
+  search_volume: number | null
+  difficulty: number | null
+  cpc: number | null
+  competitor_position: number | null
+  intent: string | null
+}
+
+export function useKeywordGaps(brandId?: string) {
+  return useQuery({
+    queryKey: ['keyword_gaps', brandId],
+    enabled: !!brandId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('keyword_gaps').select('*').eq('brand_id', brandId!)
+        .order('search_volume', { ascending: false, nullsFirst: false }).limit(60)
+      if (error) throw error
+      return data as KeywordGap[]
+    },
+  })
+}
+
+export function useRunCompetitorIntel() {
+  const userId = useUserId()
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async (brandId: string) => {
+      const { data, error } = await supabase.functions.invoke('competitor-intel', { body: { user_id: userId, brand_id: brandId } })
+      if (error) throw error
+      return data
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['keyword_gaps'] }),
+  })
+}
+
 export function useRunSeoSync() {
   const userId = useUserId()
   const qc = useQueryClient()

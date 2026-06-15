@@ -17,6 +17,25 @@ function dfsAuth(): string | null {
 
 function norm(s: string): string { return (s || '').toLowerCase().replace(/[^a-z0-9]/g, '') }
 
+// Resolve a free-text place ("Austin, TX") to a DataForSEO location_coordinate
+// ("lat,lng,radius_km") via free OpenStreetMap geocoding. Pass-through if the
+// caller already gave coordinates.
+async function resolveLocation(input?: string): Promise<string> {
+  const DEFAULT = '40.7128,-74.0060,15'
+  if (!input) return DEFAULT
+  const s = input.trim()
+  if (/^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?/.test(s)) {
+    return s.split(',').length >= 3 ? s : `${s},15`   // coords (add radius if missing)
+  }
+  try {
+    const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(s)}`,
+      { headers: { 'User-Agent': 'TracqueReputation/1.0 (https://tracque.com)' } })
+    const j = await r.json()
+    if (j?.[0]?.lat && j?.[0]?.lon) return `${j[0].lat},${j[0].lon},15`
+  } catch { /* fall through */ }
+  return DEFAULT
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: cors })
   const { user_id, brand_id, category, location } = await req.json().catch(() => ({}))
@@ -27,7 +46,7 @@ Deno.serve(async (req) => {
   const { data: brand } = await supabase.from('brands').select('id, name, user_id').eq('id', brand_id).eq('user_id', user_id).single()
   if (!brand) return new Response(JSON.stringify({ error: 'brand not found' }), { status: 404, headers: cors })
 
-  const loc = location || '40.7128,-74.0060,15' // default NYC 15km if not provided
+  const loc = await resolveLocation(location) // accepts "Austin, TX" or "lat,lng,km"
   const cats = category ? [category] : undefined
 
   const res = await fetch('https://api.dataforseo.com/v3/business_data/business_listings/search/live', {

@@ -54,8 +54,8 @@ export default function Reputation() {
             <input value={category} onChange={e => setCategory(e.target.value)} placeholder="plumber, credit union…" className="mt-1 w-48 px-3 py-2 text-sm border border-border rounded-lg bg-background" />
           </div>
           <div>
-            <label className="text-xs font-medium text-muted-foreground">Location (lat,lng,km)</label>
-            <input value={location} onChange={e => setLocation(e.target.value)} placeholder="40.71,-74.00,15" className="mt-1 w-44 px-3 py-2 text-sm border border-border rounded-lg bg-background font-mono" />
+            <label className="text-xs font-medium text-muted-foreground">City or address</label>
+            <input value={location} onChange={e => setLocation(e.target.value)} placeholder="Austin, TX" className="mt-1 w-44 px-3 py-2 text-sm border border-border rounded-lg bg-background" />
           </div>
           <button
             onClick={() => ownBrand && runSync.mutate({ brand_id: ownBrand.id, category: category || undefined, location: location || undefined })}

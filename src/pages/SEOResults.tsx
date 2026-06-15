@@ -1,5 +1,5 @@
-import { Search, TrendingUp, TrendingDown, Minus, Loader2, Link2, RefreshCw, Gauge, Users2, KeyRound, BarChart3 } from 'lucide-react'
-import { useLatestSeoResults, useDomainOverview, useBacklinks, useRunSeoSync } from '../lib/hooks'
+import { Search, TrendingUp, TrendingDown, Minus, Loader2, Link2, RefreshCw, Gauge, Users2, KeyRound, BarChart3, Target } from 'lucide-react'
+import { useLatestSeoResults, useDomainOverview, useBacklinks, useRunSeoSync, useKeywordGaps, useRunCompetitorIntel } from '../lib/hooks'
 
 function fmt(n: number | null | undefined): string {
   if (n == null) return '—'
@@ -54,6 +54,8 @@ export default function SEOResults() {
 
   const own = domains.find(d => d.type === 'own') ?? domains[0]
   const { data: backlinks = [] } = useBacklinks(own?.brand_id)
+  const { data: gaps = [] } = useKeywordGaps(own?.brand_id)
+  const runIntel = useRunCompetitorIntel()
 
   const ranked = results.filter(r => r.position != null)
   const avgPos = ranked.length ? Math.round(ranked.reduce((a, r) => a + (r.position ?? 0), 0) / ranked.length * 10) / 10 : null
@@ -130,6 +132,41 @@ export default function SEOResults() {
               </tbody>
             </table>
           </div>
+        </div>
+      )}
+
+      {/* Keyword gaps — what competitors rank for that you don't */}
+      {own?.brand_id && (
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">Keyword gaps · competitors rank, you don't</p>
+            <button onClick={() => runIntel.mutate(own.brand_id)} disabled={runIntel.isPending}
+              className="flex items-center gap-1.5 text-xs border border-border rounded-lg px-3 py-1.5 hover:bg-muted/40 disabled:opacity-50">
+              {runIntel.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Target className="w-3.5 h-3.5" />}
+              {runIntel.isPending ? 'Finding…' : 'Find keyword gaps'}
+            </button>
+          </div>
+          {gaps.length > 0 && (
+            <div className="bg-card rounded-xl border border-border shadow-card overflow-hidden">
+              <table className="w-full">
+                <thead><tr className="border-b border-border bg-muted/30">
+                  {['Keyword', 'Competitor', 'Their pos', 'Volume', 'KD', 'Intent'].map(h => <th key={h} className="px-4 py-2.5 text-left text-[11px] font-mono uppercase tracking-wider text-muted-foreground">{h}</th>)}
+                </tr></thead>
+                <tbody>
+                  {gaps.map(g => (
+                    <tr key={g.id} className="border-b border-border last:border-0 hover:bg-muted/20 transition-colors">
+                      <td className="px-4 py-2.5 text-sm font-medium max-w-[220px] truncate">{g.keyword}</td>
+                      <td className="px-4 py-2.5 text-xs text-muted-foreground truncate max-w-[150px]">{g.competitor_domain}</td>
+                      <td className="px-4 py-2.5"><span className="font-mono text-xs px-2 py-0.5 rounded bg-amber-50 text-amber-700">#{g.competitor_position ?? '—'}</span></td>
+                      <td className="px-4 py-2.5 text-xs nums text-muted-foreground">{fmt(g.search_volume)}</td>
+                      <td className="px-4 py-2.5"><KDBadge kd={g.difficulty} /></td>
+                      <td className="px-4 py-2.5 text-xs text-muted-foreground capitalize">{g.intent ?? '—'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       )}
 
