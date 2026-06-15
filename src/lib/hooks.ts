@@ -741,3 +741,67 @@ export function useRunSeoSync() {
     },
   })
 }
+
+// ── White-label client reports / share links (TRQ-12) ─────
+
+export interface ShareLink {
+  id: string
+  client_id: string
+  token: string
+  enabled: boolean
+  created_at: string
+}
+
+function randomToken(): string {
+  const bytes = new Uint8Array(18)
+  crypto.getRandomValues(bytes)
+  return Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('') // 36-char hex
+}
+
+export function useShareLink(clientId?: string) {
+  return useQuery({
+    queryKey: ['share_link', clientId],
+    enabled: !!clientId && clientId !== 'all',
+    queryFn: async () => {
+      const { data, error } = await supabase.from('client_reports').select('*').eq('client_id', clientId!).maybeSingle()
+      if (error) throw error
+      return data as ShareLink | null
+    },
+  })
+}
+
+export function useCreateShareLink() {
+  const userId = useUserId()
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async (clientId: string) => {
+      // Get-or-create: one share link per client (unique index on client_id).
+      const { data: existing } = await supabase.from('client_reports').select('*').eq('client_id', clientId).maybeSingle()
+      if (existing) {
+        if (!(existing as ShareLink).enabled) {
+          const { data, error } = await supabase.from('client_reports').update({ enabled: true }).eq('id', (existing as ShareLink).id).select().single()
+          if (error) throw error
+          return data as ShareLink
+        }
+        return existing as ShareLink
+      }
+      const { data, error } = await supabase.from('client_reports')
+        .insert({ client_id: clientId, user_id: userId, token: randomToken(), enabled: true }).select().single()
+      if (error) throw error
+      return data as ShareLink
+    },
+    onSuccess: (_d, clientId) => qc.invalidateQueries({ queryKey: ['share_link', clientId] }),
+  })
+}
+
+export function useToggleShareLink() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async (opts: { id: string; enabled: boolean }) => {
+      const { data, error } = await supabase.from('client_reports').update({ enabled: opts.enabled }).eq('id', opts.id).select().single()
+      if (error) throw error
+      return data as ShareLink
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['share_link'] }),
+  })
+}

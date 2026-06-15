@@ -17,6 +17,8 @@ import PromptDiscovery from './pages/PromptDiscovery'
 import Recommendations from './pages/Recommendations'
 import SiteAudit from './pages/SiteAudit'
 import Attribution from './pages/Attribution'
+import Report from './pages/Report'
+import SharedReport from './pages/SharedReport'
 import Settings from './pages/Settings'
 
 export default function App() {
@@ -24,6 +26,7 @@ export default function App() {
     <Routes>
       <Route path="/" element={<Landing />} />
       <Route path="/auth" element={<Auth />} />
+      <Route path="/r/:token" element={<SharedReport />} />
       <Route path="/app" element={
         <ProtectedRoute>
           <Layout />
@@ -44,6 +47,7 @@ export default function App() {
         <Route path="recommendations" element={<Recommendations />} />
         <Route path="site-audit" element={<SiteAudit />} />
         <Route path="attribution" element={<Attribution />} />
+        <Route path="report" element={<Report />} />
         <Route path="settings" element={<Settings />} />
       </Route>
     </Routes>

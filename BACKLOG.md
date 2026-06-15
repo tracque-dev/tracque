@@ -20,7 +20,7 @@ IDs are stable; reference them in commits (`TRQ-33: ...`).
 |----|--------|-------|------------|
 | TRQ-10 | ✅ | Clients table + switcher | Create clients; sidebar switcher; brands/keywords scoped |
 | TRQ-11 | ✅ | Multi-tenancy isolation | All result views client-scoped + `security_invoker`; verified by adversarial review (closed a critical cross-client leak) |
-| TRQ-12 | 🔲 | White-label client reports | Branded PDF/share-link "AI + SEO + reputation scorecard" per client; agency logo; scheduled email |
+| TRQ-12 | ✅ | White-label client reports | Branded PDF/share-link "AI + SEO + reputation scorecard" per client; agency logo; scheduled email. Verified: per-client branded report (authed + public /r/:token via shared-report edge fn); cross-tenant isolation e2e + adversarial review (fixed HIGH token-squat + LOW SEO-pollution via 026 ownership-tied RLS) |
 
 ## EPIC C — AI Visibility
 | ID | Status | Title | Acceptance |
