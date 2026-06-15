@@ -273,6 +273,87 @@ export function useBacklinks(brandId?: string) {
   })
 }
 
+// ── AI Rate-Accuracy Monitor (TRQ-70) ────────────────────
+
+export interface RateFact {
+  id: string
+  brand_id: string
+  label: string
+  value: string
+  category: string
+  effective_date: string | null
+}
+
+export interface RateCheck {
+  id: string
+  fact_id: string
+  engine: string
+  ai_value: string | null
+  status: string | null
+  excerpt: string | null
+  scanned_at: string
+  label: string
+  truth: string
+  category: string
+}
+
+export function useRateFacts(brandId?: string) {
+  return useQuery({
+    queryKey: ['rate_facts', brandId],
+    enabled: !!brandId,
+    queryFn: async () => {
+      const { data, error } = await supabase.from('rate_facts').select('*').eq('brand_id', brandId!).order('created_at')
+      if (error) throw error
+      return data as RateFact[]
+    },
+  })
+}
+
+export function useAddRateFact() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async (f: { brand_id: string; label: string; value: string; category?: string }) => {
+      const { data, error } = await supabase.from('rate_facts').insert(f).select().single()
+      if (error) throw error
+      return data as RateFact
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['rate_facts'] }),
+  })
+}
+
+export function useDeleteRateFact() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async (id: string) => { const { error } = await supabase.from('rate_facts').delete().eq('id', id); if (error) throw error },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['rate_facts'] }),
+  })
+}
+
+export function useRateChecks(brandId?: string) {
+  return useQuery({
+    queryKey: ['rate_checks', brandId],
+    enabled: !!brandId,
+    queryFn: async () => {
+      const { data, error } = await supabase.from('rate_checks_scoped').select('*').eq('brand_id', brandId!)
+      if (error) throw error
+      return data as RateCheck[]
+    },
+  })
+}
+
+export function useRunRateMonitor() {
+  const userId = useUserId()
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async (brandId: string) => {
+      const { data, error } = await supabase.functions.invoke('rate-monitor', { body: { user_id: userId, brand_id: brandId } })
+      if (error) throw error
+      return data
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['rate_checks'] }),
+  })
+}
+
 // ── Share-of-AI-Voice ─────────────────────────────────────
 
 export interface SaivResult {
