@@ -342,8 +342,62 @@ const MODEL_ENV_KEYS: Record<AIModel, string> = {
   grok: 'XAI_API_KEY',
 }
 
+// ── DataForSEO multi-engine provider (one key → ChatGPT/Claude/Gemini/Perplexity) ──
+const DFS_LOGIN = Deno.env.get('DATAFORSEO_LOGIN')
+const DFS_PASSWORD = Deno.env.get('DATAFORSEO_PASSWORD')
+const dfsCreds = () => !!(DFS_LOGIN && DFS_PASSWORD)
+const dfsAuth = () => 'Basic ' + btoa(`${DFS_LOGIN}:${DFS_PASSWORD}`)
+
+// AIModel → DataForSEO platform slug (Grok is not offered by DataForSEO).
+const DFS_PLATFORM: Record<AIModel, string | null> = {
+  chatgpt: 'chat_gpt', claude: 'claude', gemini: 'gemini', perplexity: 'perplexity', grok: null,
+}
+const DFS_MODEL: Record<string, string> = {
+  chat_gpt: 'gpt-4o', claude: 'claude-3-7-sonnet-20250219', gemini: 'gemini-2.5-flash', perplexity: 'sonar',
+}
+
+async function callViaDataForSEO(platform: string, prompt: string): Promise<ModelResponse> {
+  const res = await fetch(`https://api.dataforseo.com/v3/ai_optimization/${platform}/llm_responses/live`, {
+    method: 'POST',
+    headers: { 'Authorization': dfsAuth(), 'Content-Type': 'application/json' },
+    body: JSON.stringify([{
+      user_prompt: prompt.slice(0, 500),
+      model_name: DFS_MODEL[platform],
+      web_search: true,
+      max_output_tokens: 1500,
+    }]),
+  })
+  const data = await res.json()
+  const task = data?.tasks?.[0]
+  const result = task?.result?.[0]
+  let text = ''
+  const citationUrls: string[] = []
+  for (const item of result?.items ?? []) {
+    if (item.type !== 'message') continue
+    for (const sec of item.sections ?? []) {
+      if (sec.type === 'text' && sec.text) {
+        text += sec.text + '\n'
+        for (const ann of sec.annotations ?? []) {
+          if (ann?.url) { try { citationUrls.push(new URL(ann.url).hostname.replace(/^www\./, '')) } catch { /* */ } }
+        }
+      }
+    }
+  }
+  if (!text) throw new Error(`DataForSEO ${platform} empty: ${task?.status_message ?? data?.status_message ?? 'no text'}`)
+  return { text, citation_urls: [...new Set(citationUrls)], web_grounded: !!result?.web_search }
+}
+
+// Use the native vendor API when its key is set; otherwise route through DataForSEO.
+async function callModel(model: AIModel, prompt: string): Promise<ModelResponse> {
+  if (Deno.env.get(MODEL_ENV_KEYS[model])) return MODEL_CALLERS[model](prompt)
+  const platform = DFS_PLATFORM[model]
+  if (platform && dfsCreds()) return callViaDataForSEO(platform, prompt)
+  throw new Error(`No provider configured for ${model}`)
+}
+
 function enabledModels(): AIModel[] {
-  return (Object.keys(MODEL_CALLERS) as AIModel[]).filter(m => !!Deno.env.get(MODEL_ENV_KEYS[m]))
+  return (Object.keys(MODEL_CALLERS) as AIModel[])
+    .filter(m => !!Deno.env.get(MODEL_ENV_KEYS[m]) || (dfsCreds() && !!DFS_PLATFORM[m]))
 }
 
 // ── Google AI Overviews via SerpAPI ────────────────────────
@@ -378,24 +432,20 @@ async function fetchAIOverview(keyword: string): Promise<{ snippet: string; cite
 // ── Citation source intelligence ───────────────────────────
 
 async function updateCitationSources(brandId: string, model: string, domains: string[]) {
-  for (const domain of domains) {
-    await supabase.rpc('upsert_citation_source', {
-      p_brand_id: brandId,
-      p_domain: domain,
-      p_model: model,
-    }).catch(() => {
-      // fallback: manual upsert
-      supabase.from('citation_sources')
-        .upsert({
-          brand_id: brandId,
-          domain,
-          models: [model],
-          mention_count: 1,
-          last_seen: new Date().toISOString(),
-        }, { onConflict: 'brand_id,domain', ignoreDuplicates: false })
-        .then(() => {})
-    })
-  }
+  // Best-effort citation intelligence — must NEVER fail a scan (the prior
+  // version called a non-existent RPC, which surfaced as EDGE_FUNCTION_ERROR
+  // even though scan results had already been written).
+  try {
+    for (const domain of domains) {
+      await supabase.from('citation_sources').upsert({
+        brand_id: brandId,
+        domain,
+        models: [model],
+        mention_count: 1,
+        last_seen: new Date().toISOString(),
+      }, { onConflict: 'brand_id,domain' })
+    }
+  } catch (_e) { /* swallow — bookkeeping only */ }
 }
 
 // ── Main handler ───────────────────────────────────────────
@@ -427,6 +477,7 @@ Deno.serve(async (req) => {
   const models = enabledModels()
   let totalScanned = 0
   let totalErrors = 0
+  const errorSamples: string[] = []
   const overviewsFound: number[] = []
 
   for (const keyword of keywords) {
@@ -454,10 +505,11 @@ Deno.serve(async (req) => {
       const responses: ModelResponse[] = []
       for (let run = 0; run < RUNS; run++) {
         try {
-          const response = await MODEL_CALLERS[model](prompt)
+          const response = await callModel(model, prompt)
           responses.push(response)
         } catch (e) {
           console.error(`${model} run ${run + 1} failed for "${keyword.phrase}":`, e)
+          if (errorSamples.length < 8) errorSamples.push(`${model}: ${String(e).slice(0, 200)}`)
           totalErrors++
         }
       }
@@ -508,6 +560,7 @@ Deno.serve(async (req) => {
     scanned: totalScanned,
     errors: totalErrors,
     models_used: models,
+    error_samples: errorSamples,
     keywords_scanned: keywords.length,
     brands_tracked: brands.length,
     runs_per_keyword: RUNS,
