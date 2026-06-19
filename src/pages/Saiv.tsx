@@ -77,12 +77,21 @@ export default function Saiv() {
   const positions = rows.filter(r => r.mentioned && r.position).map(r => r.position as number)
   const avgPos = positions.length ? (positions.reduce((a, b) => a + b, 0) / positions.length).toFixed(1) : null
 
-  // Who's recommended instead of you, aggregated.
-  const rivalCounts = useMemo(() => {
+  // TRUE share of AI voice: your appearances vs every brand AI names across
+  // the prompts, normalized to a competitive share (not just your inclusion rate).
+  const sov = useMemo(() => {
     const m = new Map<string, number>()
-    rows.forEach(r => (r.competitors ?? []).forEach(c => m.set(c, (m.get(c) ?? 0) + 1)))
-    return [...m.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8)
-  }, [rows])
+    if (ownBrand) m.set(ownBrand.name, rows.filter(r => r.mentioned).length)
+    rows.forEach(r => (r.competitors ?? []).forEach(c => {
+      if (ownBrand && c.toLowerCase() === ownBrand.name.toLowerCase()) return
+      m.set(c, (m.get(c) ?? 0) + 1)
+    }))
+    const totalMentions = [...m.values()].reduce((a, b) => a + b, 0)
+    const board = [...m.entries()]
+      .map(([name, count]) => ({ name, count, share: totalMentions ? Math.round((count / totalMentions) * 100) : 0, you: name === ownBrand?.name }))
+      .sort((a, b) => b.count - a.count)
+    return { totalMentions, board, yourShare: board.find(b => b.you)?.share ?? 0 }
+  }, [rows, ownBrand])
 
   function run() {
     if (!ownBrand) return
@@ -122,6 +131,11 @@ export default function Saiv() {
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           <div className="bg-card rounded-2xl border border-border p-5 shadow-card">
             <p className="eyebrow text-muted-foreground mb-2">Share of AI Voice</p>
+            <p className="text-3xl font-display font-bold nums tracking-tight">{sov.yourShare}%</p>
+            <p className="text-xs text-muted-foreground mt-1">your share of every brand AI names</p>
+          </div>
+          <div className="bg-card rounded-2xl border border-border p-5 shadow-card">
+            <p className="eyebrow text-muted-foreground mb-2">AI inclusion rate</p>
             <p className="text-3xl font-display font-bold nums tracking-tight">{saiv}%</p>
             <p className="text-xs text-muted-foreground mt-1">recommended in {mentioned}/{total} prompts</p>
           </div>
@@ -129,10 +143,6 @@ export default function Saiv() {
             <p className="eyebrow text-muted-foreground mb-2">Avg position</p>
             <p className="text-3xl font-display font-bold nums tracking-tight">{avgPos ?? '—'}</p>
             <p className="text-xs text-muted-foreground mt-1">when recommended</p>
-          </div>
-          <div className="bg-card rounded-2xl border border-border p-5 shadow-card">
-            <p className="eyebrow text-muted-foreground mb-2">Prompts tested</p>
-            <p className="text-3xl font-display font-bold nums tracking-tight">{total}</p>
           </div>
         </div>
       )}
@@ -183,21 +193,24 @@ export default function Saiv() {
         </div>
       )}
 
-      {/* Who wins instead of you */}
-      {rivalCounts.length > 0 && (
+      {/* Share-of-voice leaderboard — you vs everyone AI names */}
+      {sov.board.length > 0 && (
         <div className="bg-card rounded-2xl border border-border p-5 shadow-card">
-          <p className="eyebrow text-muted-foreground mb-3 flex items-center gap-1.5"><Trophy className="w-3.5 h-3.5" /> Recommended most often across your prompts</p>
-          <div className="space-y-2">
-            {rivalCounts.map(([name, count]) => (
-              <div key={name} className="flex items-center gap-3">
-                <span className="text-sm w-44 truncate">{name}</span>
-                <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
-                  <div className="h-full bg-violet-500 rounded-full" style={{ width: `${(count / total) * 100}%` }} />
+          <p className="eyebrow text-muted-foreground mb-3 flex items-center gap-1.5"><Trophy className="w-3.5 h-3.5" /> Share of AI voice — you vs the field</p>
+          <div className="space-y-2.5">
+            {sov.board.slice(0, 8).map(b => (
+              <div key={b.name} className="flex items-center gap-3">
+                <span className={`text-sm w-44 truncate ${b.you ? 'font-semibold text-foreground' : ''}`}>
+                  {b.name}{b.you && <span className="ml-1.5 text-[10px] font-mono uppercase text-violet-600">you</span>}
+                </span>
+                <div className="flex-1 h-2.5 bg-muted rounded-full overflow-hidden">
+                  <div className={`h-full rounded-full ${b.you ? 'bg-violet-600' : 'bg-slate-300'}`} style={{ width: `${b.share}%` }} />
                 </div>
-                <span className="text-xs text-muted-foreground nums w-14 text-right">{count}/{total}</span>
+                <span className="text-xs nums w-12 text-right font-medium">{b.share}%</span>
               </div>
             ))}
           </div>
+          <p className="text-[11px] text-muted-foreground mt-3">Of every brand AI named across your {total} prompt{total === 1 ? '' : 's'}, this is who got the airtime.</p>
         </div>
       )}
     </div>
