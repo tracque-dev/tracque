@@ -35,7 +35,7 @@ export default function Clients() {
     <div className="p-7 space-y-6 max-w-[1400px]">
       <div className="flex items-end justify-between">
         <div>
-          <p className="eyebrow text-violet-600">Workspaces</p>
+          <p className="eyebrow text-blue-600">Workspaces</p>
           <h1 className="text-2xl font-display font-bold tracking-tight mt-1">Clients</h1>
           <p className="text-sm text-muted-foreground mt-1">Each client is its own workspace — brands, keywords, scans & reports stay scoped.</p>
         </div>
@@ -49,11 +49,11 @@ export default function Clients() {
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="eyebrow text-muted-foreground">Client name</label>
-              <input autoFocus value={name} onChange={e => setName(e.target.value)} placeholder="Acme Inc." className="mt-1.5 w-full px-3 py-2 text-sm border border-border rounded-xl bg-background focus:ring-2 focus:ring-violet-500 focus:outline-none" />
+              <input autoFocus value={name} onChange={e => setName(e.target.value)} placeholder="Acme Inc." className="mt-1.5 w-full px-3 py-2 text-sm border border-border rounded-xl bg-background focus:ring-2 focus:ring-blue-500 focus:outline-none" />
             </div>
             <div>
               <label className="eyebrow text-muted-foreground">Primary domain</label>
-              <input value={domain} onChange={e => setDomain(e.target.value)} placeholder="acme.com" className="mt-1.5 w-full px-3 py-2 text-sm border border-border rounded-xl bg-background focus:ring-2 focus:ring-violet-500 focus:outline-none" />
+              <input value={domain} onChange={e => setDomain(e.target.value)} placeholder="acme.com" className="mt-1.5 w-full px-3 py-2 text-sm border border-border rounded-xl bg-background focus:ring-2 focus:ring-blue-500 focus:outline-none" />
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -61,7 +61,7 @@ export default function Clients() {
             {COLORS.map(c => (
               <button type="button" key={c} onClick={() => setColor(c)} className={`w-5 h-5 rounded-full transition-transform ${color === c ? 'ring-2 ring-offset-2 ring-foreground scale-110' : ''}`} style={{ background: c }} />
             ))}
-            <button type="submit" disabled={addClient.isPending} className="ml-auto flex items-center gap-2 bg-violet-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-violet-700 disabled:opacity-50 transition-colors">
+            <button type="submit" disabled={addClient.isPending} className="ml-auto flex items-center gap-2 bg-blue-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors">
               {addClient.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />} Create
             </button>
           </div>
@@ -72,8 +72,8 @@ export default function Clients() {
         <div className="flex items-center justify-center py-16"><Loader2 className="w-5 h-5 animate-spin text-muted-foreground" /></div>
       ) : clients.length === 0 ? (
         <div className="bg-card rounded-2xl border border-border p-10 text-center shadow-card">
-          <div className="w-12 h-12 rounded-xl bg-violet-50 flex items-center justify-center mx-auto mb-4">
-            <Building2 className="w-5 h-5 text-violet-600" />
+          <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center mx-auto mb-4">
+            <Building2 className="w-5 h-5 text-blue-600" />
           </div>
           <p className="text-base font-display font-semibold mb-1">No clients yet</p>
           <p className="text-sm text-muted-foreground">Create your first client workspace to start tracking their AI visibility & SEO.</p>

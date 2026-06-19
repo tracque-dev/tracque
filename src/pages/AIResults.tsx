@@ -6,8 +6,8 @@ const MODEL_LABELS: Record<string, string> = {
 }
 const MODEL_COLORS: Record<string, string> = {
   chatgpt: 'bg-emerald-50 text-emerald-700',
-  perplexity: 'bg-violet-50 text-violet-700',
-  gemini: 'bg-violet-50 text-violet-700',
+  perplexity: 'bg-blue-50 text-blue-700',
+  gemini: 'bg-blue-50 text-blue-700',
   claude: 'bg-amber-50 text-amber-700',
   grok: 'bg-slate-100 text-slate-700',
 }
@@ -36,7 +36,7 @@ export default function AIResults() {
     <div className="p-7 space-y-6 max-w-[1400px]">
       <div className="flex items-end justify-between">
         <div>
-          <p className="eyebrow text-violet-600">Visibility</p>
+          <p className="eyebrow text-blue-600">Visibility</p>
           <h1 className="text-2xl font-display font-bold tracking-tight mt-1">AI Visibility</h1>
           <p className="text-sm text-muted-foreground mt-1">How AI models mention your brands</p>
         </div>

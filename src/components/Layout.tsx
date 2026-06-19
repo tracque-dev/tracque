@@ -80,7 +80,7 @@ export default function Layout() {
 
         {/* Brand */}
         <div className="relative flex items-center gap-2.5 px-5 pt-6 pb-5">
-          <div className="w-9 h-9 rounded-xl bg-violet-600 flex items-center justify-center shadow-violet">
+          <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center shadow-blue">
             <Mark className="w-5 h-5" badge="transparent" rail="#ffffff" node="#ffffff" />
           </div>
           <span className="text-white font-display font-semibold text-lg tracking-tight">Tracque</span>
@@ -109,8 +109,8 @@ export default function Layout() {
             >
               {({ isActive }) => (
                 <>
-                  {isActive && <span className="absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-full bg-violet-500" />}
-                  <Icon className={cn('w-4 h-4 shrink-0 transition-colors', isActive ? 'text-violet-400' : 'text-white/40 group-hover:text-white/70')} />
+                  {isActive && <span className="absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-full bg-blue-500" />}
+                  <Icon className={cn('w-4 h-4 shrink-0 transition-colors', isActive ? 'text-blue-400' : 'text-white/40 group-hover:text-white/70')} />
                   {label}
                 </>
               )}

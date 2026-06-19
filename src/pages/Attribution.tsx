@@ -10,7 +10,7 @@ const LABELS: Record<string, string> = {
   referral: 'Referral', direct: 'Direct',
 }
 const COLORS: Record<string, string> = {
-  chatgpt: 'bg-emerald-500', perplexity: 'bg-blue-500', gemini: 'bg-violet-500', claude: 'bg-orange-500',
+  chatgpt: 'bg-emerald-500', perplexity: 'bg-blue-500', gemini: 'bg-blue-500', claude: 'bg-orange-500',
   grok: 'bg-slate-800', copilot: 'bg-cyan-500', google: 'bg-amber-500', bing: 'bg-teal-500',
   paid_google: 'bg-red-400', paid_meta: 'bg-indigo-500', referral: 'bg-pink-400', direct: 'bg-gray-400',
 }
@@ -67,7 +67,7 @@ export default function Attribution() {
     <div className="p-7 space-y-6 max-w-[1400px]">
       <div className="flex items-end justify-between">
         <div>
-          <p className="eyebrow text-violet-600">Revenue</p>
+          <p className="eyebrow text-blue-600">Revenue</p>
           <h1 className="text-2xl font-display font-bold tracking-tight mt-1">Attribution</h1>
           <p className="text-sm text-muted-foreground mt-1">AI mention → click → conversion → revenue, in one place</p>
         </div>
@@ -75,17 +75,17 @@ export default function Attribution() {
 
       {/* Setup / snippet */}
       {!site ? (
-        <div className="bg-violet-50 border border-violet-200 rounded-2xl p-5">
-          <p className="text-sm font-display font-semibold text-violet-700 mb-1">Set up conversion tracking</p>
+        <div className="bg-blue-50 border border-blue-200 rounded-2xl p-5">
+          <p className="text-sm font-display font-semibold text-blue-700 mb-1">Set up conversion tracking</p>
           <p className="text-xs text-muted-foreground mb-4">Generate a tracking snippet for this client. It captures which AI engine (or ad) sent each visitor, then ties it to conversions and revenue.</p>
           <div className="flex flex-wrap items-end gap-3">
             <div>
               <label className="text-xs font-medium text-muted-foreground">Site domain (optional)</label>
-              <input value={domain} onChange={e => setDomain(e.target.value)} placeholder="acme.com" className="mt-1 w-44 px-3 py-2 text-sm border border-border rounded-xl bg-background focus:ring-violet-500" />
+              <input value={domain} onChange={e => setDomain(e.target.value)} placeholder="acme.com" className="mt-1 w-44 px-3 py-2 text-sm border border-border rounded-xl bg-background focus:ring-blue-500" />
             </div>
             <div>
               <label className="text-xs font-medium text-muted-foreground">GA4 ID (optional)</label>
-              <input value={ga4} onChange={e => setGa4(e.target.value)} placeholder="G-XXXXXXX" className="mt-1 w-40 px-3 py-2 text-sm border border-border rounded-xl bg-background focus:ring-violet-500" />
+              <input value={ga4} onChange={e => setGa4(e.target.value)} placeholder="G-XXXXXXX" className="mt-1 w-40 px-3 py-2 text-sm border border-border rounded-xl bg-background focus:ring-blue-500" />
             </div>
             <button onClick={() => createSite.mutate({ domain: domain || undefined, ga4_id: ga4 || undefined })} disabled={createSite.isPending}
               className="flex items-center gap-2 bg-foreground text-background px-4 py-2.5 rounded-xl text-sm font-medium hover:opacity-90 disabled:opacity-40 transition-all">
@@ -100,7 +100,7 @@ export default function Attribution() {
       {/* Summary */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <StatCard icon={DollarSign} label="Total revenue" value={money(totalRevenue)} tint="bg-muted text-foreground" />
-        <StatCard icon={MousePointerClick} label="AI-driven revenue" value={money(aiRevenue)} tint="bg-violet-50 text-violet-600" />
+        <StatCard icon={MousePointerClick} label="AI-driven revenue" value={money(aiRevenue)} tint="bg-blue-50 text-blue-600" />
         <StatCard icon={TrendingUp} label="Conversions" value={totalConversions.toLocaleString()} tint="bg-muted text-foreground" />
         <StatCard icon={Users} label="Sessions" value={totalSessions.toLocaleString()} tint="bg-muted text-foreground" />
       </div>
@@ -136,7 +136,7 @@ export default function Attribution() {
                       <div className="flex items-center gap-2">
                         <span className={`w-2 h-2 rounded-full ${color(s.source)}`} />
                         <span className="text-sm font-medium">{label(s.source)}</span>
-                        {isAi && <span className="text-[10px] font-mono px-1.5 py-0.5 bg-violet-50 text-violet-700 rounded-md">AI</span>}
+                        {isAi && <span className="text-[10px] font-mono px-1.5 py-0.5 bg-blue-50 text-blue-700 rounded-md">AI</span>}
                       </div>
                     </td>
                     <td className="px-5 py-3 text-sm nums text-muted-foreground">{Number(s.sessions).toLocaleString()}</td>
@@ -161,8 +161,8 @@ export default function Attribution() {
       {rows.length > 0 && (
         <div className="grid grid-cols-3 gap-4">
           {[
-            { label: 'AI Search', match: (s: SourceAttribution) => s.is_ai || AI_SOURCES.has(s.source), color: 'bg-violet-600' },
-            { label: 'Paid Ads', match: (s: SourceAttribution) => s.source.startsWith('paid_'), color: 'bg-violet-300' },
+            { label: 'AI Search', match: (s: SourceAttribution) => s.is_ai || AI_SOURCES.has(s.source), color: 'bg-blue-600' },
+            { label: 'Paid Ads', match: (s: SourceAttribution) => s.source.startsWith('paid_'), color: 'bg-blue-300' },
             { label: 'Organic / Direct', match: (s: SourceAttribution) => ['google', 'bing', 'referral', 'direct'].includes(s.source), color: 'bg-slate-300' },
           ].map(g => {
             const grp = rows.filter(g.match)

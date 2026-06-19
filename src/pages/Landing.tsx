@@ -19,7 +19,7 @@ function Reveal({ children, className = '', delay = 0 }: { children: React.React
 }
 
 function Eyebrow({ children }: { children: React.ReactNode }) {
-  return <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#7B5BF5] mb-4">{children}</p>
+  return <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#2D7FF9] mb-4">{children}</p>
 }
 
 // ── Hero product mock (the money shot) ─────────────────────
@@ -73,7 +73,7 @@ function HeroVisual() {
                     className="h-full rounded-full origin-left"
                     style={{
                       width: `${m.rate}%`,
-                      background: 'linear-gradient(90deg,#7B5BF5,#7C3AED)',
+                      background: 'linear-gradient(90deg,#2D7FF9,#2D7FF9)',
                       animation: `bar-grow 0.9s ${0.2 + i * 0.1}s cubic-bezier(0.16,1,0.3,1) both`,
                     }}
                   />
@@ -140,7 +140,7 @@ function PricingCard({ name, price, period, desc, features, cta, highlighted = f
       <ul className="space-y-2.5 flex-1 mb-6">
         {features.map(f => (
           <li key={f} className="flex items-start gap-2.5">
-            <Check className={`w-4 h-4 mt-0.5 shrink-0 ${highlighted ? 'text-[#7B5BF5]' : 'text-[#0A0A0A]'}`} />
+            <Check className={`w-4 h-4 mt-0.5 shrink-0 ${highlighted ? 'text-[#2D7FF9]' : 'text-[#0A0A0A]'}`} />
             <span className={`text-[13px] ${highlighted ? 'text-white/75' : 'text-[#5B5772]'}`}>{f}</span>
           </li>
         ))}
@@ -157,7 +157,7 @@ function CompRow({ feature, tracque, profound, heyamos, peec }: {
   feature: string; tracque: boolean | string; profound: boolean | string; heyamos: boolean | string; peec: boolean | string
 }) {
   function Cell({ val, hl = false }: { val: boolean | string; hl?: boolean }) {
-    if (val === true) return <Check className={`w-4 h-4 mx-auto ${hl ? 'text-[#7B5BF5]' : 'text-[#0A0A0A]'}`} />
+    if (val === true) return <Check className={`w-4 h-4 mx-auto ${hl ? 'text-[#2D7FF9]' : 'text-[#0A0A0A]'}`} />
     if (val === false) return <span className="text-[#D5D2E4] mx-auto block text-center">—</span>
     return <span className="font-mono text-[11px] text-[#5B5772] text-center block">{val}</span>
   }
@@ -209,7 +209,7 @@ export default function Landing() {
               </div>
               <h1 className="text-[44px] md:text-[56px] font-display font-bold leading-[1.04] tracking-[-0.035em] mb-6">
                 See your brand in<br />
-                <span className="bg-gradient-to-r from-[#7B5BF5] to-[#7C3AED] bg-clip-text text-transparent">every AI answer.</span><br />
+                <span className="bg-gradient-to-r from-[#2D7FF9] to-[#2D7FF9] bg-clip-text text-transparent">every AI answer.</span><br />
                 Prove what it earns.
               </h1>
               <p className="text-[17px] text-[#5B5772] max-w-md mb-8 leading-relaxed">
@@ -304,7 +304,7 @@ export default function Landing() {
               { icon: DollarSign, title: 'UTM Tracking', desc: 'Auto-capture utm_source=perplexity / chatgpt and AI referrers, beside paid and organic.' },
             ].map(({ icon: Icon, title, desc }, i) => (
               <Reveal key={title} delay={(i % 4) * 80} className="group bg-white p-6 hover:bg-[#FBFAFE] transition-colors">
-                <Icon className="w-5 h-5 text-[#0A0A0A] mb-4 group-hover:text-[#7B5BF5] transition-colors" strokeWidth={1.75} />
+                <Icon className="w-5 h-5 text-[#0A0A0A] mb-4 group-hover:text-[#2D7FF9] transition-colors" strokeWidth={1.75} />
                 <p className="font-semibold text-[15px] mb-1.5">{title}</p>
                 <p className="text-[13px] text-[#5B5772] leading-relaxed">{desc}</p>
               </Reveal>
@@ -318,14 +318,14 @@ export default function Landing() {
         <Reveal>
           <div className="relative bg-ink rounded-3xl p-10 md:p-14 text-white overflow-hidden">
             <div className="absolute inset-0 bg-dots opacity-[0.15]" />
-            <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[480px] h-[480px] rounded-full bg-[#7B5BF5]/20 blur-3xl" />
+            <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[480px] h-[480px] rounded-full bg-[#2D7FF9]/20 blur-3xl" />
             <div className="relative text-center">
-              <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#7B5BF5] mb-4">The full loop</p>
+              <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#2D7FF9] mb-4">The full loop</p>
               <h2 className="text-[32px] font-display font-bold tracking-tight mb-10">From AI question to closed deal.</h2>
               <div className="flex flex-wrap items-center justify-center gap-2.5 mb-8">
                 {['Buyer asks ChatGPT', 'You get mentioned', 'They click through', 'UTM captured', 'They convert', 'Revenue tracked'].map((step, i, arr) => (
                   <div key={step} className="flex items-center gap-2.5">
-                    <div className={`px-3.5 py-2 rounded-lg text-[13px] font-medium border ${i === arr.length - 1 ? 'bg-[#7B5BF5] border-[#7B5BF5] text-white' : 'bg-white/[0.06] border-white/10 text-white/90'}`}>{step}</div>
+                    <div className={`px-3.5 py-2 rounded-lg text-[13px] font-medium border ${i === arr.length - 1 ? 'bg-[#2D7FF9] border-[#2D7FF9] text-white' : 'bg-white/[0.06] border-white/10 text-white/90'}`}>{step}</div>
                     {i < arr.length - 1 && <ArrowRight className="w-3.5 h-3.5 text-white/30" />}
                   </div>
                 ))}
@@ -356,8 +356,8 @@ export default function Landing() {
                     { name: 'Peec', price: '$150', hl: false },
                   ].map(({ name, price, hl }) => (
                     <th key={name} className={`py-3 text-center ${hl ? 'bg-[#F3F1FE] rounded-t-lg' : ''}`}>
-                      <p className={`text-[13px] font-bold ${hl ? 'text-[#7B5BF5]' : 'text-[#0A0A0A]'}`}>{name}</p>
-                      <p className={`font-mono text-[11px] mt-0.5 ${hl ? 'text-[#7B5BF5]' : 'text-[#8C8AA3]'}`}>{price}/mo</p>
+                      <p className={`text-[13px] font-bold ${hl ? 'text-[#2D7FF9]' : 'text-[#0A0A0A]'}`}>{name}</p>
+                      <p className={`font-mono text-[11px] mt-0.5 ${hl ? 'text-[#2D7FF9]' : 'text-[#8C8AA3]'}`}>{price}/mo</p>
                     </th>
                   ))}
                 </tr>
@@ -439,7 +439,7 @@ export default function Landing() {
         <Reveal>
           <div className="relative bg-ink rounded-3xl px-8 py-16 text-center overflow-hidden">
             <div className="absolute inset-0 bg-grid opacity-[0.12]" />
-            <div className="absolute -bottom-32 left-1/2 -translate-x-1/2 w-[560px] h-[400px] rounded-full bg-[#7C3AED]/20 blur-3xl" />
+            <div className="absolute -bottom-32 left-1/2 -translate-x-1/2 w-[560px] h-[400px] rounded-full bg-[#2D7FF9]/20 blur-3xl" />
             <div className="relative">
               <h2 className="text-[36px] font-display font-bold tracking-tight text-white mb-4">Start tracking what actually matters.</h2>
               <p className="text-white/55 mb-8 max-w-xl mx-auto text-[16px]">AI search is where your next customer starts their research. Know if you're there — and prove it drove revenue.</p>

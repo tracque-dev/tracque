@@ -46,7 +46,7 @@ export default function SiteAudit() {
 
   const CATEGORY_COLORS: Record<string, string> = {
     conversion: 'bg-emerald-50 text-emerald-700',
-    engagement: 'bg-violet-50 text-violet-700',
+    engagement: 'bg-blue-50 text-blue-700',
     navigation: 'bg-muted text-foreground',
     attribution: 'bg-amber-50 text-amber-700',
   }
@@ -56,7 +56,7 @@ export default function SiteAudit() {
       {/* Header */}
       <div className="flex items-end justify-between">
         <div>
-          <p className="eyebrow text-violet-600">Technical</p>
+          <p className="eyebrow text-blue-600">Technical</p>
           <h1 className="text-2xl font-display font-bold tracking-tight mt-1">Site Audit</h1>
           <p className="text-sm text-muted-foreground mt-1">Auto-generate GA4 events + GTM container for any site</p>
         </div>
@@ -89,7 +89,7 @@ export default function SiteAudit() {
           <div>
             <label className="text-xs text-muted-foreground mb-1 block">Website URL</label>
             <input
-              className="w-full text-sm border border-border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500 bg-background"
+              className="w-full text-sm border border-border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-background"
               placeholder="https://yoursite.com"
               value={url}
               onChange={e => setUrl(e.target.value)}
@@ -99,7 +99,7 @@ export default function SiteAudit() {
           <div>
             <label className="text-xs text-muted-foreground mb-1 block">GA4 Measurement ID (optional)</label>
             <input
-              className="w-full text-sm border border-border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500 bg-background font-mono"
+              className="w-full text-sm border border-border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-background font-mono"
               placeholder="G-XXXXXXXXXX"
               value={ga4Id}
               onChange={e => setGa4Id(e.target.value)}
@@ -109,7 +109,7 @@ export default function SiteAudit() {
         <button
           onClick={runAudit}
           disabled={loading || !url.trim()}
-          className="flex items-center gap-2 px-4 py-2.5 text-sm bg-violet-600 text-white rounded-xl font-medium hover:bg-violet-700 disabled:opacity-40 transition-all"
+          className="flex items-center gap-2 px-4 py-2.5 text-sm bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 disabled:opacity-40 transition-all"
         >
           {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Auditing site…</> : <><Play className="w-4 h-4" /> Run audit</>}
         </button>
