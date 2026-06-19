@@ -13,7 +13,8 @@ const supabase = createClient(
   Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
 )
 
-const ANTHROPIC_KEY = Deno.env.get('ANTHROPIC_API_KEY')!
+const ANTHROPIC_KEY = Deno.env.get('ANTHROPIC_API_KEY')
+const OPENAI_KEY = Deno.env.get('OPENAI_API_KEY')
 
 // ── Data gathering ─────────────────────────────────────────
 
@@ -257,31 +258,38 @@ Be ruthlessly specific. If you don't have enough data to be specific, say what d
 
 // ── Call Claude ────────────────────────────────────────────
 
+// Provider-flexible: use Anthropic if its key is set, otherwise OpenAI (live).
 async function callClaude(prompt: string): Promise<any[]> {
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'x-api-key': ANTHROPIC_KEY,
-      'anthropic-version': '2023-06-01',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: 'claude-opus-4-5',
-      max_tokens: 4000,
-      messages: [{
-        role: 'user',
-        content: prompt,
-      }],
-    }),
-  })
+  let text = ''
+  if (ANTHROPIC_KEY) {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'x-api-key': ANTHROPIC_KEY, 'anthropic-version': '2023-06-01', 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'claude-opus-4-5', max_tokens: 4000, messages: [{ role: 'user', content: prompt }] }),
+    })
+    const data = await res.json()
+    text = data.content?.[0]?.text ?? ''
+  } else if (OPENAI_KEY) {
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${OPENAI_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'gpt-4o',
+        max_tokens: 4000,
+        messages: [
+          { role: 'system', content: 'You are a GEO/SEO/AI-visibility strategist. Respond with ONLY a valid JSON array — no prose, no markdown code fences.' },
+          { role: 'user', content: prompt },
+        ],
+      }),
+    })
+    const data = await res.json()
+    text = data.choices?.[0]?.message?.content ?? ''
+  } else {
+    throw new Error('No LLM key configured (set ANTHROPIC_API_KEY or OPENAI_API_KEY)')
+  }
 
-  const data = await res.json()
-  const text = data.content?.[0]?.text ?? ''
-
-  // Extract JSON from response
   const jsonMatch = text.match(/\[[\s\S]*\]/)
-  if (!jsonMatch) throw new Error('Claude did not return valid JSON array')
-
+  if (!jsonMatch) throw new Error('LLM did not return a valid JSON array')
   return JSON.parse(jsonMatch[0])
 }
 
