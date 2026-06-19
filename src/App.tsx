@@ -19,6 +19,8 @@ import SiteAudit from './pages/SiteAudit'
 import Attribution from './pages/Attribution'
 import Report from './pages/Report'
 import SharedReport from './pages/SharedReport'
+import Privacy from './pages/Privacy'
+import Terms from './pages/Terms'
 import Settings from './pages/Settings'
 
 export default function App() {
@@ -27,6 +29,8 @@ export default function App() {
       <Route path="/" element={<Landing />} />
       <Route path="/auth" element={<Auth />} />
       <Route path="/r/:token" element={<SharedReport />} />
+      <Route path="/privacy" element={<Privacy />} />
+      <Route path="/terms" element={<Terms />} />
       <Route path="/app" element={
         <ProtectedRoute>
           <Layout />

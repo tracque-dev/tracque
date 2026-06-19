@@ -461,7 +461,7 @@ export default function Landing() {
           </div>
           <p className="font-mono text-[11px] text-[#8C8AA3]">© 2026 Tracque · AI visibility + SEO + attribution</p>
           <div className="flex gap-5">
-            {['Privacy', 'Terms'].map(l => <a key={l} href="#" className="text-[12px] text-[#8C8AA3] hover:text-[#0A0A0A] transition-colors">{l}</a>)}
+            {[['Privacy', '/privacy'], ['Terms', '/terms']].map(([l, to]) => <Link key={l} to={to} className="text-[12px] text-[#8C8AA3] hover:text-[#0A0A0A] transition-colors">{l}</Link>)}
           </div>
         </div>
       </footer>
