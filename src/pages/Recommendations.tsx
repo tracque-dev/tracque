@@ -9,8 +9,8 @@ import { supabase } from '../integrations/supabase/client'
 import { useBrands, USER_ID } from '../lib/hooks'
 
 const CATEGORY_META: Record<string, { label: string; color: string }> = {
-  citation_source:  { label: 'Citation Source',   color: 'bg-violet-50 text-violet-700' },
-  content_gap:      { label: 'Content Gap',        color: 'bg-violet-50 text-violet-700' },
+  citation_source:  { label: 'Citation Source',   color: 'bg-primary/10 text-primary' },
+  content_gap:      { label: 'Content Gap',        color: 'bg-primary/10 text-primary' },
   competitor_gap:   { label: 'Competitor Gap',     color: 'bg-muted text-foreground' },
   site_structure:   { label: 'Site Structure',     color: 'bg-muted text-foreground' },
   review_platform:  { label: 'Review Platform',    color: 'bg-muted text-foreground' },
@@ -20,9 +20,9 @@ const CATEGORY_META: Record<string, { label: string; color: string }> = {
 }
 
 const EFFORT_META: Record<string, { label: string; color: string }> = {
-  low:    { label: 'Low effort',    color: 'text-emerald-600' },
-  medium: { label: 'Medium effort', color: 'text-amber-600' },
-  high:   { label: 'High effort',   color: 'text-red-500' },
+  low:    { label: 'Low effort',    color: 'text-emerald-400' },
+  medium: { label: 'Medium effort', color: 'text-amber-400' },
+  high:   { label: 'High effort',   color: 'text-red-400' },
 }
 
 function ImpactBar({ score }: { score: number }) {
@@ -35,7 +35,7 @@ function ImpactBar({ score }: { score: number }) {
             className={`w-1.5 h-3 rounded-sm ${
               i < score
                 ? score >= 8 ? 'bg-emerald-500' : score >= 5 ? 'bg-amber-400' : 'bg-red-400'
-                : 'bg-muted'
+                : 'bg-secondary'
             }`}
           />
         ))}
@@ -66,14 +66,14 @@ function RecommendationCard({ rec, onStatusChange }: {
   onStatusChange: (id: string, status: string) => void
 }) {
   const [expanded, setExpanded] = useState(false)
-  const catMeta = CATEGORY_META[rec.category] ?? { label: rec.category, color: 'bg-muted text-muted-foreground' }
+  const catMeta = CATEGORY_META[rec.category] ?? { label: rec.category, color: 'bg-secondary text-muted-foreground' }
   const effortMeta = EFFORT_META[rec.effort] ?? { label: rec.effort, color: 'text-muted-foreground' }
 
   const borderColor = rec.impact_score >= 8 ? 'border-l-emerald-500' :
     rec.impact_score >= 5 ? 'border-l-amber-400' : 'border-l-red-400'
 
   return (
-    <div className={`bg-card rounded-2xl border border-border border-l-4 ${borderColor} shadow-card ${
+    <div className={`bg-card rounded-xl border border-border border-l-4 ${borderColor} ${
       rec.status === 'done' ? 'opacity-60' : ''
     }`}>
       {/* Header */}
@@ -83,7 +83,7 @@ function RecommendationCard({ rec, onStatusChange }: {
       >
         <div className="flex items-start gap-3">
           {/* Priority rank */}
-          <div className="w-7 h-7 rounded-xl bg-muted flex items-center justify-center shrink-0 mt-0.5">
+          <div className="w-7 h-7 rounded-lg bg-secondary flex items-center justify-center shrink-0 mt-0.5">
             <span className="text-xs font-display font-bold nums text-foreground">#{rec.priority_rank}</span>
           </div>
 
@@ -96,12 +96,12 @@ function RecommendationCard({ rec, onStatusChange }: {
                 {effortMeta.label}
               </span>
               {rec.status === 'done' && (
-                <span className="flex items-center gap-1 text-xs text-emerald-600 font-medium">
+                <span className="flex items-center gap-1 text-xs text-emerald-400 font-medium">
                   <CheckCircle2 className="w-3 h-3" /> Done
                 </span>
               )}
               {rec.status === 'in_progress' && (
-                <span className="flex items-center gap-1 text-xs text-amber-600 font-medium">
+                <span className="flex items-center gap-1 text-xs text-amber-400 font-medium">
                   <Clock className="w-3 h-3" /> In progress
                 </span>
               )}
@@ -132,7 +132,7 @@ function RecommendationCard({ rec, onStatusChange }: {
           {rec.data_evidence && Object.keys(rec.data_evidence).some(k => rec.data_evidence[k] != null) && (
             <div className="flex flex-wrap gap-2">
               {rec.data_evidence.current_rate != null && (
-                <span className="text-xs px-2 py-1 bg-red-50 text-red-700 rounded-md font-medium nums">
+                <span className="text-xs px-2 py-1 bg-red-500/10 text-red-400 rounded-md font-medium nums">
                   Current: {rec.data_evidence.current_rate}% mention rate
                 </span>
               )}
@@ -142,12 +142,12 @@ function RecommendationCard({ rec, onStatusChange }: {
                 </span>
               )}
               {rec.data_evidence.target_rate != null && (
-                <span className="text-xs px-2 py-1 bg-emerald-50 text-emerald-700 rounded-md font-medium nums">
+                <span className="text-xs px-2 py-1 bg-emerald-500/10 text-emerald-400 rounded-md font-medium nums">
                   Target: {rec.data_evidence.target_rate}%
                 </span>
               )}
               {rec.data_evidence.domain && (
-                <span className="text-xs px-2 py-1 bg-violet-50 text-violet-700 rounded-md font-medium">
+                <span className="text-xs px-2 py-1 bg-primary/10 text-primary rounded-md font-medium">
                   {rec.data_evidence.domain}
                 </span>
               )}
@@ -179,9 +179,9 @@ function RecommendationCard({ rec, onStatusChange }: {
           )}
 
           {/* Expected result */}
-          <div className="flex items-center gap-2 p-3 bg-emerald-50 rounded-xl">
-            <TrendingUp className="w-4 h-4 text-emerald-600 shrink-0" />
-            <p className="text-xs text-emerald-700 font-medium">{rec.expected_result}</p>
+          <div className="flex items-center gap-2 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
+            <TrendingUp className="w-4 h-4 text-emerald-400 shrink-0" />
+            <p className="text-xs text-emerald-400 font-medium">{rec.expected_result}</p>
           </div>
 
           {/* Actions */}
@@ -190,7 +190,7 @@ function RecommendationCard({ rec, onStatusChange }: {
               {rec.status === 'pending' && (
                 <button
                   onClick={() => onStatusChange(rec.id, 'in_progress')}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-violet-600 text-white rounded-xl font-medium hover:bg-violet-700"
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90"
                 >
                   <ArrowRight className="w-3 h-3" /> Start working on this
                 </button>
@@ -198,14 +198,14 @@ function RecommendationCard({ rec, onStatusChange }: {
               {rec.status === 'in_progress' && (
                 <button
                   onClick={() => onStatusChange(rec.id, 'done')}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-emerald-500 text-white rounded-xl font-medium hover:bg-emerald-600"
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-emerald-500 text-white rounded-lg font-medium hover:bg-emerald-600"
                 >
                   <CheckCircle2 className="w-3 h-3" /> Mark as done
                 </button>
               )}
               <button
                 onClick={() => onStatusChange(rec.id, 'dismissed')}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-border rounded-xl text-muted-foreground hover:bg-muted hover:text-foreground"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-border rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
               >
                 <XCircle className="w-3 h-3" /> Dismiss
               </button>
@@ -273,14 +273,14 @@ export default function Recommendations() {
       {/* Header */}
       <div className="flex items-end justify-between">
         <div>
-          <p className="eyebrow text-violet-600">Actions</p>
-          <h1 className="text-2xl font-display font-bold tracking-tight mt-1">Recommendations</h1>
+          <p className="eyebrow text-primary">Actions</p>
+          <h1 className="text-2xl font-display font-semibold tracking-tight mt-1">Recommendations</h1>
           <p className="text-sm text-muted-foreground mt-1">Specific actions to improve your AI visibility — ranked by impact</p>
         </div>
         <div className="flex items-center gap-2">
           {brands.length > 1 && (
             <select
-              className="text-sm border border-border rounded-xl px-3 py-2.5 bg-background focus:outline-none focus:ring-1 focus:ring-violet-500"
+              className="text-sm border border-border rounded-lg px-3 py-2.5 bg-background focus:outline-none focus:ring-1 focus:ring-primary"
               value={activeBrandId}
               onChange={e => setSelectedBrandId(e.target.value)}
             >
@@ -304,18 +304,18 @@ export default function Recommendations() {
       {/* Progress summary */}
       {recommendations.length > 0 && (
         <div className="grid grid-cols-3 gap-4">
-          <div className="bg-card rounded-2xl border border-border p-5 shadow-card">
-            <p className="text-3xl font-display font-bold nums tracking-tight">{recommendations.length}</p>
+          <div className="bg-card rounded-xl border border-border p-5">
+            <p className="text-3xl font-display font-semibold nums tracking-tight">{recommendations.length}</p>
             <p className="eyebrow text-muted-foreground mt-1">Total recommendations</p>
           </div>
-          <div className="bg-card rounded-2xl border border-border p-5 shadow-card">
-            <p className="text-3xl font-display font-bold nums tracking-tight text-amber-600">{inProgressCount}</p>
+          <div className="bg-card rounded-xl border border-border p-5">
+            <p className="text-3xl font-display font-semibold nums tracking-tight text-amber-400">{inProgressCount}</p>
             <p className="eyebrow text-muted-foreground mt-1">In progress</p>
           </div>
-          <div className="bg-card rounded-2xl border border-border p-5 shadow-card">
+          <div className="bg-card rounded-xl border border-border p-5">
             <div className="flex items-center gap-2">
-              <p className="text-3xl font-display font-bold nums tracking-tight text-emerald-600">{doneCount}</p>
-              {doneCount > 0 && <Star className="w-4 h-4 text-emerald-500" />}
+              <p className="text-3xl font-display font-semibold nums tracking-tight text-emerald-400">{doneCount}</p>
+              {doneCount > 0 && <Star className="w-4 h-4 text-emerald-400" />}
             </div>
             <p className="eyebrow text-muted-foreground mt-1">Completed</p>
           </div>
@@ -336,7 +336,7 @@ export default function Recommendations() {
               onClick={() => setStatusFilter(value)}
               className={`text-xs px-3 py-1.5 rounded-md border font-medium transition-colors ${
                 statusFilter === value
-                  ? 'bg-violet-600 text-white border-violet-600'
+                  ? 'bg-primary text-primary-foreground border-primary'
                   : 'border-border text-muted-foreground hover:bg-muted hover:text-foreground'
               }`}
             >
@@ -348,7 +348,7 @@ export default function Recommendations() {
 
       {/* Empty / loading states */}
       {!activeBrandId ? (
-        <div className="bg-card rounded-2xl border border-border p-10 text-center shadow-card">
+        <div className="bg-card rounded-xl border border-border p-10 text-center">
           <p className="text-base font-display font-semibold mb-1">No brands yet</p>
           <p className="text-sm text-muted-foreground">Add a brand first, then run scans to generate recommendations</p>
         </div>
@@ -357,13 +357,13 @@ export default function Recommendations() {
           <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
         </div>
       ) : recommendations.length === 0 ? (
-        <div className="bg-card rounded-2xl border border-border p-10 text-center shadow-card">
+        <div className="bg-card rounded-xl border border-border p-10 text-center">
           <p className="text-base font-display font-semibold mb-1">No recommendations yet</p>
           <p className="text-sm text-muted-foreground mb-5">Run at least one scan, then click Generate to get specific actions ranked by impact</p>
           <button
             onClick={() => generate.mutate()}
             disabled={generate.isPending}
-            className="flex items-center gap-2 px-4 py-2.5 text-sm bg-violet-600 text-white rounded-xl font-medium hover:bg-violet-700 disabled:opacity-40 mx-auto"
+            className="flex items-center gap-2 px-4 py-2.5 text-sm bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 disabled:opacity-40 mx-auto"
           >
             {generate.isPending
               ? <><Loader2 className="w-4 h-4 animate-spin" /> Analyzing your data…</>

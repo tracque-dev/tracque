@@ -3,7 +3,7 @@ import LegalLayout, { LegalSection } from '../components/LegalLayout'
 export default function Privacy() {
   return (
     <LegalLayout title="Privacy Policy" updated="June 19, 2026">
-      <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-xs text-amber-800">
+      <div className="rounded-xl border border-amber-500/20 bg-amber-500/10 p-4 text-xs text-amber-400">
         This is a good-faith starting template. Have it reviewed by counsel before relying on it for compliance (GDPR, CCPA, etc.).
       </div>
 

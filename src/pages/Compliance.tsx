@@ -22,11 +22,11 @@ function freshnessScore(days: number | null): number | null {
 
 function grade(score: number | null): { letter: string; color: string } {
   if (score == null) return { letter: '—', color: 'text-muted-foreground' }
-  if (score >= 90) return { letter: 'A', color: 'text-emerald-600' }
-  if (score >= 80) return { letter: 'B', color: 'text-emerald-600' }
-  if (score >= 70) return { letter: 'C', color: 'text-amber-600' }
-  if (score >= 60) return { letter: 'D', color: 'text-amber-600' }
-  return { letter: 'F', color: 'text-red-600' }
+  if (score >= 90) return { letter: 'A', color: 'text-emerald-400' }
+  if (score >= 80) return { letter: 'B', color: 'text-emerald-400' }
+  if (score >= 70) return { letter: 'C', color: 'text-amber-400' }
+  if (score >= 60) return { letter: 'D', color: 'text-amber-400' }
+  return { letter: 'F', color: 'text-red-400' }
 }
 
 function ScoreCard({ icon: Icon, label, score, detail, foot }: {
@@ -47,7 +47,7 @@ function ScoreCard({ icon: Icon, label, score, detail, foot }: {
         {pct != null && <span className="text-sm text-muted-foreground">%</span>}
       </div>
       <p className="text-xs text-muted-foreground mt-1">{detail}</p>
-      <div className="mt-3 h-1.5 rounded-full bg-muted overflow-hidden">
+      <div className="mt-3 h-1.5 rounded-full bg-white/[0.07] overflow-hidden">
         <div className={`h-full rounded-full ${tone}`} style={{ width: `${bar}%` }} />
       </div>
       <p className="text-[11px] text-muted-foreground mt-2">{foot}</p>
@@ -105,7 +105,7 @@ export default function Compliance() {
       {/* Header */}
       <div className="flex items-end justify-between print:hidden">
         <div>
-          <p className="eyebrow text-violet-600">Compliance</p>
+          <p className="eyebrow text-primary">Compliance</p>
           <h1 className="text-2xl font-display font-bold tracking-tight mt-1">Compliance</h1>
           <p className="text-sm text-muted-foreground mt-1">Vendor-risk scorecard + printable one-pager for procurement &amp; exam files</p>
         </div>
@@ -123,7 +123,7 @@ export default function Compliance() {
         <>
           {/* Overall grade banner */}
           <div className="bg-card rounded-2xl border border-border shadow-card p-5 flex items-center gap-5 print:hidden">
-            <div className="w-20 h-20 rounded-xl bg-muted/50 border border-border flex items-center justify-center shrink-0">
+            <div className="w-20 h-20 rounded-xl bg-secondary border border-border flex items-center justify-center shrink-0">
               <span className={`text-5xl font-display font-bold nums tracking-tight ${g.color}`}>{g.letter}</span>
             </div>
             <div className="flex-1">
@@ -152,9 +152,9 @@ export default function Compliance() {
 
           {/* Wrong-fact callout (the procurement red flag to fix first) */}
           {wrong > 0 && (
-            <div className="bg-red-50 border border-red-200 rounded-xl p-4 print:hidden">
-              <p className="text-sm font-semibold text-red-700">{wrong} fact{wrong > 1 ? 's' : ''} currently misstated by AI</p>
-              <p className="text-xs text-red-600 mt-0.5">Resolve these on AI Rate Accuracy before sharing the one-pager — a clean rate-accuracy row is the strongest line in a vendor-risk packet.</p>
+            <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 print:hidden">
+              <p className="text-sm font-semibold text-red-400">{wrong} fact{wrong > 1 ? 's' : ''} currently misstated by AI</p>
+              <p className="text-xs text-red-400 mt-0.5">Resolve these on AI Rate Accuracy before sharing the one-pager — a clean rate-accuracy row is the strongest line in a vendor-risk packet.</p>
             </div>
           )}
 
@@ -168,7 +168,7 @@ export default function Compliance() {
               </div>
               <div className="text-right">
                 <div className="flex items-center gap-1.5 justify-end text-foreground">
-                  <ShieldCheck className="w-5 h-5 text-emerald-600" />
+                  <ShieldCheck className="w-5 h-5 text-emerald-400" />
                   <span className="font-display font-semibold">Tracque</span>
                 </div>
                 <p className="text-[11px] text-muted-foreground mt-1">AI-visibility &amp; rate-accuracy monitoring</p>
@@ -213,7 +213,7 @@ export default function Compliance() {
                 },
               ].map(s => (
                 <div key={s.title} className="flex gap-3">
-                  <div className="w-7 h-7 rounded-lg bg-muted flex items-center justify-center shrink-0 mt-0.5">
+                  <div className="w-7 h-7 rounded-lg bg-secondary flex items-center justify-center shrink-0 mt-0.5">
                     <s.icon className="w-3.5 h-3.5 text-foreground" />
                   </div>
                   <div>
@@ -232,7 +232,7 @@ export default function Compliance() {
                 { l: 'Tenant-isolated', d: 'Row-level security' },
               ].map(a => (
                 <div key={a.l} className="flex items-start gap-1.5">
-                  <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                  <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
                   <div>
                     <p className="font-medium text-foreground">{a.l}</p>
                     <p className="text-muted-foreground">{a.d}</p>

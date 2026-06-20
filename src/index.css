@@ -4,49 +4,49 @@
 
 @layer base {
   :root {
-    /* ── Tracque OS — bold high-contrast, violet-native ──────
-       Light canvas + violet-black ink blocks + one electric
-       violet accent. High contrast, oversized type, no pastel. */
-    --background: 252 30% 98%;        /* whisper-violet off-white */
-    --foreground: 252 30% 8%;         /* violet-near-black ink */
-    --card: 0 0% 100%;
-    --card-foreground: 252 30% 8%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 252 30% 8%;
-    --primary: 252 90% 62%;           /* electric violet-indigo #7B5BF5 */
+    /* ── Tracque — dark, Linear/Vercel-grade ─────────────────
+       Near-black canvas · hairline borders · sharp geometry ·
+       one restrained electric-blue accent. */
+    --background: 240 6% 5%;          /* #0C0C0E near-black */
+    --foreground: 240 9% 94%;         /* #ECECEF */
+    --card: 240 6% 8%;                /* #141416 surface */
+    --card-foreground: 240 9% 94%;
+    --popover: 240 6% 9%;
+    --popover-foreground: 240 9% 94%;
+    --primary: 216 94% 58%;           /* electric blue accent #2D7FF9 */
     --primary-foreground: 0 0% 100%;
-    --secondary: 252 24% 95%;
-    --secondary-foreground: 252 30% 8%;
-    --muted: 252 24% 96%;
-    --muted-foreground: 252 8% 44%;
-    --accent: 252 90% 96%;            /* faint violet wash for hovers */
-    --accent-foreground: 252 80% 40%;
-    --destructive: 351 83% 58%;
+    --secondary: 240 5% 13%;
+    --secondary-foreground: 240 9% 94%;
+    --muted: 240 5% 12%;
+    --muted-foreground: 240 5% 58%;   /* #8E8E96 */
+    --accent: 240 5% 14%;
+    --accent-foreground: 240 9% 94%;
+    --destructive: 0 72% 55%;
     --destructive-foreground: 0 0% 100%;
-    --border: 252 22% 91%;
-    --input: 252 22% 91%;
-    --ring: 252 90% 62%;
-    --radius: 0.875rem;               /* bolder corners */
-    --success: 158 75% 40%;
-    --warning: 32 95% 52%;
+    --border: 240 5% 15%;             /* #25252A hairline */
+    --input: 240 5% 15%;
+    --ring: 216 94% 58%;
+    --radius: 0.5rem;                 /* sharper corners */
+    --success: 142 58% 50%;
+    --warning: 38 92% 56%;
 
-    /* Ink — the near-black violet block used for the sidebar,
-       hero metrics, and high-contrast inverted panels. */
-    --ink: 252 32% 9%;
-    --ink-foreground: 252 20% 96%;
-    --ink-muted: 252 14% 62%;
+    /* Ink = the canvas on dark; inverted panels are subtle elevations */
+    --ink: 240 6% 5%;
+    --ink-foreground: 240 9% 94%;
+    --ink-muted: 240 5% 58%;
 
-    /* Sidebar = ink */
-    --sidebar: 252 32% 9%;
-    --sidebar-foreground: 252 14% 64%;
-    --sidebar-accent: 252 28% 16%;
-    --sidebar-primary: 252 95% 72%;
+    /* Sidebar — a hair darker than the canvas */
+    --sidebar: 240 8% 4%;
+    --sidebar-foreground: 240 5% 60%;
+    --sidebar-accent: 240 5% 12%;
+    --sidebar-primary: 216 94% 64%;
 
-    --shadow-sm: 0 1px 2px hsl(252 40% 12% / 0.06);
-    --shadow: 0 2px 8px -2px hsl(252 40% 12% / 0.08), 0 1px 2px -1px hsl(252 40% 12% / 0.05);
-    --shadow-md: 0 8px 24px -6px hsl(252 40% 12% / 0.10), 0 2px 6px -2px hsl(252 40% 12% / 0.06);
-    --shadow-lg: 0 20px 40px -12px hsl(252 45% 14% / 0.16), 0 6px 12px -6px hsl(252 40% 12% / 0.08);
-    --shadow-violet: 0 12px 32px -8px hsl(252 90% 62% / 0.35);
+    --shadow-sm: 0 1px 2px hsl(0 0% 0% / 0.4);
+    --shadow: 0 1px 3px hsl(0 0% 0% / 0.45);
+    --shadow-md: 0 6px 18px hsl(0 0% 0% / 0.45);
+    --shadow-lg: 0 16px 40px hsl(0 0% 0% / 0.55);
+    --shadow-blue: 0 0 0 1px hsl(216 94% 58% / 0.5);
+    --shadow-violet: 0 0 0 1px hsl(216 94% 58% / 0.5);
   }
 }
 
@@ -65,44 +65,42 @@
   .shadow-card { box-shadow: var(--shadow); }
   .shadow-card-md { box-shadow: var(--shadow-md); }
   .shadow-card-lg { box-shadow: var(--shadow-lg); }
+  .shadow-blue { box-shadow: var(--shadow-blue); }
   .shadow-violet { box-shadow: var(--shadow-violet); }
 
   .font-mono { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace; }
-  /* Space Grotesk — the display face for headers + big numbers */
-  .font-display { font-family: 'Space Grotesk', 'Inter', sans-serif; letter-spacing: -0.02em; }
+  /* Display = Inter, tight tracking (Linear-style headers) */
+  .font-display { font-family: 'Inter', -apple-system, sans-serif; letter-spacing: -0.02em; }
   .nums { font-variant-numeric: tabular-nums; }
 
-  /* Ink — high-contrast inverted block (sidebar / hero metric / panels) */
-  .bg-ink { background-color: hsl(var(--ink)); }
+  /* Elevated panels on dark */
+  .bg-ink { background-color: hsl(240 6% 8%); }
   .text-ink { color: hsl(var(--ink)); }
-  .bg-violet-grad { background-image: linear-gradient(135deg, hsl(252 90% 64%), hsl(266 85% 56%)); }
-  .bg-ink-grad { background-image: linear-gradient(150deg, hsl(252 32% 12%), hsl(252 40% 7%)); }
+  .bg-violet-grad { background-image: linear-gradient(135deg, hsl(216 94% 58%), hsl(222 90% 50%)); }
+  .bg-blue-grad { background-image: linear-gradient(135deg, hsl(216 94% 58%), hsl(222 90% 50%)); }
+  .bg-ink-grad { background-image: linear-gradient(160deg, hsl(240 6% 11%), hsl(240 7% 6%)); }
 
-  /* Eyebrow micro-label */
   .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 0.6875rem; letter-spacing: 0.12em; text-transform: uppercase; }
 
-  /* Signature "rail" motif — diagonal up-right lines from the logo */
   .rails {
-    background-image: repeating-linear-gradient(115deg, hsl(0 0% 100% / 0.06) 0 1px, transparent 1px 18px);
+    background-image: repeating-linear-gradient(115deg, hsl(0 0% 100% / 0.05) 0 1px, transparent 1px 18px);
   }
-  .rails-violet {
-    background-image: repeating-linear-gradient(115deg, hsl(252 90% 62% / 0.10) 0 1px, transparent 1px 16px);
+  .rails-violet, .rails-blue {
+    background-image: repeating-linear-gradient(115deg, hsl(216 94% 58% / 0.14) 0 1px, transparent 1px 16px);
   }
 
-  /* Line-grid + dotted textures for section backdrops */
   .bg-grid {
     background-image:
-      linear-gradient(to right, rgba(10,10,10,0.04) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(10,10,10,0.04) 1px, transparent 1px);
+      linear-gradient(to right, rgba(255,255,255,0.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,0.035) 1px, transparent 1px);
     background-size: 56px 56px;
   }
   .bg-dots {
-    background-image: radial-gradient(rgba(10,10,10,0.07) 1px, transparent 1px);
+    background-image: radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px);
     background-size: 22px 22px;
   }
-  /* Soft radial spotlight behind hero product */
   .glow-radial {
-    background: radial-gradient(60% 60% at 50% 40%, rgba(123,91,245,0.16), transparent 70%);
+    background: radial-gradient(60% 60% at 50% 40%, rgba(45,127,249,0.18), transparent 70%);
   }
   .mask-fade-edges {
     -webkit-mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
@@ -110,7 +108,6 @@
   }
 }
 
-/* ── Motion ──────────────────────────────────────────────── */
 @keyframes reveal-up {
   from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -125,9 +122,9 @@
 .animate-marquee { animation: marquee 28s linear infinite; }
 
 @keyframes pulse-ring {
-  0%   { box-shadow: 0 0 0 0 rgba(16,185,129,0.5); }
-  70%  { box-shadow: 0 0 0 6px rgba(16,185,129,0); }
-  100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); }
+  0%   { box-shadow: 0 0 0 0 rgba(63,185,80,0.5); }
+  70%  { box-shadow: 0 0 0 6px rgba(63,185,80,0); }
+  100% { box-shadow: 0 0 0 0 rgba(63,185,80,0); }
 }
 .live-dot { animation: pulse-ring 2s infinite; }
 

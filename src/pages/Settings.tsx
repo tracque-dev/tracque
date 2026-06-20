@@ -25,8 +25,8 @@ export default function Settings() {
       {/* Header */}
       <div className="flex items-end justify-between">
         <div>
-          <p className="eyebrow text-violet-600">Account</p>
-          <h1 className="text-2xl font-display font-bold tracking-tight mt-1">Settings</h1>
+          <p className="eyebrow text-primary">Account</p>
+          <h1 className="text-2xl font-display font-semibold tracking-tight mt-1">Settings</h1>
           <p className="text-sm text-muted-foreground mt-1">API keys and scan preferences</p>
         </div>
         <button
@@ -38,7 +38,7 @@ export default function Settings() {
       </div>
 
       {/* AI API Keys */}
-      <div className="bg-card rounded-2xl border border-border shadow-card overflow-hidden">
+      <div className="bg-card rounded-xl border border-border overflow-hidden">
         <div className="px-5 py-4 border-b border-border flex items-center gap-2">
           <Key className="w-4 h-4 text-muted-foreground" />
           <p className="eyebrow text-muted-foreground">AI model API keys</p>
@@ -55,10 +55,10 @@ export default function Settings() {
                 placeholder="sk-..."
                 value={keys[model.id] ?? ''}
                 onChange={e => setKeys(k => ({ ...k, [model.id]: e.target.value }))}
-                className="w-56 text-sm border border-border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500 bg-background font-mono"
+                className="w-56 text-sm border border-border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary bg-background font-mono"
               />
               {keys[model.id] ? (
-                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
               ) : (
                 <div className="w-4 h-4 rounded-full border-2 border-muted shrink-0" />
               )}
@@ -68,7 +68,7 @@ export default function Settings() {
       </div>
 
       {/* SEO API Key */}
-      <div className="bg-card rounded-2xl border border-border shadow-card overflow-hidden">
+      <div className="bg-card rounded-xl border border-border overflow-hidden">
         <div className="px-5 py-4 border-b border-border flex items-center gap-2">
           <Key className="w-4 h-4 text-muted-foreground" />
           <p className="eyebrow text-muted-foreground">SEO data</p>
@@ -83,14 +83,14 @@ export default function Settings() {
             placeholder="serpapi key..."
             value={serpKey}
             onChange={e => setSerpKey(e.target.value)}
-            className="w-56 text-sm border border-border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500 bg-background font-mono"
+            className="w-56 text-sm border border-border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary bg-background font-mono"
           />
-          {serpKey ? <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" /> : <div className="w-4 h-4 rounded-full border-2 border-muted shrink-0" />}
+          {serpKey ? <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" /> : <div className="w-4 h-4 rounded-full border-2 border-muted shrink-0" />}
         </div>
       </div>
 
       {/* Scan frequency */}
-      <div className="bg-card rounded-2xl border border-border shadow-card overflow-hidden">
+      <div className="bg-card rounded-xl border border-border overflow-hidden">
         <div className="px-5 py-4 border-b border-border flex items-center gap-2">
           <RefreshCw className="w-4 h-4 text-muted-foreground" />
           <p className="eyebrow text-muted-foreground">Scan frequency</p>
@@ -101,7 +101,7 @@ export default function Settings() {
               key={f}
               onClick={() => setScanFreq(f)}
               className={`px-4 py-2 text-sm rounded-xl border font-medium capitalize transition-colors ${
-                scanFreq === f ? 'bg-violet-600 text-white border-violet-600' : 'border-border text-muted-foreground hover:border-violet-600 hover:text-violet-600'
+                scanFreq === f ? 'bg-primary text-primary-foreground border-primary' : 'border-border text-muted-foreground hover:border-primary/40 hover:text-primary'
               }`}
             >
               {f}
@@ -118,7 +118,7 @@ export default function Settings() {
       </div>
 
       {/* Notifications */}
-      <div className="bg-card rounded-2xl border border-border shadow-card overflow-hidden">
+      <div className="bg-card rounded-xl border border-border overflow-hidden">
         <div className="px-5 py-4 border-b border-border flex items-center gap-2">
           <Bell className="w-4 h-4 text-muted-foreground" />
           <p className="eyebrow text-muted-foreground">Notifications</p>
@@ -126,7 +126,7 @@ export default function Settings() {
         <div className="px-5 py-4 space-y-2">
           {['Alert when mention rate drops >10%', 'Alert when competitor overtakes you in AI', 'Weekly summary email'].map(label => (
             <label key={label} className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" defaultChecked className="w-4 h-4 accent-violet-600" />
+              <input type="checkbox" defaultChecked className="w-4 h-4 accent-primary" />
               <span className="text-sm text-foreground">{label}</span>
             </label>
           ))}

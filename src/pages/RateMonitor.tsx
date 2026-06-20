@@ -5,8 +5,8 @@ import { useBrands, useRateFacts, useAddRateFact, useDeleteRateFact, useRateChec
 const CATEGORIES = ['rate', 'fee', 'hours', 'eligibility', 'other']
 
 function StatusBadge({ status }: { status: string | null }) {
-  if (status === 'accurate') return <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-md font-medium bg-emerald-50 text-emerald-700"><Check className="w-3 h-3" /> Accurate</span>
-  if (status === 'wrong') return <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-md bg-red-50 text-red-700 font-medium"><X className="w-3 h-3" /> Wrong</span>
+  if (status === 'accurate') return <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-md font-medium bg-emerald-500/10 text-emerald-400"><Check className="w-3 h-3" /> Accurate</span>
+  if (status === 'wrong') return <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-md bg-red-500/10 text-red-400 font-medium"><X className="w-3 h-3" /> Wrong</span>
   return <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-md bg-muted text-muted-foreground"><MinusCircle className="w-3 h-3" /> Not stated</span>
 }
 
@@ -37,12 +37,12 @@ export default function RateMonitor() {
     <div className="p-7 space-y-6 max-w-[1400px]">
       <div className="flex items-end justify-between">
         <div>
-          <p className="eyebrow text-violet-600">Compliance</p>
-          <h1 className="text-2xl font-display font-bold tracking-tight mt-1">AI Rate Accuracy</h1>
+          <p className="eyebrow text-primary">Compliance</p>
+          <h1 className="text-2xl font-display font-semibold tracking-tight mt-1">AI Rate Accuracy</h1>
           <p className="text-sm text-muted-foreground mt-1">Catch when AI states the wrong rate, fee, or hours about you — before it's a compliance problem</p>
         </div>
         <button onClick={() => ownBrand && runMonitor.mutate(ownBrand.id)} disabled={runMonitor.isPending || !facts.length}
-          className="flex items-center gap-2 bg-foreground text-background px-4 py-2.5 rounded-xl text-sm font-medium hover:opacity-90 disabled:opacity-40 transition-all">
+          className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2.5 rounded-xl text-sm font-medium hover:opacity-90 disabled:opacity-40 transition-all">
           {runMonitor.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
           {runMonitor.isPending ? 'Checking AI…' : 'Run accuracy check'}
         </button>
@@ -50,11 +50,11 @@ export default function RateMonitor() {
 
       {/* Alert if anything wrong */}
       {wrong.length > 0 && (
-        <div className="bg-red-50 border border-red-200 rounded-2xl p-5 flex items-start gap-3">
-          <AlertTriangle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+        <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-5 flex items-start gap-3">
+          <AlertTriangle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
           <div>
-            <p className="text-sm font-semibold text-red-700">{wrong.length} fact{wrong.length > 1 ? 's' : ''} stated incorrectly by AI</p>
-            <p className="text-xs text-red-600 mt-0.5">Wrong rate/fee info from an AI engine is a reputational and regulatory (UDAAP / fair-lending) risk. Review below and correct the source content.</p>
+            <p className="text-sm font-semibold text-red-400">{wrong.length} fact{wrong.length > 1 ? 's' : ''} stated incorrectly by AI</p>
+            <p className="text-xs text-red-400/80 mt-0.5">Wrong rate/fee info from an AI engine is a reputational and regulatory (UDAAP / fair-lending) risk. Review below and correct the source content.</p>
           </div>
         </div>
       )}
@@ -67,19 +67,19 @@ export default function RateMonitor() {
         <form onSubmit={add} className="flex flex-wrap items-end gap-2 p-4 border-b border-border bg-muted/20">
           <div>
             <label className="eyebrow text-muted-foreground">Fact</label>
-            <input value={label} onChange={e => setLabel(e.target.value)} placeholder="12-month CD APY" className="mt-1 w-48 px-3 py-2 text-sm border border-border rounded-xl bg-background focus:ring-violet-500" />
+            <input value={label} onChange={e => setLabel(e.target.value)} placeholder="12-month CD APY" className="mt-1 w-48 px-3 py-2 text-sm border border-border rounded-xl bg-background focus:ring-primary" />
           </div>
           <div>
             <label className="eyebrow text-muted-foreground">Correct value</label>
-            <input value={value} onChange={e => setValue(e.target.value)} placeholder="4.50%" className="mt-1 w-28 px-3 py-2 text-sm border border-border rounded-xl bg-background nums focus:ring-violet-500" />
+            <input value={value} onChange={e => setValue(e.target.value)} placeholder="4.50%" className="mt-1 w-28 px-3 py-2 text-sm border border-border rounded-xl bg-background nums focus:ring-primary" />
           </div>
           <div>
             <label className="eyebrow text-muted-foreground">Type</label>
-            <select value={category} onChange={e => setCategory(e.target.value)} className="mt-1 px-3 py-2 text-sm border border-border rounded-xl bg-background capitalize focus:ring-violet-500">
+            <select value={category} onChange={e => setCategory(e.target.value)} className="mt-1 px-3 py-2 text-sm border border-border rounded-xl bg-background capitalize focus:ring-primary">
               {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
-          <button type="submit" disabled={addFact.isPending} className="flex items-center gap-1.5 bg-foreground text-background px-4 py-2 rounded-xl text-sm font-medium hover:opacity-90 disabled:opacity-40 transition-all">
+          <button type="submit" disabled={addFact.isPending} className="flex items-center gap-1.5 bg-primary text-primary-foreground px-4 py-2 rounded-xl text-sm font-medium hover:opacity-90 disabled:opacity-40 transition-all">
             <Plus className="w-3.5 h-3.5" /> Add
           </button>
         </form>
@@ -98,7 +98,7 @@ export default function RateMonitor() {
               {facts.map(f => {
                 const c = checkByFact.get(f.id)
                 return (
-                  <tr key={f.id} className={`border-b border-border last:border-0 ${c?.status === 'wrong' ? 'bg-red-50/40' : 'hover:bg-muted/40'} transition-colors`}>
+                  <tr key={f.id} className={`border-b border-border last:border-0 ${c?.status === 'wrong' ? 'bg-red-500/[0.07]' : 'hover:bg-white/[0.02]'} transition-colors`}>
                     <td className="px-5 py-3 text-sm font-medium">{f.label} <span className="text-xs text-muted-foreground capitalize">· {f.category}</span></td>
                     <td className="px-5 py-3 text-sm nums">{f.value}</td>
                     <td className="px-5 py-3 text-sm nums text-muted-foreground">{c?.ai_value ?? '—'}</td>

@@ -27,17 +27,17 @@ export default class ErrorBoundary extends Component<Props, State> {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background p-6">
         <div className="max-w-md text-center">
-          <div className="w-12 h-12 rounded-2xl bg-violet-50 flex items-center justify-center mx-auto mb-5">
-            <AlertTriangle className="w-5 h-5 text-violet-600" />
+          <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-5">
+            <AlertTriangle className="w-5 h-5 text-primary" />
           </div>
-          <p className="eyebrow text-violet-600">Something broke</p>
+          <p className="eyebrow text-primary">Something broke</p>
           <h1 className="text-2xl font-display font-bold tracking-tight mt-1">This page hit an error</h1>
           <p className="text-sm text-muted-foreground mt-2">
             It’s been logged automatically. Reloading usually fixes it — if it keeps happening, let us know.
           </p>
           <button
             onClick={() => window.location.reload()}
-            className="mt-6 bg-foreground text-background px-5 py-2.5 rounded-xl text-sm font-medium hover:opacity-90 transition-all"
+            className="mt-6 bg-primary text-primary-foreground px-5 py-2.5 rounded-xl text-sm font-medium hover:opacity-90 transition-all"
           >
             Reload
           </button>

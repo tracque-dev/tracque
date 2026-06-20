@@ -80,11 +80,11 @@ The look has been iterated several times. **Current decision: DARK, Linear/Verce
    `#08111F` midnight, `#F8FAFC` off-white, slate, **Geist** font, new track+arrow logo.
    → **HELD / reverted** (`c5ae9cc1`) at user request; recoverable by reverting the revert
    or cherry-picking `f1996342`. Prod stayed violet.
-3. **DARK Linear/Vercel-grade** (CURRENT, in progress) — near-black `#0C0C0E` canvas,
+3. **DARK Linear/Vercel-grade** (CURRENT, LIVE) — near-black `#0C0C0E` canvas,
    hairline borders, sharp `0.5rem` radius, mono micro-labels, ONE restrained accent =
-   electric blue (`--primary #2D7FF9`). Inter display (tight tracking). Dashboard +
-   sidebar done; full 23-page rollout was running; **not yet deployed** when this doc
-   was written — compile + fix + deploy when the rollout lands.
+   electric blue (`--primary #2D7FF9`). Inter display (tight tracking). Rolled out
+   across all 23 surfaces + Dashboard/sidebar (compiled clean; spot-verified
+   Dashboard, SEO, and Landing). Deployed to tracque.com 2026-06-20. Logo still pending.
 
 **Design tokens** live in `src/index.css` (`:root` HSL vars) + `tailwind.config.ts`.
 Utility conventions kept across redesigns: `.eyebrow` (mono uppercase micro-label),

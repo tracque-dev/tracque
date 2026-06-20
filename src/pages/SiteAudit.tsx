@@ -45,10 +45,10 @@ export default function SiteAudit() {
   }
 
   const CATEGORY_COLORS: Record<string, string> = {
-    conversion: 'bg-emerald-50 text-emerald-700',
-    engagement: 'bg-violet-50 text-violet-700',
+    conversion: 'bg-emerald-500/10 text-emerald-400',
+    engagement: 'bg-primary/10 text-primary',
     navigation: 'bg-muted text-foreground',
-    attribution: 'bg-amber-50 text-amber-700',
+    attribution: 'bg-amber-500/10 text-amber-400',
   }
 
   return (
@@ -56,14 +56,14 @@ export default function SiteAudit() {
       {/* Header */}
       <div className="flex items-end justify-between">
         <div>
-          <p className="eyebrow text-violet-600">Technical</p>
-          <h1 className="text-2xl font-display font-bold tracking-tight mt-1">Site Audit</h1>
+          <p className="eyebrow text-primary">Technical</p>
+          <h1 className="text-2xl font-display font-semibold tracking-tight mt-1">Site Audit</h1>
           <p className="text-sm text-muted-foreground mt-1">Auto-generate GA4 events + GTM container for any site</p>
         </div>
       </div>
 
       {/* How it works */}
-      <div className="bg-card rounded-2xl border border-border p-5 shadow-card">
+      <div className="bg-card rounded-xl border border-border p-5">
         <p className="eyebrow text-muted-foreground mb-4">How it works</p>
         <div className="grid grid-cols-4 gap-4">
           {[
@@ -73,8 +73,8 @@ export default function SiteAudit() {
             { icon: Download, label: 'Export', desc: 'Download GTM container JSON — import in 30 seconds' },
           ].map(({ icon: Icon, label, desc }) => (
             <div key={label} className="text-center">
-              <div className="w-9 h-9 rounded-xl bg-muted flex items-center justify-center mx-auto mb-2">
-                <Icon className="w-4 h-4 text-foreground" />
+              <div className="w-9 h-9 rounded-lg bg-secondary flex items-center justify-center mx-auto mb-2">
+                <Icon className="w-4 h-4 text-muted-foreground" />
               </div>
               <p className="text-sm font-display font-semibold">{label}</p>
               <p className="text-xs text-muted-foreground mt-0.5">{desc}</p>
@@ -84,12 +84,12 @@ export default function SiteAudit() {
       </div>
 
       {/* Input */}
-      <div className="bg-card rounded-2xl border border-border p-5 shadow-card space-y-4">
+      <div className="bg-card rounded-xl border border-border p-5 space-y-4">
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="text-xs text-muted-foreground mb-1 block">Website URL</label>
             <input
-              className="w-full text-sm border border-border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500 bg-background"
+              className="w-full text-sm border border-border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary bg-background"
               placeholder="https://yoursite.com"
               value={url}
               onChange={e => setUrl(e.target.value)}
@@ -99,7 +99,7 @@ export default function SiteAudit() {
           <div>
             <label className="text-xs text-muted-foreground mb-1 block">GA4 Measurement ID (optional)</label>
             <input
-              className="w-full text-sm border border-border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500 bg-background font-mono"
+              className="w-full text-sm border border-border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary bg-background font-mono"
               placeholder="G-XXXXXXXXXX"
               value={ga4Id}
               onChange={e => setGa4Id(e.target.value)}
@@ -109,7 +109,7 @@ export default function SiteAudit() {
         <button
           onClick={runAudit}
           disabled={loading || !url.trim()}
-          className="flex items-center gap-2 px-4 py-2.5 text-sm bg-violet-600 text-white rounded-xl font-medium hover:bg-violet-700 disabled:opacity-40 transition-all"
+          className="flex items-center gap-2 px-4 py-2.5 text-sm bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 disabled:opacity-40 transition-all"
         >
           {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Auditing site…</> : <><Play className="w-4 h-4" /> Run audit</>}
         </button>
@@ -124,7 +124,7 @@ export default function SiteAudit() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
               <p className="text-sm font-display font-semibold">
                 {result.events.length} events generated
                 {result.business_type && <span className="text-muted-foreground font-normal"> · detected: {result.business_type}</span>}
@@ -132,13 +132,13 @@ export default function SiteAudit() {
             </div>
             <button
               onClick={downloadGTM}
-              className="flex items-center gap-2 px-4 py-2.5 text-sm border border-border rounded-xl text-foreground hover:bg-muted transition-colors"
+              className="flex items-center gap-2 px-4 py-2.5 text-sm border border-border rounded-lg text-foreground hover:bg-muted transition-colors"
             >
               <Download className="w-4 h-4" /> Download GTM container
             </button>
           </div>
 
-          <div className="bg-card rounded-2xl border border-border shadow-card overflow-hidden">
+          <div className="bg-card rounded-xl border border-border overflow-hidden">
             <div className="px-5 py-4 border-b border-border">
               <p className="eyebrow text-muted-foreground">GA4 events</p>
             </div>
@@ -152,9 +152,9 @@ export default function SiteAudit() {
               </thead>
               <tbody>
                 {result.events.map((ev, i) => (
-                  <tr key={i} className="border-b border-border last:border-0 hover:bg-muted/40 transition-colors">
+                  <tr key={i} className="border-b border-border last:border-0 hover:bg-white/[0.02] transition-colors">
                     <td className="px-5 py-3 text-sm font-mono text-foreground">
-                      {ev.is_key_event && <span title="Key event (conversion)" className="text-amber-500 mr-1">★</span>}{ev.name}
+                      {ev.is_key_event && <span title="Key event (conversion)" className="text-amber-400 mr-1">★</span>}{ev.name}
                     </td>
                     <td className="px-5 py-3">
                       <span className={`text-xs px-2 py-0.5 rounded-md font-medium ${CATEGORY_COLORS[ev.category] ?? 'bg-muted text-foreground'}`}>
@@ -170,7 +170,7 @@ export default function SiteAudit() {
           </div>
 
           {result.guide && (
-            <div className="bg-card rounded-2xl border border-border p-5 shadow-card">
+            <div className="bg-card rounded-xl border border-border p-5">
               <p className="eyebrow text-muted-foreground mb-4">Implementation guide</p>
               <pre className="text-xs text-muted-foreground whitespace-pre-wrap font-sans">{result.guide}</pre>
             </div>

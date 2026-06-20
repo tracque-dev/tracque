@@ -11,9 +11,9 @@ const SUGGESTED = [
 ]
 
 const INTENT_COLORS: Record<string, string> = {
-  commercial: 'bg-violet-50 text-violet-700',
+  commercial: 'bg-primary/10 text-primary',
   informational: 'bg-muted text-foreground',
-  navigational: 'bg-amber-50 text-amber-700',
+  navigational: 'bg-amber-500/10 text-amber-400',
 }
 
 export default function Keywords() {
@@ -35,22 +35,22 @@ export default function Keywords() {
     <div className="p-7 space-y-6 max-w-[1400px]">
       <div className="flex items-end justify-between">
         <div>
-          <p className="eyebrow text-violet-600">Tracking</p>
-          <h1 className="text-2xl font-display font-bold tracking-tight mt-1">Keywords</h1>
+          <p className="eyebrow text-primary">Tracking</p>
+          <h1 className="text-2xl font-display font-semibold tracking-tight mt-1">Keywords</h1>
           <p className="text-sm text-muted-foreground mt-1">Phrases tracked across AI models and Google</p>
         </div>
         <button
           onClick={() => setShowAdd(true)}
-          className="flex items-center gap-2 px-4 py-2.5 text-sm bg-violet-600 text-white rounded-xl font-medium hover:bg-violet-700 transition-all"
+          className="flex items-center gap-2 px-4 py-2.5 text-sm bg-primary text-primary-foreground rounded-xl font-medium hover:bg-primary/90 transition-all"
         >
           <Plus className="w-4 h-4" /> Add keyword
         </button>
       </div>
 
       {/* Suggested */}
-      <div className="bg-card rounded-2xl border border-border p-5 shadow-card">
+      <div className="bg-card rounded-xl border border-border p-5">
         <div className="flex items-center gap-2 mb-4">
-          <Sparkles className="w-4 h-4 text-violet-600" />
+          <Sparkles className="w-4 h-4 text-primary" />
           <p className="eyebrow text-muted-foreground">Suggested keywords</p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -58,7 +58,7 @@ export default function Keywords() {
             <button
               key={s}
               onClick={() => handleAdd(s)}
-              className="text-xs px-2.5 py-1 border border-dashed border-border rounded-md text-muted-foreground hover:border-violet-600 hover:text-violet-600 transition-colors"
+              className="text-xs px-2.5 py-1 border border-dashed border-border rounded-md text-muted-foreground hover:border-primary/40 hover:text-primary transition-colors"
             >
               + {s}
             </button>
@@ -68,19 +68,19 @@ export default function Keywords() {
 
       {/* Add form */}
       {showAdd && (
-        <div className="bg-card rounded-2xl border border-border p-5 shadow-card space-y-3">
+        <div className="bg-card rounded-xl border border-border p-5 space-y-3">
           <p className="text-sm font-display font-semibold">Add keyword</p>
           <div className="flex gap-3">
             <input
               autoFocus
-              className="flex-1 text-sm border border-border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500 bg-background"
+              className="flex-1 text-sm border border-border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary bg-background"
               placeholder="best project management software"
               value={phrase}
               onChange={e => setPhrase(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleAdd(phrase)}
             />
             <select
-              className="text-sm border border-border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500 bg-background"
+              className="text-sm border border-border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary bg-background"
               value={intent}
               onChange={e => setIntent(e.target.value as typeof intent)}
             >
@@ -107,13 +107,13 @@ export default function Keywords() {
           <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
         </div>
       ) : keywords.length === 0 ? (
-        <div className="bg-card rounded-2xl border border-border p-10 text-center shadow-card text-muted-foreground">
+        <div className="bg-card rounded-xl border border-border p-10 text-center text-muted-foreground">
           <Hash className="w-8 h-8 mx-auto mb-3 opacity-30" />
           <p className="text-base font-display font-semibold text-foreground">No keywords yet</p>
           <p className="text-sm mt-1">Add keywords to track across AI models and Google</p>
         </div>
       ) : (
-        <div className="bg-card rounded-2xl border border-border shadow-card overflow-hidden">
+        <div className="bg-card rounded-xl border border-border overflow-hidden">
           <table className="w-full">
             <thead>
               <tr className="border-b border-border">
@@ -124,7 +124,7 @@ export default function Keywords() {
             </thead>
             <tbody>
               {keywords.map((kw) => (
-                <tr key={kw.id} className="border-b border-border last:border-0 hover:bg-muted/40 transition-colors">
+                <tr key={kw.id} className="border-b border-border last:border-0 hover:bg-white/[0.02] transition-colors">
                   <td className="px-5 py-3 text-sm font-medium">{kw.phrase}</td>
                   <td className="px-5 py-3">
                     {kw.intent && (

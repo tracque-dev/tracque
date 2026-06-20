@@ -5,11 +5,11 @@ const MODEL_LABELS: Record<string, string> = {
   chatgpt: 'ChatGPT', perplexity: 'Perplexity', gemini: 'Gemini', claude: 'Claude', grok: 'Grok',
 }
 const MODEL_COLORS: Record<string, string> = {
-  chatgpt: 'bg-emerald-50 text-emerald-700',
-  perplexity: 'bg-violet-50 text-violet-700',
-  gemini: 'bg-violet-50 text-violet-700',
-  claude: 'bg-amber-50 text-amber-700',
-  grok: 'bg-slate-100 text-slate-700',
+  chatgpt: 'bg-emerald-500/10 text-emerald-400',
+  perplexity: 'bg-primary/10 text-primary',
+  gemini: 'bg-primary/10 text-primary',
+  claude: 'bg-amber-500/10 text-amber-400',
+  grok: 'bg-secondary text-foreground',
 }
 
 export default function AIResults() {
@@ -36,14 +36,14 @@ export default function AIResults() {
     <div className="p-7 space-y-6 max-w-[1400px]">
       <div className="flex items-end justify-between">
         <div>
-          <p className="eyebrow text-violet-600">Visibility</p>
-          <h1 className="text-2xl font-display font-bold tracking-tight mt-1">AI Visibility</h1>
+          <p className="eyebrow text-primary">Visibility</p>
+          <h1 className="text-2xl font-display font-semibold tracking-tight mt-1">AI Visibility</h1>
           <p className="text-sm text-muted-foreground mt-1">How AI models mention your brands</p>
         </div>
         <button
           onClick={() => runScan.mutate()}
           disabled={runScan.isPending || brands.length === 0 || keywords.length === 0}
-          className="flex items-center gap-2 px-4 py-2.5 text-sm bg-foreground text-background rounded-xl font-medium hover:opacity-90 disabled:opacity-40 transition-all"
+          className="flex items-center gap-2 px-4 py-2 text-sm bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 disabled:opacity-40 transition-all"
         >
           {runScan.isPending
             ? <><Loader2 className="w-4 h-4 animate-spin" /> Scanning…</>
@@ -61,14 +61,14 @@ export default function AIResults() {
               : null
             const webGrounded = scans.filter(s => s.model === model).some(s => s.web_grounded)
             return (
-              <div key={model} className="bg-card rounded-2xl border border-border p-5 shadow-card text-center">
+              <div key={model} className="bg-card rounded-xl border border-border p-5 text-center">
                 <div className="flex items-center justify-center gap-1 mb-2">
-                  <span className={`text-xs px-2 py-0.5 rounded-md font-medium ${MODEL_COLORS[model] ?? 'bg-muted text-foreground'}`}>
+                  <span className={`text-xs px-2 py-0.5 rounded-md font-medium ${MODEL_COLORS[model] ?? 'bg-secondary text-foreground'}`}>
                     {MODEL_LABELS[model] ?? model}
                   </span>
-                  {webGrounded && <span title="Web grounded — live data" className="text-emerald-500 text-xs">⚡</span>}
+                  {webGrounded && <span title="Web grounded — live data" className="text-emerald-400 text-xs">⚡</span>}
                 </div>
-                <p className="text-3xl font-display font-bold nums tracking-tight mt-1">{rate}%</p>
+                <p className="text-3xl font-display font-semibold nums tracking-tight mt-1">{rate}%</p>
                 <p className="eyebrow text-muted-foreground mt-1">mention rate</p>
                 {avgConf != null && (
                   <p className="text-xs text-muted-foreground mt-1 nums">{avgConf}% confidence</p>
@@ -84,7 +84,7 @@ export default function AIResults() {
           <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
         </div>
       ) : byKeyword.length === 0 ? (
-        <div className="bg-card rounded-2xl border border-border p-10 text-center shadow-card text-muted-foreground">
+        <div className="bg-card rounded-xl border border-border p-10 text-center text-muted-foreground">
           <Bot className="w-8 h-8 mx-auto mb-3 opacity-30 text-foreground" />
           <p className="text-base font-display font-semibold text-foreground">No scan results yet</p>
           <p className="text-sm mt-1">Add brands + keywords, then run a scan from the Dashboard</p>
@@ -92,15 +92,15 @@ export default function AIResults() {
       ) : (
         <div className="space-y-4">
           {byKeyword.map(({ keyword, entries }) => (
-            <div key={keyword.id} className="bg-card rounded-2xl border border-border shadow-card overflow-hidden">
+            <div key={keyword.id} className="bg-card rounded-xl border border-border overflow-hidden">
               <div className="px-5 py-4 border-b border-border">
                 <p className="text-sm font-display font-semibold">"{keyword.phrase}"</p>
               </div>
               <div className="divide-y divide-border">
                 {entries.map((entry) => (
-                  <div key={entry.id} className="px-5 py-3 flex items-start gap-4 hover:bg-muted/40 transition-colors">
+                  <div key={entry.id} className="px-5 py-3 flex items-start gap-4 hover:bg-white/[0.02] transition-colors">
                     <div className="w-24 shrink-0 pt-0.5">
-                      <span className={`text-xs px-2 py-0.5 rounded-md font-medium ${MODEL_COLORS[entry.model] ?? 'bg-muted text-foreground'}`}>
+                      <span className={`text-xs px-2 py-0.5 rounded-md font-medium ${MODEL_COLORS[entry.model] ?? 'bg-secondary text-foreground'}`}>
                         {MODEL_LABELS[entry.model] ?? entry.model}
                       </span>
                     </div>
@@ -109,7 +109,7 @@ export default function AIResults() {
                     </div>
                     <div className="shrink-0">
                       {entry.mentioned
-                        ? <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5" />
+                        ? <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5" />
                         : <XCircle className="w-4 h-4 text-muted-foreground mt-0.5" />}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -125,16 +125,16 @@ export default function AIResults() {
                             )}
                             {entry.sentiment && (
                               <span className={`text-xs px-1.5 py-0.5 rounded-md font-medium ${
-                                entry.sentiment === 'positive' ? 'bg-emerald-50 text-emerald-700' :
-                                entry.sentiment === 'neutral' ? 'bg-amber-50 text-amber-700' :
-                                'bg-red-50 text-red-700'
+                                entry.sentiment === 'positive' ? 'bg-emerald-500/10 text-emerald-400' :
+                                entry.sentiment === 'neutral' ? 'bg-amber-500/10 text-amber-400' :
+                                'bg-red-500/10 text-red-400'
                               }`}>{entry.sentiment}</span>
                             )}
                             {entry.web_grounded && (
-                              <span className="text-xs text-emerald-600 font-medium">⚡ live web</span>
+                              <span className="text-xs text-emerald-400 font-medium">⚡ live web</span>
                             )}
                             {(entry.citation_urls ?? entry.sources)?.slice(0, 3).map((s: string) => (
-                              <span key={s} className="text-xs px-1.5 py-0.5 bg-muted rounded-md text-muted-foreground">{s}</span>
+                              <span key={s} className="text-xs px-1.5 py-0.5 bg-secondary rounded-md text-muted-foreground">{s}</span>
                             ))}
                           </div>
                           {entry.excerpt && (

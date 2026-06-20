@@ -18,8 +18,8 @@ function ReviewCard({ review, businessName }: { review: Review; businessName: st
         </div>
         <div className="flex items-center gap-2">
           {review.owner_answered
-            ? <span className="text-[10px] font-mono px-1.5 py-0.5 bg-emerald-50 text-emerald-700 rounded-md">replied</span>
-            : <span className="text-[10px] font-mono px-1.5 py-0.5 bg-amber-50 text-amber-700 rounded-md">needs reply</span>}
+            ? <span className="text-[10px] font-mono px-1.5 py-0.5 bg-emerald-500/10 text-emerald-400 rounded-md">replied</span>
+            : <span className="text-[10px] font-mono px-1.5 py-0.5 bg-amber-500/10 text-amber-400 rounded-md">needs reply</span>}
           <span className="text-xs text-muted-foreground">{review.posted_at}</span>
         </div>
       </div>
@@ -27,14 +27,14 @@ function ReviewCard({ review, businessName }: { review: Review; businessName: st
       {!review.owner_answered && (
         <div className="mt-2.5">
           {!reply ? (
-            <button onClick={generate} disabled={draft.isPending} className="flex items-center gap-1.5 text-xs font-medium text-violet-600 hover:text-violet-700 disabled:opacity-50">
+            <button onClick={generate} disabled={draft.isPending} className="flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80 disabled:opacity-50">
               {draft.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />} Draft AI reply
             </button>
           ) : (
             <div className="bg-muted/40 rounded-xl p-3 mt-1">
               <p className="eyebrow text-muted-foreground mb-1.5">Suggested reply</p>
               <p className="text-sm">{reply}</p>
-              <button onClick={() => navigator.clipboard.writeText(reply)} className="text-xs font-medium text-violet-600 hover:text-violet-700 mt-1.5">Copy</button>
+              <button onClick={() => navigator.clipboard.writeText(reply)} className="text-xs font-medium text-primary hover:text-primary/80 mt-1.5">Copy</button>
             </div>
           )}
         </div>
@@ -81,7 +81,7 @@ export default function Reputation() {
     <div className="p-7 space-y-6 max-w-[1400px]">
       <div className="flex items-end justify-between">
         <div>
-          <p className="eyebrow text-violet-600">Reputation</p>
+          <p className="eyebrow text-primary">Reputation</p>
           <h1 className="text-2xl font-display font-bold tracking-tight mt-1">Reputation</h1>
           <p className="text-sm text-muted-foreground mt-1">Reviews drive what AI recommends — track your rating vs the local field</p>
         </div>
@@ -92,11 +92,11 @@ export default function Reputation() {
         <div className="flex flex-wrap items-end gap-3">
           <div>
             <label className="text-xs font-medium text-muted-foreground">Category</label>
-            <input value={category} onChange={e => setCategory(e.target.value)} placeholder="plumber, credit union…" className="mt-1 w-48 px-3 py-2 text-sm border border-border rounded-xl bg-background focus:ring-violet-500" />
+            <input value={category} onChange={e => setCategory(e.target.value)} placeholder="plumber, credit union…" className="mt-1 w-48 px-3 py-2 text-sm border border-border rounded-xl bg-background focus:ring-primary" />
           </div>
           <div>
             <label className="text-xs font-medium text-muted-foreground">City or address</label>
-            <input value={location} onChange={e => setLocation(e.target.value)} placeholder="Austin, TX" className="mt-1 w-44 px-3 py-2 text-sm border border-border rounded-xl bg-background focus:ring-violet-500" />
+            <input value={location} onChange={e => setLocation(e.target.value)} placeholder="Austin, TX" className="mt-1 w-44 px-3 py-2 text-sm border border-border rounded-xl bg-background focus:ring-primary" />
           </div>
           <button
             onClick={() => ownBrand && runSync.mutate({ brand_id: ownBrand.id, category: category || undefined, location: location || undefined })}
@@ -121,12 +121,12 @@ export default function Reputation() {
             <p className="text-xs text-muted-foreground mt-1.5 flex items-center gap-1"><MessageSquare className="w-3 h-3" /> {reviews.toLocaleString()} reviews</p>
           </div>
 
-          <div className={`rounded-2xl border p-5 shadow-card ${recommendable ? 'bg-emerald-50 border-emerald-200' : 'bg-amber-50 border-amber-200'}`}>
+          <div className={`rounded-2xl border p-5 shadow-card ${recommendable ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-amber-500/10 border-amber-500/20'}`}>
             <p className="eyebrow text-muted-foreground mb-3">AI-recommendable?</p>
             {recommendable ? (
-              <div className="flex items-center gap-2 text-emerald-700"><ShieldCheck className="w-5 h-5" /><p className="font-display font-semibold">Yes — above threshold</p></div>
+              <div className="flex items-center gap-2 text-emerald-400"><ShieldCheck className="w-5 h-5" /><p className="font-display font-semibold">Yes — above threshold</p></div>
             ) : (
-              <div className="flex items-start gap-2 text-amber-700">
+              <div className="flex items-start gap-2 text-amber-400">
                 <AlertTriangle className="w-5 h-5 shrink-0" />
                 <p className="text-sm font-medium">
                   {rating == null ? 'Run a scan to measure.'
@@ -192,7 +192,7 @@ export default function Reputation() {
               {runReviews.isPending ? 'Loading reviews…' : 'Load reviews'}
             </button>
           </div>
-          {(runReviews.data as any)?.pending && <p className="text-xs text-amber-600 mb-2">Reviews still processing — click again in a few seconds.</p>}
+          {(runReviews.data as any)?.pending && <p className="text-xs text-amber-400 mb-2">Reviews still processing — click again in a few seconds.</p>}
           {reviewList.length > 0 && (
             <div className="space-y-2.5">
               {reviewList.map(r => <ReviewCard key={r.id} review={r} businessName={ownBrand?.name ?? google.brand_name} />)}
@@ -216,17 +216,17 @@ export default function Reputation() {
               </thead>
               <tbody>
                 {competitors.map((c, i) => (
-                  <tr key={c.id} className={`border-b border-border last:border-0 transition-colors ${c.is_self ? 'bg-violet-50/60' : 'hover:bg-muted/40'}`}>
+                  <tr key={c.id} className={`border-b border-border last:border-0 transition-colors ${c.is_self ? 'bg-primary/10' : 'hover:bg-white/[0.02]'}`}>
                     <td className="px-5 py-3 text-sm nums text-muted-foreground">{i + 1}</td>
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-medium truncate max-w-[260px]">{c.name}</span>
-                        {c.is_self && <span className="text-[10px] font-mono px-1.5 py-0.5 bg-violet-100 text-violet-700 rounded-md">YOU</span>}
+                        {c.is_self && <span className="text-[10px] font-mono px-1.5 py-0.5 bg-primary/10 text-primary rounded-md">YOU</span>}
                       </div>
                     </td>
                     <td className="px-5 py-3"><div className="flex items-center gap-1.5"><span className="text-sm font-display font-semibold nums">{c.rating?.toFixed(1) ?? '—'}</span><Star className="w-3 h-3 text-amber-400 fill-amber-400" /></div></td>
                     <td className="px-5 py-3 text-sm nums text-muted-foreground">{c.reviews_count?.toLocaleString() ?? '—'}</td>
-                    <td className="px-5 py-3">{c.is_claimed ? <span className="text-[10px] font-mono px-1.5 py-0.5 bg-emerald-50 text-emerald-700 rounded-md">claimed</span> : <span className="text-sm text-muted-foreground">—</span>}</td>
+                    <td className="px-5 py-3">{c.is_claimed ? <span className="text-[10px] font-mono px-1.5 py-0.5 bg-emerald-500/10 text-emerald-400 rounded-md">claimed</span> : <span className="text-sm text-muted-foreground">—</span>}</td>
                   </tr>
                 ))}
               </tbody>

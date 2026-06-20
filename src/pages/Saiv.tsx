@@ -20,11 +20,11 @@ function GeoGrid({ ownBrand }: { ownBrand?: Brand }) {
         <div className="flex flex-wrap items-end gap-2 mb-4">
           <div>
             <label className="eyebrow text-muted-foreground">Category</label>
-            <input value={category} onChange={e => setCategory(e.target.value)} placeholder="credit union, plumber…" className="mt-0.5 w-44 px-3 py-1.5 text-sm border border-border rounded-xl bg-background focus:ring-violet-500" />
+            <input value={category} onChange={e => setCategory(e.target.value)} placeholder="credit union, plumber…" className="mt-0.5 w-44 px-3 py-1.5 text-sm border border-border rounded-xl bg-background focus:ring-primary" />
           </div>
           <div>
             <label className="eyebrow text-muted-foreground">City</label>
-            <input value={location} onChange={e => setLocation(e.target.value)} placeholder="Austin, TX" className="mt-0.5 w-40 px-3 py-1.5 text-sm border border-border rounded-xl bg-background focus:ring-violet-500" />
+            <input value={location} onChange={e => setLocation(e.target.value)} placeholder="Austin, TX" className="mt-0.5 w-40 px-3 py-1.5 text-sm border border-border rounded-xl bg-background focus:ring-primary" />
           </div>
           <button onClick={() => ownBrand && category && location && run.mutate({ brand_id: ownBrand.id, category, location })}
             disabled={run.isPending || !ownBrand || !category || !location}
@@ -40,7 +40,7 @@ function GeoGrid({ ownBrand }: { ownBrand?: Brand }) {
             <div className="grid grid-cols-3 gap-1.5">
               {rows3.flat().map(c => (
                 <div key={c.id} title={`${c.label ?? ''}${c.position ? ` · #${c.position}` : ''}`}
-                  className={`w-24 h-16 rounded-xl flex flex-col items-center justify-center text-center px-1 ${c.mentioned ? (c.position && c.position <= 3 ? 'bg-emerald-500 text-white' : 'bg-emerald-200 text-emerald-900') : 'bg-red-100 text-red-700'}`}>
+                  className={`w-24 h-16 rounded-xl flex flex-col items-center justify-center text-center px-1 ${c.mentioned ? (c.position && c.position <= 3 ? 'bg-emerald-500 text-white' : 'bg-emerald-500/20 text-emerald-300') : 'bg-red-500/15 text-red-400'}`}>
                   <span className="text-[10px] font-medium leading-tight line-clamp-2">{c.label}</span>
                   {c.mentioned ? <span className="text-[10px] font-mono mt-0.5">{c.position ? `#${c.position}` : '✓'}</span> : <span className="text-[10px] font-mono mt-0.5">—</span>}
                 </div>
@@ -103,7 +103,7 @@ export default function Saiv() {
     <div className="p-7 space-y-6 max-w-[1400px]">
       <div className="flex items-end justify-between">
         <div>
-          <p className="eyebrow text-violet-600">Visibility</p>
+          <p className="eyebrow text-primary">Visibility</p>
           <h1 className="text-2xl font-display font-bold tracking-tight mt-1">Share of AI Voice</h1>
           <p className="text-sm text-muted-foreground mt-1">Across real buyer prompts — are you recommended, and who shows up instead?</p>
         </div>
@@ -114,7 +114,7 @@ export default function Saiv() {
         <label className="eyebrow text-muted-foreground">Prompts to test (one per line, up to 12)</label>
         <textarea value={promptText} onChange={e => setPrompts(e.target.value)} rows={4}
           placeholder={"best project management software\nnotion alternatives\ntools for product teams"}
-          className="w-full px-3 py-2 text-sm border border-border rounded-xl bg-background font-mono focus:ring-violet-500" />
+          className="w-full px-3 py-2 text-sm border border-border rounded-xl bg-background font-mono focus:ring-primary" />
         <div className="flex items-center gap-3">
           <button onClick={run} disabled={runScan.isPending || !ownBrand}
             className="flex items-center gap-2 bg-foreground text-background px-4 py-2.5 rounded-xl text-sm font-medium hover:opacity-90 disabled:opacity-40 transition-all">
@@ -171,18 +171,18 @@ export default function Saiv() {
             </thead>
             <tbody>
               {rows.map(r => (
-                <tr key={r.id} className="border-b border-border last:border-0 hover:bg-muted/40 transition-colors align-top">
+                <tr key={r.id} className="border-b border-border last:border-0 hover:bg-white/[0.02] transition-colors align-top">
                   <td className="px-5 py-3 text-sm font-medium max-w-[260px]">{r.prompt}</td>
                   <td className="px-5 py-3">
                     {r.mentioned
-                      ? <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700"><Check className="w-3 h-3" /> Yes</span>
-                      : <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-md bg-red-50 text-red-600"><X className="w-3 h-3" /> No</span>}
+                      ? <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400"><Check className="w-3 h-3" /> Yes</span>
+                      : <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-md bg-red-500/10 text-red-400"><X className="w-3 h-3" /> No</span>}
                   </td>
-                  <td className="px-5 py-3">{r.position ? <span className="font-mono text-xs px-2 py-0.5 rounded-md bg-violet-50 text-violet-700">#{r.position}</span> : <span className="text-xs text-muted-foreground">—</span>}</td>
+                  <td className="px-5 py-3">{r.position ? <span className="font-mono text-xs px-2 py-0.5 rounded-md bg-primary/10 text-primary">#{r.position}</span> : <span className="text-xs text-muted-foreground">—</span>}</td>
                   <td className="px-5 py-3">
                     <div className="flex flex-wrap gap-1 max-w-[320px]">
                       {(r.competitors ?? []).slice(0, 6).map(c => (
-                        <span key={c} className="text-[11px] px-1.5 py-0.5 rounded-md bg-muted text-foreground">{c}</span>
+                        <span key={c} className="text-[11px] px-1.5 py-0.5 rounded-md bg-secondary text-foreground">{c}</span>
                       ))}
                     </div>
                   </td>
@@ -201,10 +201,10 @@ export default function Saiv() {
             {sov.board.slice(0, 8).map(b => (
               <div key={b.name} className="flex items-center gap-3">
                 <span className={`text-sm w-44 truncate ${b.you ? 'font-semibold text-foreground' : ''}`}>
-                  {b.name}{b.you && <span className="ml-1.5 text-[10px] font-mono uppercase text-violet-600">you</span>}
+                  {b.name}{b.you && <span className="ml-1.5 text-[10px] font-mono uppercase text-primary">you</span>}
                 </span>
-                <div className="flex-1 h-2.5 bg-muted rounded-full overflow-hidden">
-                  <div className={`h-full rounded-full ${b.you ? 'bg-violet-600' : 'bg-slate-300'}`} style={{ width: `${b.share}%` }} />
+                <div className="flex-1 h-2.5 bg-white/[0.06] rounded-full overflow-hidden">
+                  <div className={`h-full rounded-full ${b.you ? 'bg-primary' : 'bg-white/25'}`} style={{ width: `${b.share}%` }} />
                 </div>
                 <span className="text-xs nums w-12 text-right font-medium">{b.share}%</span>
               </div>

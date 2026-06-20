@@ -20,27 +20,27 @@ export default function Brands() {
     <div className="p-7 space-y-6 max-w-[1400px]">
       <div className="flex items-end justify-between">
         <div>
-          <p className="eyebrow text-violet-600">Tracking</p>
-          <h1 className="text-2xl font-display font-bold tracking-tight mt-1">Brands</h1>
+          <p className="eyebrow text-primary">Tracking</p>
+          <h1 className="text-2xl font-display font-semibold tracking-tight mt-1">Brands</h1>
           <p className="text-sm text-muted-foreground mt-1">Track your brand and competitors</p>
         </div>
         <button
           onClick={() => setShowAdd(true)}
-          className="flex items-center gap-2 px-4 py-2.5 text-sm bg-violet-600 text-white rounded-xl font-medium hover:bg-violet-700 transition-colors"
+          className="flex items-center gap-2 px-4 py-2.5 text-sm bg-primary text-primary-foreground rounded-xl font-medium hover:bg-primary/90 transition-colors"
         >
           <Plus className="w-4 h-4" /> Add brand
         </button>
       </div>
 
       {showAdd && (
-        <div className="bg-card rounded-2xl border border-border p-5 shadow-card space-y-4">
+        <div className="bg-card rounded-xl border border-border p-5 space-y-4">
           <p className="eyebrow text-muted-foreground">Add a brand to track</p>
           <div className="grid grid-cols-3 gap-3">
             <div>
               <label className="text-xs text-muted-foreground mb-1.5 block">Brand name</label>
               <input
                 autoFocus
-                className="w-full text-sm border border-border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500 bg-background"
+                className="w-full text-sm border border-border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary bg-background"
                 placeholder="Acme Corp"
                 value={form.name}
                 onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
@@ -49,7 +49,7 @@ export default function Brands() {
             <div>
               <label className="text-xs text-muted-foreground mb-1.5 block">Domain (optional)</label>
               <input
-                className="w-full text-sm border border-border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500 bg-background"
+                className="w-full text-sm border border-border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary bg-background"
                 placeholder="acmecorp.com"
                 value={form.domain}
                 onChange={e => setForm(f => ({ ...f, domain: e.target.value }))}
@@ -58,7 +58,7 @@ export default function Brands() {
             <div>
               <label className="text-xs text-muted-foreground mb-1.5 block">Type</label>
               <select
-                className="w-full text-sm border border-border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500 bg-background"
+                className="w-full text-sm border border-border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary bg-background"
                 value={form.type}
                 onChange={e => setForm(f => ({ ...f, type: e.target.value as 'own' | 'competitor' }))}
               >
@@ -71,7 +71,7 @@ export default function Brands() {
             <button
               onClick={handleAdd}
               disabled={addBrand.isPending}
-              className="flex items-center gap-2 px-4 py-2.5 text-sm bg-violet-600 text-white rounded-xl font-medium hover:bg-violet-700 disabled:opacity-50 transition-colors"
+              className="flex items-center gap-2 px-4 py-2.5 text-sm bg-primary text-primary-foreground rounded-xl font-medium hover:bg-primary/90 disabled:opacity-50 transition-colors"
             >
               {addBrand.isPending && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
               Add brand
@@ -88,7 +88,7 @@ export default function Brands() {
           <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
         </div>
       ) : brands.length === 0 ? (
-        <div className="bg-card rounded-2xl border border-border p-10 text-center shadow-card text-muted-foreground">
+        <div className="bg-card rounded-xl border border-border p-10 text-center text-muted-foreground">
           <Building2 className="w-8 h-8 mx-auto mb-3 opacity-30" />
           <p className="text-base font-display font-semibold text-foreground">No brands yet</p>
           <p className="text-sm mt-1">Add your brand and competitors to start tracking</p>
@@ -96,9 +96,9 @@ export default function Brands() {
       ) : (
         <div className="grid grid-cols-1 gap-3">
           {brands.map((brand) => (
-            <div key={brand.id} className="bg-card rounded-2xl border border-border p-5 shadow-card flex items-center gap-4">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-display font-bold text-sm ${
-                brand.type === 'own' ? 'bg-violet-50 text-violet-600' : 'bg-muted text-foreground'
+            <div key={brand.id} className="bg-card rounded-xl border border-border p-5 flex items-center gap-4">
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-display font-semibold text-sm ${
+                brand.type === 'own' ? 'bg-primary/10 text-primary' : 'bg-secondary text-foreground'
               }`}>
                 {brand.name.charAt(0)}
               </div>
@@ -106,7 +106,7 @@ export default function Brands() {
                 <div className="flex items-center gap-2">
                   <p className="text-sm font-semibold">{brand.name}</p>
                   {brand.type === 'own' && (
-                    <span className="text-xs px-2 py-0.5 bg-violet-50 text-violet-700 rounded-md font-medium flex items-center gap-0.5">
+                    <span className="text-xs px-2 py-0.5 bg-primary/10 text-primary rounded-md font-medium flex items-center gap-0.5">
                       <CheckCircle2 className="w-3 h-3" /> My Brand
                     </span>
                   )}

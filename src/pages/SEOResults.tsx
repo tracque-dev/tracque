@@ -10,7 +10,7 @@ function fmt(n: number | null | undefined): string {
 }
 
 function PositionBadge({ pos }: { pos: number }) {
-  const color = pos <= 3 ? 'bg-emerald-50 text-emerald-700' : pos <= 10 ? 'bg-amber-50 text-amber-700' : 'bg-muted text-muted-foreground'
+  const color = pos <= 3 ? 'bg-emerald-500/10 text-emerald-400' : pos <= 10 ? 'bg-amber-500/10 text-amber-400' : 'bg-muted text-muted-foreground'
   return <span className={`font-mono text-xs px-2 py-0.5 rounded-md ${color}`}>#{pos}</span>
 }
 
@@ -38,8 +38,8 @@ function DRBadge({ dr }: { dr: number | null }) {
 function StatCard({ icon: Icon, label, value, sub }: { icon: any; label: string; value: string; sub?: string }) {
   return (
     <div className="bg-card rounded-2xl border border-border p-5 shadow-card">
-      <div className="w-9 h-9 rounded-xl bg-muted flex items-center justify-center mb-4">
-        <Icon className="w-4 h-4 text-foreground" />
+      <div className="w-9 h-9 rounded-xl bg-secondary flex items-center justify-center mb-4">
+        <Icon className="w-4 h-4 text-muted-foreground" />
       </div>
       <p className="text-2xl font-display font-bold nums tracking-tight">{value}</p>
       <p className="eyebrow text-muted-foreground mt-1">{label}</p>
@@ -114,7 +114,7 @@ function KeywordExplorer() {
       <p className="eyebrow text-muted-foreground mb-3 flex items-center gap-1.5"><Lightbulb className="w-3.5 h-3.5" /> Keyword explorer</p>
       <div className="bg-card rounded-2xl border border-border shadow-card overflow-hidden">
         <form onSubmit={e => { e.preventDefault(); if (seed.trim()) explore.mutate(seed.trim()) }} className="flex items-center gap-2 p-3 border-b border-border bg-muted/40">
-          <input value={seed} onChange={e => setSeed(e.target.value)} placeholder="Seed keyword, e.g. crm" className="flex-1 px-3 py-2 text-sm border border-border rounded-xl bg-background focus:ring-violet-500" />
+          <input value={seed} onChange={e => setSeed(e.target.value)} placeholder="Seed keyword, e.g. crm" className="flex-1 px-3 py-2 text-sm border border-border rounded-xl bg-background focus:ring-primary" />
           <button type="submit" disabled={explore.isPending || !seed.trim()} className="flex items-center gap-1.5 bg-foreground text-background px-4 py-2 rounded-xl text-sm font-medium hover:opacity-90 disabled:opacity-40">
             {explore.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Lightbulb className="w-3.5 h-3.5" />} Explore
           </button>
@@ -136,7 +136,7 @@ function KeywordExplorer() {
                   <td className="px-5 py-3 text-xs text-muted-foreground capitalize">{k.intent ?? '—'}</td>
                   <td className="px-5 py-3 text-right">
                     {tracked.has(k.keyword ?? '')
-                      ? <span className="text-xs text-emerald-600 inline-flex items-center gap-1"><Check className="w-3.5 h-3.5" /> tracked</span>
+                      ? <span className="text-xs text-emerald-400 inline-flex items-center gap-1"><Check className="w-3.5 h-3.5" /> tracked</span>
                       : <button onClick={() => k.keyword && track(k.keyword)} className="text-xs text-primary hover:underline inline-flex items-center gap-1"><Plus className="w-3.5 h-3.5" /> track</button>}
                   </td>
                 </tr>
@@ -169,7 +169,7 @@ export default function SEOResults() {
       {/* Header */}
       <div className="flex items-end justify-between">
         <div>
-          <p className="eyebrow text-violet-600">Search</p>
+          <p className="eyebrow text-primary">Search</p>
           <h1 className="text-2xl font-display font-bold tracking-tight mt-1">SEO</h1>
           <p className="text-sm text-muted-foreground mt-1">Rank tracking, keyword metrics, backlinks & domain authority</p>
         </div>
@@ -199,9 +199,9 @@ export default function SEOResults() {
           {/* Knowledge panel — a strong AI-citation signal */}
           <div className="mt-3 flex items-center gap-3 flex-wrap">
             {own.has_knowledge_panel === true
-              ? <span className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-700"><BadgeCheck className="w-4 h-4" /> Google Knowledge Panel detected{own.knowledge_type ? ` · ${own.knowledge_type}` : ''}</span>
+              ? <span className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-400"><BadgeCheck className="w-4 h-4" /> Google Knowledge Panel detected{own.knowledge_type ? ` · ${own.knowledge_type}` : ''}</span>
               : own.has_knowledge_panel === false
-                ? <span className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-md bg-amber-50 text-amber-700"><AlertCircle className="w-4 h-4" /> No Knowledge Panel — a strong AI-citation gap to close</span>
+                ? <span className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-md bg-amber-500/10 text-amber-400"><AlertCircle className="w-4 h-4" /> No Knowledge Panel — a strong AI-citation gap to close</span>
                 : <span className="text-xs text-muted-foreground">Knowledge Panel: not checked yet</span>}
             <button onClick={() => own.brand_id && runKnowledge.mutate(own.brand_id)} disabled={runKnowledge.isPending}
               className="text-xs text-primary hover:underline disabled:opacity-50 inline-flex items-center gap-1">
@@ -226,11 +226,11 @@ export default function SEOResults() {
               </thead>
               <tbody>
                 {domains.map(d => (
-                  <tr key={d.brand_id} className={`border-b border-border last:border-0 transition-colors ${d.type === 'own' ? 'bg-violet-50/50' : 'hover:bg-muted/40'}`}>
+                  <tr key={d.brand_id} className={`border-b border-border last:border-0 transition-colors ${d.type === 'own' ? 'bg-primary/[0.06]' : 'hover:bg-muted/40'}`}>
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-medium">{d.domain ?? d.brand_name}</span>
-                        {d.type === 'own' && <span className="text-[10px] font-mono px-1.5 py-0.5 bg-violet-100 text-violet-700 rounded-md">YOU</span>}
+                        {d.type === 'own' && <span className="text-[10px] font-mono px-1.5 py-0.5 bg-primary/10 text-primary rounded-md">YOU</span>}
                       </div>
                     </td>
                     <td className="px-5 py-3"><DRBadge dr={d.domain_rating} /></td>
@@ -268,7 +268,7 @@ export default function SEOResults() {
                     <tr key={g.id} className="border-b border-border last:border-0 hover:bg-muted/40 transition-colors">
                       <td className="px-5 py-3 text-sm font-medium max-w-[220px] truncate">{g.keyword}</td>
                       <td className="px-5 py-3 text-xs text-muted-foreground truncate max-w-[150px]">{g.competitor_domain}</td>
-                      <td className="px-5 py-3"><span className="font-mono text-xs px-2 py-0.5 rounded-md bg-amber-50 text-amber-700">#{g.competitor_position ?? '—'}</span></td>
+                      <td className="px-5 py-3"><span className="font-mono text-xs px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-400">#{g.competitor_position ?? '—'}</span></td>
                       <td className="px-5 py-3 text-xs nums text-muted-foreground">{fmt(g.search_volume)}</td>
                       <td className="px-5 py-3"><KDBadge kd={g.difficulty} /></td>
                       <td className="px-5 py-3 text-xs text-muted-foreground capitalize">{g.intent ?? '—'}</td>
@@ -336,7 +336,7 @@ export default function SEOResults() {
                     <td className="px-5 py-3 text-xs max-w-[220px] truncate">{b.source_domain ?? b.source_url}</td>
                     <td className="px-5 py-3 text-xs nums font-medium">{b.domain_rating ?? '—'}</td>
                     <td className="px-5 py-3 text-xs text-muted-foreground max-w-[200px] truncate">{b.anchor || '—'}</td>
-                    <td className="px-5 py-3"><span className={`text-[10px] font-mono px-1.5 py-0.5 rounded-md ${b.dofollow ? 'bg-emerald-50 text-emerald-700' : 'bg-muted text-muted-foreground'}`}>{b.dofollow ? 'dofollow' : 'nofollow'}</span></td>
+                    <td className="px-5 py-3"><span className={`text-[10px] font-mono px-1.5 py-0.5 rounded-md ${b.dofollow ? 'bg-emerald-500/10 text-emerald-400' : 'bg-muted text-muted-foreground'}`}>{b.dofollow ? 'dofollow' : 'nofollow'}</span></td>
                     <td className="px-5 py-3 text-xs text-muted-foreground">{b.first_seen ?? '—'}</td>
                   </tr>
                 ))}

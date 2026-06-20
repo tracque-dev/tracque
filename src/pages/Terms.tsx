@@ -3,7 +3,7 @@ import LegalLayout, { LegalSection } from '../components/LegalLayout'
 export default function Terms() {
   return (
     <LegalLayout title="Terms of Service" updated="June 19, 2026">
-      <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-xs text-amber-800">
+      <div className="rounded-xl border border-amber-500/20 bg-amber-500/10 p-4 text-xs text-amber-400">
         This is a good-faith starting template. Have it reviewed by counsel before relying on it.
       </div>
 
@@ -26,7 +26,7 @@ export default function Terms() {
       </LegalSection>
 
       <LegalSection heading="5. Your data">
-        <p>You own the brands, keywords, and business facts you provide and the analytics you instrument. You grant us the limited rights needed to operate the service for you. We handle your data per our <a href="/privacy" className="text-violet-600 hover:underline">Privacy Policy</a>.</p>
+        <p>You own the brands, keywords, and business facts you provide and the analytics you instrument. You grant us the limited rights needed to operate the service for you. We handle your data per our <a href="/privacy" className="text-primary hover:underline">Privacy Policy</a>.</p>
       </LegalSection>
 
       <LegalSection heading="6. Accuracy & no guarantees">

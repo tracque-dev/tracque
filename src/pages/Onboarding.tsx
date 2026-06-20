@@ -107,10 +107,10 @@ export default function Onboarding() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {SEGMENTS.map(({ key, icon: Icon, label, desc }) => (
                     <button key={key} onClick={() => setSeg(key)}
-                      className={`text-left rounded-xl border p-4 transition-all ${seg === key ? 'border-violet-500 ring-1 ring-violet-500/30 bg-violet-50' : 'border-border hover:border-violet-300'}`}>
+                      className={`text-left rounded-xl border p-4 transition-all ${seg === key ? 'border-primary/40 ring-1 ring-primary/30 bg-primary/10' : 'border-border hover:border-primary/40'}`}>
                       <div className="flex items-center justify-between">
-                        <div className="w-9 h-9 rounded-xl bg-muted flex items-center justify-center"><Icon className="w-4 h-4 text-foreground" /></div>
-                        {seg === key && <Check className="w-4 h-4 text-violet-600" />}
+                        <div className="w-9 h-9 rounded-xl bg-secondary flex items-center justify-center"><Icon className="w-4 h-4 text-foreground" /></div>
+                        {seg === key && <Check className="w-4 h-4 text-primary" />}
                       </div>
                       <p className="font-medium text-sm mt-3">{label}</p>
                       <p className="text-xs text-muted-foreground mt-0.5">{desc}</p>
@@ -118,7 +118,7 @@ export default function Onboarding() {
                   ))}
                 </div>
                 <button onClick={() => seg && setStep(2)} disabled={!seg}
-                  className="mt-6 w-full flex items-center justify-center gap-2 bg-violet-600 text-white py-2.5 rounded-xl text-sm font-medium hover:bg-violet-700 disabled:opacity-40 transition-colors">
+                  className="mt-6 w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground py-2.5 rounded-xl text-sm font-medium hover:bg-primary/90 disabled:opacity-40 transition-colors">
                   Continue <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </>
@@ -127,38 +127,38 @@ export default function Onboarding() {
                 <div>
                   <label className="eyebrow text-muted-foreground block mb-1.5">{seg === 'cu' ? 'Institution name' : 'Brand / business name'}</label>
                   <input autoFocus value={name} onChange={e => setName(e.target.value)} placeholder={seg === 'cu' ? 'Summit Credit Union' : 'Acme Inc.'}
-                    className="w-full text-sm border border-border rounded-xl px-3 py-2.5 bg-background focus:outline-none focus:ring-2 focus:ring-violet-500" />
+                    className="w-full text-sm border border-border rounded-xl px-3 py-2.5 bg-background focus:outline-none focus:ring-2 focus:ring-primary" />
                 </div>
                 <div>
                   <label className="eyebrow text-muted-foreground block mb-1.5">Website (optional)</label>
                   <input value={domain} onChange={e => setDomain(e.target.value)} placeholder="acme.com"
-                    className="w-full text-sm border border-border rounded-xl px-3 py-2.5 bg-background focus:outline-none focus:ring-2 focus:ring-violet-500" />
+                    className="w-full text-sm border border-border rounded-xl px-3 py-2.5 bg-background focus:outline-none focus:ring-2 focus:ring-primary" />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   {needsCity && (
                     <div>
                       <label className="eyebrow text-muted-foreground block mb-1.5">City</label>
                       <input value={city} onChange={e => setCity(e.target.value)} placeholder="Denver, CO"
-                        className="w-full text-sm border border-border rounded-xl px-3 py-2.5 bg-background focus:outline-none focus:ring-2 focus:ring-violet-500" />
+                        className="w-full text-sm border border-border rounded-xl px-3 py-2.5 bg-background focus:outline-none focus:ring-2 focus:ring-primary" />
                     </div>
                   )}
                   {needsCategory && (
                     <div>
                       <label className="eyebrow text-muted-foreground block mb-1.5">Category</label>
                       <input value={category} onChange={e => setCategory(e.target.value)} placeholder={seg === 'saas' ? 'CRM software' : 'plumber'}
-                        className="w-full text-sm border border-border rounded-xl px-3 py-2.5 bg-background focus:outline-none focus:ring-2 focus:ring-violet-500" />
+                        className="w-full text-sm border border-border rounded-xl px-3 py-2.5 bg-background focus:outline-none focus:ring-2 focus:ring-primary" />
                     </div>
                   )}
                 </div>
 
-                {error && <p className="text-xs text-destructive bg-red-50 border border-red-100 rounded-md px-3 py-2">{error}</p>}
+                {error && <p className="text-xs text-red-400 bg-red-500/10 border border-red-500/20 rounded-md px-3 py-2">{error}</p>}
 
                 <div className="flex items-center gap-2 pt-1">
                   <button onClick={() => setStep(1)} disabled={busy} className="flex items-center gap-1.5 border border-border px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-muted disabled:opacity-50">
                     <ArrowLeft className="w-3.5 h-3.5" /> Back
                   </button>
                   <button onClick={finish} disabled={busy || !name.trim()}
-                    className="flex-1 flex items-center justify-center gap-2 bg-violet-600 text-white py-2.5 rounded-xl text-sm font-medium hover:bg-violet-700 disabled:opacity-40 transition-colors">
+                    className="flex-1 flex items-center justify-center gap-2 bg-primary text-primary-foreground py-2.5 rounded-xl text-sm font-medium hover:bg-primary/90 disabled:opacity-40 transition-colors">
                     {busy ? <><Loader2 className="w-4 h-4 animate-spin" /> Setting up &amp; scanning…</> : <>Set up my account <ArrowRight className="w-3.5 h-3.5" /></>}
                   </button>
                 </div>
