@@ -203,7 +203,7 @@ export function useRunScan() {
   const userId = useUserId()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: async (opts?: { brand_ids?: string[]; keyword_ids?: string[] }) => {
+    mutationFn: async (opts?: { brand_ids?: string[]; keyword_ids?: string[]; runs_per_keyword?: number }) => {
       const { data, error } = await supabase.functions.invoke('run-scan', {
         body: { user_id: userId, ...opts },
       })

@@ -480,7 +480,11 @@ Deno.serve(async (req) => {
   const errorSamples: string[] = []
   const overviewsFound: number[] = []
 
-  for (const keyword of keywords) {
+  // Bound the work per invocation so we never blow the edge wall-clock limit.
+  // Fewer runs → more keywords fit. Any keywords beyond the cap are covered by
+  // the daily scheduled scan (or the next manual run).
+  const MAX_KW = RUNS <= 1 ? 8 : 5
+  for (const keyword of keywords.slice(0, MAX_KW)) {
     const prompt = buildPrompt(keyword.phrase)
 
     // ── Google AI Overview (one call per keyword) ──
@@ -499,22 +503,21 @@ Deno.serve(async (req) => {
       overviewsFound.push(brandsMentioned.length)
     }
 
-    // ── AI model scans (RUNS × models, parsed for all brands) ──
-    for (const model of models) {
-      // Collect RUNS responses for this keyword/model
+    // ── AI model scans — models AND runs run in PARALLEL so a many-keyword
+    //    scan stays under the edge wall-clock limit (sequential would time out). ──
+    await Promise.all(models.map(async (model) => {
+      const settled = await Promise.allSettled(
+        Array.from({ length: RUNS }, () => callModel(model, prompt)),
+      )
       const responses: ModelResponse[] = []
-      for (let run = 0; run < RUNS; run++) {
-        try {
-          const response = await callModel(model, prompt)
-          responses.push(response)
-        } catch (e) {
-          console.error(`${model} run ${run + 1} failed for "${keyword.phrase}":`, e)
-          if (errorSamples.length < 8) errorSamples.push(`${model}: ${String(e).slice(0, 200)}`)
+      for (const s of settled) {
+        if (s.status === 'fulfilled') responses.push(s.value)
+        else {
+          if (errorSamples.length < 8) errorSamples.push(`${model}: ${String(s.reason).slice(0, 200)}`)
           totalErrors++
         }
       }
-
-      if (responses.length === 0) continue
+      if (responses.length === 0) return
 
       // Parse and aggregate per brand
       for (const brand of brands) {
@@ -552,7 +555,7 @@ Deno.serve(async (req) => {
           }
         }
       }
-    }
+    }))
   }
 
   return new Response(JSON.stringify({
@@ -561,7 +564,7 @@ Deno.serve(async (req) => {
     errors: totalErrors,
     models_used: models,
     error_samples: errorSamples,
-    keywords_scanned: keywords.length,
+    keywords_scanned: Math.min(keywords.length, MAX_KW),
     brands_tracked: brands.length,
     runs_per_keyword: RUNS,
     ai_overviews_found: overviewsFound.length,

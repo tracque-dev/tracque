@@ -32,13 +32,13 @@ export default function App() {
       <Route path="/r/:token" element={<SharedReport />} />
       <Route path="/privacy" element={<Privacy />} />
       <Route path="/terms" element={<Terms />} />
+      <Route path="/app/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
       <Route path="/app" element={
         <ProtectedRoute>
           <Layout />
         </ProtectedRoute>
       }>
         <Route index element={<Navigate to="dashboard" replace />} />
-        <Route path="onboarding" element={<Onboarding />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="clients" element={<Clients />} />
         <Route path="brands" element={<Brands />} />

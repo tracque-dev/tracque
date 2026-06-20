@@ -77,7 +77,7 @@ export default function Onboarding() {
       localStorage.setItem(`tracque.segment.${userId}`, seg)
 
       await qc.invalidateQueries()
-      runScan.mutate()             // fire the first scan in the background
+      runScan.mutate({ runs_per_keyword: 1 })   // light first scan (fast, won't time out)
       navigate('/app/dashboard')
     } catch (e: any) {
       setError(e.message ?? 'Something went wrong'); setBusy(false)
