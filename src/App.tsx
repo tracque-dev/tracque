@@ -21,6 +21,7 @@ import Report from './pages/Report'
 import SharedReport from './pages/SharedReport'
 import Privacy from './pages/Privacy'
 import Terms from './pages/Terms'
+import Onboarding from './pages/Onboarding'
 import Settings from './pages/Settings'
 
 export default function App() {
@@ -37,6 +38,7 @@ export default function App() {
         </ProtectedRoute>
       }>
         <Route index element={<Navigate to="dashboard" replace />} />
+        <Route path="onboarding" element={<Onboarding />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="clients" element={<Clients />} />
         <Route path="brands" element={<Brands />} />

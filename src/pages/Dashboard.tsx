@@ -1,3 +1,4 @@
+import { Navigate } from 'react-router-dom'
 import { Bot, Search, Building2, Hash, Loader2, Play, ArrowUpRight } from 'lucide-react'
 import { useBrands, useKeywords, useMentionRates, useLatestScanResults, useRunScan } from '../lib/hooks'
 
@@ -6,11 +7,15 @@ const MODEL_LABELS: Record<string, string> = {
 }
 
 export default function Dashboard() {
-  const { data: brands = [] } = useBrands()
+  const { data: brands = [], isLoading: brandsLoading } = useBrands()
   const { data: keywords = [] } = useKeywords()
   const { data: mentionRates = [], isLoading: ratesLoading } = useMentionRates()
   const { data: recentScans = [], isLoading: scansLoading } = useLatestScanResults()
   const runScan = useRunScan()
+
+  // A brand-new account has nothing set up → run them through onboarding
+  // (seeds their brand, keywords, and first scan) so the app is never empty.
+  if (!brandsLoading && brands.length === 0) return <Navigate to="/app/onboarding" replace />
 
   const ownBrand = brands.find(b => b.type === 'own')
   const ownRates = mentionRates.filter(r => r.brand_name === ownBrand?.name)
