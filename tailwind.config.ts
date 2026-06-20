@@ -14,9 +14,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['Geist', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
         mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
-        display: ['Geist', '-apple-system', 'sans-serif'],
+        display: ['Space Grotesk', 'Inter', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -75,20 +75,25 @@ export default {
           600: "#059669",
         },
         blue: {
-          50: "#EFF5FF",
-          100: "#D9E8FE",
-          200: "#BAD5FD",
-          300: "#8DBAFB",
-          400: "#5896F8",
-          500: "#2D7FF9",
-          600: "#1668E6",
-          700: "#1453BC",
-          900: "#0C2E66",
+          400: "#60A5FA",
+          500: "#3B82F6",
+          600: "#2563EB",
         },
         purple: {
           400: "#C084FC",
           500: "#A855F7",
           600: "#9333EA",
+        },
+        violet: {
+          50: "#F5F3FF",
+          100: "#EDE9FE",
+          200: "#DDD6FE",
+          300: "#C4B5FD",
+          400: "#A78BFA",
+          500: "#8B5CF6",
+          600: "#7B5BF5",
+          700: "#6D28D9",
+          900: "#3B1E80",
         },
         amber: {
           400: "#FBBF24",

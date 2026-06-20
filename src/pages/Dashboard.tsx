@@ -39,7 +39,7 @@ export default function Dashboard() {
       {/* Header */}
       <div className="flex items-end justify-between">
         <div>
-          <p className="eyebrow text-blue-600">Overview</p>
+          <p className="eyebrow text-violet-600">Overview</p>
           <h1 className="text-3xl font-display font-bold tracking-tight mt-1">Dashboard</h1>
           <p className="text-sm text-muted-foreground mt-1">
             {recentScans.length > 0
@@ -64,7 +64,7 @@ export default function Dashboard() {
           <p className="text-base font-display font-semibold mb-1">Get started</p>
           <p className="text-sm text-muted-foreground mb-5">Add your brand and some keywords, then run your first scan.</p>
           <div className="flex items-center justify-center gap-3">
-            <a href="/app/brands" className="px-4 py-2 text-sm bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700">Add brand</a>
+            <a href="/app/brands" className="px-4 py-2 text-sm bg-violet-600 text-white rounded-xl font-medium hover:bg-violet-700">Add brand</a>
             <a href="/app/keywords" className="px-4 py-2 text-sm border border-border rounded-xl text-foreground hover:bg-muted">Add keywords</a>
           </div>
         </div>
@@ -75,10 +75,10 @@ export default function Dashboard() {
         {/* Hero — AI mention rate */}
         <div className="lg:col-span-2 lg:row-span-2 relative overflow-hidden rounded-2xl bg-ink-grad text-white p-6 shadow-lg">
           <div className="absolute inset-0 rails opacity-60 pointer-events-none" />
-          <div className="absolute -right-10 -top-10 w-44 h-44 rounded-full bg-blue-600/30 blur-3xl pointer-events-none" />
+          <div className="absolute -right-10 -top-10 w-44 h-44 rounded-full bg-violet-600/30 blur-3xl pointer-events-none" />
           <div className="relative">
             <div className="flex items-center gap-2">
-              <Bot className="w-4 h-4 text-blue-400" />
+              <Bot className="w-4 h-4 text-violet-400" />
               <p className="eyebrow text-white/50">Avg AI mention rate</p>
             </div>
             <div className="flex items-baseline gap-3 mt-4">
@@ -95,7 +95,7 @@ export default function Dashboard() {
                   <div key={r.model} className="flex items-center gap-3">
                     <span className="text-xs text-white/60 w-20 shrink-0">{MODEL_LABELS[r.model] ?? r.model}</span>
                     <div className="flex-1 h-1.5 rounded-full bg-white/10 overflow-hidden">
-                      <div className="h-full rounded-full bg-blue-500" style={{ width: `${r.mention_rate_pct}%` }} />
+                      <div className="h-full rounded-full bg-violet-500" style={{ width: `${r.mention_rate_pct}%` }} />
                     </div>
                     <span className="text-xs nums text-white/80 w-9 text-right">{r.mention_rate_pct}%</span>
                   </div>
@@ -138,7 +138,7 @@ export default function Dashboard() {
                   </div>
                   <div className="h-2 bg-muted rounded-full overflow-hidden">
                     <div
-                      className={`h-full rounded-full ${i === 0 ? 'bg-blue-600' : i === 1 ? 'bg-blue-400' : 'bg-slate-300'}`}
+                      className={`h-full rounded-full ${i === 0 ? 'bg-violet-600' : i === 1 ? 'bg-violet-400' : 'bg-slate-300'}`}
                       style={{ width: `${pct}%` }}
                     />
                   </div>
@@ -191,7 +191,7 @@ export default function Dashboard() {
         <div className="bg-card rounded-2xl border border-border shadow-card overflow-hidden">
           <div className="px-5 py-4 border-b border-border flex items-center justify-between">
             <p className="eyebrow text-muted-foreground">Recent scan results</p>
-            <a href="/app/ai" className="flex items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-700">
+            <a href="/app/ai" className="flex items-center gap-1 text-xs font-medium text-violet-600 hover:text-violet-700">
               View all <ArrowUpRight className="w-3 h-3" />
             </a>
           </div>
@@ -212,7 +212,7 @@ export default function Dashboard() {
                     <td className="px-5 py-3 text-sm font-medium">{r.brand_name}</td>
                     <td className="px-5 py-3 text-sm text-muted-foreground max-w-[200px] truncate">{r.phrase}</td>
                     <td className="px-5 py-3">
-                      <span className="text-xs px-2 py-0.5 bg-blue-50 text-blue-700 rounded-md font-medium">{MODEL_LABELS[r.model] ?? r.model}</span>
+                      <span className="text-xs px-2 py-0.5 bg-violet-50 text-violet-700 rounded-md font-medium">{MODEL_LABELS[r.model] ?? r.model}</span>
                     </td>
                     <td className="px-5 py-3">
                       <span className={`text-sm font-medium ${r.mentioned ? 'text-[hsl(var(--success))]' : 'text-muted-foreground'}`}>

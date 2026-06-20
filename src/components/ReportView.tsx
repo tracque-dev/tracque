@@ -46,7 +46,7 @@ function Stat({ label, value, sub }: { label: string; value: string; sub?: strin
 
 export default function ReportView({ data }: { data: ReportData }) {
   const { brand, ai, seo, reputation, attribution } = data
-  const accent = brand.color || '#2D7FF9'
+  const accent = brand.color || '#7C3AED'
   const date = new Date(data.generated_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
 
   return (
@@ -64,7 +64,7 @@ export default function ReportView({ data }: { data: ReportData }) {
           </div>
         </div>
         <div className="text-right">
-          <p className="eyebrow text-blue-600">Performance report</p>
+          <p className="eyebrow text-violet-600">Performance report</p>
           <p className="text-sm font-medium mt-1">{date}</p>
         </div>
       </div>
@@ -83,7 +83,7 @@ export default function ReportView({ data }: { data: ReportData }) {
                 <div key={m.model} className="flex items-center gap-2">
                   <span className="text-xs w-20 text-muted-foreground">{MODEL_LABEL[m.model] ?? m.model}</span>
                   <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
-                    <div className="h-full rounded-full bg-blue-500" style={{ width: `${m.rate}%` }} />
+                    <div className="h-full rounded-full bg-violet-500" style={{ width: `${m.rate}%` }} />
                   </div>
                   <span className="text-xs nums w-8 text-right">{m.rate}%</span>
                 </div>
@@ -137,7 +137,7 @@ export default function ReportView({ data }: { data: ReportData }) {
 
       {/* Footer */}
       <div className="flex items-center justify-center gap-1.5 pt-2 text-[11px] text-muted-foreground">
-        <Mark className="w-3.5 h-3.5" badge="#2D7FF9" rail="#fff" node="#2D7FF9" />
+        <Mark className="w-3.5 h-3.5" badge="#7C3AED" rail="#fff" node="#7C3AED" />
         Powered by Tracque
       </div>
     </div>

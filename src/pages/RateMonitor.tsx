@@ -37,7 +37,7 @@ export default function RateMonitor() {
     <div className="p-7 space-y-6 max-w-[1400px]">
       <div className="flex items-end justify-between">
         <div>
-          <p className="eyebrow text-blue-600">Compliance</p>
+          <p className="eyebrow text-violet-600">Compliance</p>
           <h1 className="text-2xl font-display font-bold tracking-tight mt-1">AI Rate Accuracy</h1>
           <p className="text-sm text-muted-foreground mt-1">Catch when AI states the wrong rate, fee, or hours about you — before it's a compliance problem</p>
         </div>
@@ -67,15 +67,15 @@ export default function RateMonitor() {
         <form onSubmit={add} className="flex flex-wrap items-end gap-2 p-4 border-b border-border bg-muted/20">
           <div>
             <label className="eyebrow text-muted-foreground">Fact</label>
-            <input value={label} onChange={e => setLabel(e.target.value)} placeholder="12-month CD APY" className="mt-1 w-48 px-3 py-2 text-sm border border-border rounded-xl bg-background focus:ring-blue-500" />
+            <input value={label} onChange={e => setLabel(e.target.value)} placeholder="12-month CD APY" className="mt-1 w-48 px-3 py-2 text-sm border border-border rounded-xl bg-background focus:ring-violet-500" />
           </div>
           <div>
             <label className="eyebrow text-muted-foreground">Correct value</label>
-            <input value={value} onChange={e => setValue(e.target.value)} placeholder="4.50%" className="mt-1 w-28 px-3 py-2 text-sm border border-border rounded-xl bg-background nums focus:ring-blue-500" />
+            <input value={value} onChange={e => setValue(e.target.value)} placeholder="4.50%" className="mt-1 w-28 px-3 py-2 text-sm border border-border rounded-xl bg-background nums focus:ring-violet-500" />
           </div>
           <div>
             <label className="eyebrow text-muted-foreground">Type</label>
-            <select value={category} onChange={e => setCategory(e.target.value)} className="mt-1 px-3 py-2 text-sm border border-border rounded-xl bg-background capitalize focus:ring-blue-500">
+            <select value={category} onChange={e => setCategory(e.target.value)} className="mt-1 px-3 py-2 text-sm border border-border rounded-xl bg-background capitalize focus:ring-violet-500">
               {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>

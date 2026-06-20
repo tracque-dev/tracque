@@ -63,7 +63,7 @@ export default function Auth() {
           {/* Ink-grad accent panel */}
           <div className="relative overflow-hidden bg-ink-grad text-white px-8 py-6">
             <div className="absolute inset-0 rails opacity-60 pointer-events-none" />
-            <div className="absolute -right-10 -top-10 w-44 h-44 rounded-full bg-blue-600/30 blur-3xl pointer-events-none" />
+            <div className="absolute -right-10 -top-10 w-44 h-44 rounded-full bg-violet-600/30 blur-3xl pointer-events-none" />
             <div className="relative">
               <p className="eyebrow text-white/50">Auth</p>
               <h1 className="text-2xl font-display font-bold tracking-tight mt-1">
@@ -88,7 +88,7 @@ export default function Auth() {
                   value={email}
                   onChange={e => setEmail(e.target.value)}
                   placeholder="you@company.com"
-                  className="w-full text-sm border border-border rounded-xl px-3 py-2.5 bg-background focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  className="w-full text-sm border border-border rounded-xl px-3 py-2.5 bg-background focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-colors"
                 />
               </div>
 
@@ -102,7 +102,7 @@ export default function Auth() {
                     onChange={e => setPassword(e.target.value)}
                     placeholder="••••••••"
                     minLength={6}
-                    className="w-full text-sm border border-border rounded-xl px-3 py-2.5 bg-background focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                    className="w-full text-sm border border-border rounded-xl px-3 py-2.5 bg-background focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-colors"
                   />
                 </div>
               )}
@@ -117,7 +117,7 @@ export default function Auth() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white py-2.5 rounded-xl text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                className="w-full flex items-center justify-center gap-2 bg-violet-600 text-white py-2.5 rounded-xl text-sm font-medium hover:bg-violet-700 disabled:opacity-50 transition-colors"
               >
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : (
                   <>
@@ -137,7 +137,7 @@ export default function Auth() {
                   </button>
                   <p className="text-xs text-muted-foreground">
                     No account?{' '}
-                    <button onClick={() => setMode('signup')} className="text-blue-600 font-medium hover:underline">
+                    <button onClick={() => setMode('signup')} className="text-violet-600 font-medium hover:underline">
                       Sign up free
                     </button>
                   </p>
@@ -146,7 +146,7 @@ export default function Auth() {
               {mode === 'signup' && (
                 <p className="text-xs text-muted-foreground">
                   Already have an account?{' '}
-                  <button onClick={() => setMode('signin')} className="text-blue-600 font-medium hover:underline">
+                  <button onClick={() => setMode('signin')} className="text-violet-600 font-medium hover:underline">
                     Sign in
                   </button>
                 </p>

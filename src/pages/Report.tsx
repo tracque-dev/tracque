@@ -100,7 +100,7 @@ export default function Report() {
       {/* Header / actions */}
       <div className="flex items-end justify-between print:hidden">
         <div>
-          <p className="eyebrow text-blue-600">Reporting</p>
+          <p className="eyebrow text-violet-600">Reporting</p>
           <h1 className="text-2xl font-display font-bold tracking-tight mt-1">Client Report</h1>
           <p className="text-sm text-muted-foreground mt-1">Branded, shareable scorecard — AI visibility, SEO, reputation &amp; revenue</p>
         </div>
@@ -120,14 +120,14 @@ export default function Report() {
             <div className="flex items-center justify-between">
               <p className="text-sm text-muted-foreground">Generate a read-only link to hand this client — no login required.</p>
               <button onClick={() => createLink.mutate(clientId)} disabled={createLink.isPending}
-                className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition-all">
+                className="flex items-center gap-2 bg-violet-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-violet-700 disabled:opacity-50 transition-all">
                 {createLink.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Link2 className="w-3.5 h-3.5" />} Generate link
               </button>
             </div>
           ) : (
             <div className="flex items-center gap-2 flex-wrap">
               <input readOnly value={link.enabled ? shareUrl : 'Link disabled'} onFocus={e => e.target.select()}
-                className={`flex-1 min-w-[260px] px-3 py-2.5 text-sm border border-border rounded-xl bg-background font-mono focus:ring-blue-500 ${link.enabled ? '' : 'text-muted-foreground line-through'}`} />
+                className={`flex-1 min-w-[260px] px-3 py-2.5 text-sm border border-border rounded-xl bg-background font-mono focus:ring-violet-500 ${link.enabled ? '' : 'text-muted-foreground line-through'}`} />
               <button onClick={copy} disabled={!link.enabled} className="flex items-center gap-1.5 border border-border px-4 py-2.5 rounded-xl text-sm font-medium disabled:opacity-40 hover:bg-muted transition-all">
                 {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />} {copied ? 'Copied' : 'Copy'}
               </button>

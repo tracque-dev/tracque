@@ -114,7 +114,7 @@ function KeywordExplorer() {
       <p className="eyebrow text-muted-foreground mb-3 flex items-center gap-1.5"><Lightbulb className="w-3.5 h-3.5" /> Keyword explorer</p>
       <div className="bg-card rounded-2xl border border-border shadow-card overflow-hidden">
         <form onSubmit={e => { e.preventDefault(); if (seed.trim()) explore.mutate(seed.trim()) }} className="flex items-center gap-2 p-3 border-b border-border bg-muted/40">
-          <input value={seed} onChange={e => setSeed(e.target.value)} placeholder="Seed keyword, e.g. crm" className="flex-1 px-3 py-2 text-sm border border-border rounded-xl bg-background focus:ring-blue-500" />
+          <input value={seed} onChange={e => setSeed(e.target.value)} placeholder="Seed keyword, e.g. crm" className="flex-1 px-3 py-2 text-sm border border-border rounded-xl bg-background focus:ring-violet-500" />
           <button type="submit" disabled={explore.isPending || !seed.trim()} className="flex items-center gap-1.5 bg-foreground text-background px-4 py-2 rounded-xl text-sm font-medium hover:opacity-90 disabled:opacity-40">
             {explore.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Lightbulb className="w-3.5 h-3.5" />} Explore
           </button>
@@ -169,7 +169,7 @@ export default function SEOResults() {
       {/* Header */}
       <div className="flex items-end justify-between">
         <div>
-          <p className="eyebrow text-blue-600">Search</p>
+          <p className="eyebrow text-violet-600">Search</p>
           <h1 className="text-2xl font-display font-bold tracking-tight mt-1">SEO</h1>
           <p className="text-sm text-muted-foreground mt-1">Rank tracking, keyword metrics, backlinks & domain authority</p>
         </div>
@@ -226,11 +226,11 @@ export default function SEOResults() {
               </thead>
               <tbody>
                 {domains.map(d => (
-                  <tr key={d.brand_id} className={`border-b border-border last:border-0 transition-colors ${d.type === 'own' ? 'bg-blue-50/50' : 'hover:bg-muted/40'}`}>
+                  <tr key={d.brand_id} className={`border-b border-border last:border-0 transition-colors ${d.type === 'own' ? 'bg-violet-50/50' : 'hover:bg-muted/40'}`}>
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-medium">{d.domain ?? d.brand_name}</span>
-                        {d.type === 'own' && <span className="text-[10px] font-mono px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded-md">YOU</span>}
+                        {d.type === 'own' && <span className="text-[10px] font-mono px-1.5 py-0.5 bg-violet-100 text-violet-700 rounded-md">YOU</span>}
                       </div>
                     </td>
                     <td className="px-5 py-3"><DRBadge dr={d.domain_rating} /></td>

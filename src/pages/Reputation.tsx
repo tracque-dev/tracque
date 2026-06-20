@@ -27,14 +27,14 @@ function ReviewCard({ review, businessName }: { review: Review; businessName: st
       {!review.owner_answered && (
         <div className="mt-2.5">
           {!reply ? (
-            <button onClick={generate} disabled={draft.isPending} className="flex items-center gap-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 disabled:opacity-50">
+            <button onClick={generate} disabled={draft.isPending} className="flex items-center gap-1.5 text-xs font-medium text-violet-600 hover:text-violet-700 disabled:opacity-50">
               {draft.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />} Draft AI reply
             </button>
           ) : (
             <div className="bg-muted/40 rounded-xl p-3 mt-1">
               <p className="eyebrow text-muted-foreground mb-1.5">Suggested reply</p>
               <p className="text-sm">{reply}</p>
-              <button onClick={() => navigator.clipboard.writeText(reply)} className="text-xs font-medium text-blue-600 hover:text-blue-700 mt-1.5">Copy</button>
+              <button onClick={() => navigator.clipboard.writeText(reply)} className="text-xs font-medium text-violet-600 hover:text-violet-700 mt-1.5">Copy</button>
             </div>
           )}
         </div>
@@ -81,7 +81,7 @@ export default function Reputation() {
     <div className="p-7 space-y-6 max-w-[1400px]">
       <div className="flex items-end justify-between">
         <div>
-          <p className="eyebrow text-blue-600">Reputation</p>
+          <p className="eyebrow text-violet-600">Reputation</p>
           <h1 className="text-2xl font-display font-bold tracking-tight mt-1">Reputation</h1>
           <p className="text-sm text-muted-foreground mt-1">Reviews drive what AI recommends — track your rating vs the local field</p>
         </div>
@@ -92,11 +92,11 @@ export default function Reputation() {
         <div className="flex flex-wrap items-end gap-3">
           <div>
             <label className="text-xs font-medium text-muted-foreground">Category</label>
-            <input value={category} onChange={e => setCategory(e.target.value)} placeholder="plumber, credit union…" className="mt-1 w-48 px-3 py-2 text-sm border border-border rounded-xl bg-background focus:ring-blue-500" />
+            <input value={category} onChange={e => setCategory(e.target.value)} placeholder="plumber, credit union…" className="mt-1 w-48 px-3 py-2 text-sm border border-border rounded-xl bg-background focus:ring-violet-500" />
           </div>
           <div>
             <label className="text-xs font-medium text-muted-foreground">City or address</label>
-            <input value={location} onChange={e => setLocation(e.target.value)} placeholder="Austin, TX" className="mt-1 w-44 px-3 py-2 text-sm border border-border rounded-xl bg-background focus:ring-blue-500" />
+            <input value={location} onChange={e => setLocation(e.target.value)} placeholder="Austin, TX" className="mt-1 w-44 px-3 py-2 text-sm border border-border rounded-xl bg-background focus:ring-violet-500" />
           </div>
           <button
             onClick={() => ownBrand && runSync.mutate({ brand_id: ownBrand.id, category: category || undefined, location: location || undefined })}
@@ -216,12 +216,12 @@ export default function Reputation() {
               </thead>
               <tbody>
                 {competitors.map((c, i) => (
-                  <tr key={c.id} className={`border-b border-border last:border-0 transition-colors ${c.is_self ? 'bg-blue-50/60' : 'hover:bg-muted/40'}`}>
+                  <tr key={c.id} className={`border-b border-border last:border-0 transition-colors ${c.is_self ? 'bg-violet-50/60' : 'hover:bg-muted/40'}`}>
                     <td className="px-5 py-3 text-sm nums text-muted-foreground">{i + 1}</td>
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-medium truncate max-w-[260px]">{c.name}</span>
-                        {c.is_self && <span className="text-[10px] font-mono px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded-md">YOU</span>}
+                        {c.is_self && <span className="text-[10px] font-mono px-1.5 py-0.5 bg-violet-100 text-violet-700 rounded-md">YOU</span>}
                       </div>
                     </td>
                     <td className="px-5 py-3"><div className="flex items-center gap-1.5"><span className="text-sm font-display font-semibold nums">{c.rating?.toFixed(1) ?? '—'}</span><Star className="w-3 h-3 text-amber-400 fill-amber-400" /></div></td>

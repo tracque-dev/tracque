@@ -26,7 +26,7 @@ export default function Terms() {
       </LegalSection>
 
       <LegalSection heading="5. Your data">
-        <p>You own the brands, keywords, and business facts you provide and the analytics you instrument. You grant us the limited rights needed to operate the service for you. We handle your data per our <a href="/privacy" className="text-blue-600 hover:underline">Privacy Policy</a>.</p>
+        <p>You own the brands, keywords, and business facts you provide and the analytics you instrument. You grant us the limited rights needed to operate the service for you. We handle your data per our <a href="/privacy" className="text-violet-600 hover:underline">Privacy Policy</a>.</p>
       </LegalSection>
 
       <LegalSection heading="6. Accuracy & no guarantees">

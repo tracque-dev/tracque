@@ -105,7 +105,7 @@ export default function Compliance() {
       {/* Header */}
       <div className="flex items-end justify-between print:hidden">
         <div>
-          <p className="eyebrow text-blue-600">Compliance</p>
+          <p className="eyebrow text-violet-600">Compliance</p>
           <h1 className="text-2xl font-display font-bold tracking-tight mt-1">Compliance</h1>
           <p className="text-sm text-muted-foreground mt-1">Vendor-risk scorecard + printable one-pager for procurement &amp; exam files</p>
         </div>

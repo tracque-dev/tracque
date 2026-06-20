@@ -11,7 +11,7 @@ const SUGGESTED = [
 ]
 
 const INTENT_COLORS: Record<string, string> = {
-  commercial: 'bg-blue-50 text-blue-700',
+  commercial: 'bg-violet-50 text-violet-700',
   informational: 'bg-muted text-foreground',
   navigational: 'bg-amber-50 text-amber-700',
 }
@@ -35,13 +35,13 @@ export default function Keywords() {
     <div className="p-7 space-y-6 max-w-[1400px]">
       <div className="flex items-end justify-between">
         <div>
-          <p className="eyebrow text-blue-600">Tracking</p>
+          <p className="eyebrow text-violet-600">Tracking</p>
           <h1 className="text-2xl font-display font-bold tracking-tight mt-1">Keywords</h1>
           <p className="text-sm text-muted-foreground mt-1">Phrases tracked across AI models and Google</p>
         </div>
         <button
           onClick={() => setShowAdd(true)}
-          className="flex items-center gap-2 px-4 py-2.5 text-sm bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-all"
+          className="flex items-center gap-2 px-4 py-2.5 text-sm bg-violet-600 text-white rounded-xl font-medium hover:bg-violet-700 transition-all"
         >
           <Plus className="w-4 h-4" /> Add keyword
         </button>
@@ -50,7 +50,7 @@ export default function Keywords() {
       {/* Suggested */}
       <div className="bg-card rounded-2xl border border-border p-5 shadow-card">
         <div className="flex items-center gap-2 mb-4">
-          <Sparkles className="w-4 h-4 text-blue-600" />
+          <Sparkles className="w-4 h-4 text-violet-600" />
           <p className="eyebrow text-muted-foreground">Suggested keywords</p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -58,7 +58,7 @@ export default function Keywords() {
             <button
               key={s}
               onClick={() => handleAdd(s)}
-              className="text-xs px-2.5 py-1 border border-dashed border-border rounded-md text-muted-foreground hover:border-blue-600 hover:text-blue-600 transition-colors"
+              className="text-xs px-2.5 py-1 border border-dashed border-border rounded-md text-muted-foreground hover:border-violet-600 hover:text-violet-600 transition-colors"
             >
               + {s}
             </button>
@@ -73,14 +73,14 @@ export default function Keywords() {
           <div className="flex gap-3">
             <input
               autoFocus
-              className="flex-1 text-sm border border-border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-background"
+              className="flex-1 text-sm border border-border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500 bg-background"
               placeholder="best project management software"
               value={phrase}
               onChange={e => setPhrase(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleAdd(phrase)}
             />
             <select
-              className="text-sm border border-border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-background"
+              className="text-sm border border-border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500 bg-background"
               value={intent}
               onChange={e => setIntent(e.target.value as typeof intent)}
             >

@@ -9,8 +9,8 @@ import { supabase } from '../integrations/supabase/client'
 import { useBrands, USER_ID } from '../lib/hooks'
 
 const CATEGORY_META: Record<string, { label: string; color: string }> = {
-  citation_source:  { label: 'Citation Source',   color: 'bg-blue-50 text-blue-700' },
-  content_gap:      { label: 'Content Gap',        color: 'bg-blue-50 text-blue-700' },
+  citation_source:  { label: 'Citation Source',   color: 'bg-violet-50 text-violet-700' },
+  content_gap:      { label: 'Content Gap',        color: 'bg-violet-50 text-violet-700' },
   competitor_gap:   { label: 'Competitor Gap',     color: 'bg-muted text-foreground' },
   site_structure:   { label: 'Site Structure',     color: 'bg-muted text-foreground' },
   review_platform:  { label: 'Review Platform',    color: 'bg-muted text-foreground' },
@@ -147,7 +147,7 @@ function RecommendationCard({ rec, onStatusChange }: {
                 </span>
               )}
               {rec.data_evidence.domain && (
-                <span className="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded-md font-medium">
+                <span className="text-xs px-2 py-1 bg-violet-50 text-violet-700 rounded-md font-medium">
                   {rec.data_evidence.domain}
                 </span>
               )}
@@ -190,7 +190,7 @@ function RecommendationCard({ rec, onStatusChange }: {
               {rec.status === 'pending' && (
                 <button
                   onClick={() => onStatusChange(rec.id, 'in_progress')}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700"
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-violet-600 text-white rounded-xl font-medium hover:bg-violet-700"
                 >
                   <ArrowRight className="w-3 h-3" /> Start working on this
                 </button>
@@ -273,14 +273,14 @@ export default function Recommendations() {
       {/* Header */}
       <div className="flex items-end justify-between">
         <div>
-          <p className="eyebrow text-blue-600">Actions</p>
+          <p className="eyebrow text-violet-600">Actions</p>
           <h1 className="text-2xl font-display font-bold tracking-tight mt-1">Recommendations</h1>
           <p className="text-sm text-muted-foreground mt-1">Specific actions to improve your AI visibility — ranked by impact</p>
         </div>
         <div className="flex items-center gap-2">
           {brands.length > 1 && (
             <select
-              className="text-sm border border-border rounded-xl px-3 py-2.5 bg-background focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="text-sm border border-border rounded-xl px-3 py-2.5 bg-background focus:outline-none focus:ring-1 focus:ring-violet-500"
               value={activeBrandId}
               onChange={e => setSelectedBrandId(e.target.value)}
             >
@@ -336,7 +336,7 @@ export default function Recommendations() {
               onClick={() => setStatusFilter(value)}
               className={`text-xs px-3 py-1.5 rounded-md border font-medium transition-colors ${
                 statusFilter === value
-                  ? 'bg-blue-600 text-white border-blue-600'
+                  ? 'bg-violet-600 text-white border-violet-600'
                   : 'border-border text-muted-foreground hover:bg-muted hover:text-foreground'
               }`}
             >
@@ -363,7 +363,7 @@ export default function Recommendations() {
           <button
             onClick={() => generate.mutate()}
             disabled={generate.isPending}
-            className="flex items-center gap-2 px-4 py-2.5 text-sm bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 disabled:opacity-40 mx-auto"
+            className="flex items-center gap-2 px-4 py-2.5 text-sm bg-violet-600 text-white rounded-xl font-medium hover:bg-violet-700 disabled:opacity-40 mx-auto"
           >
             {generate.isPending
               ? <><Loader2 className="w-4 h-4 animate-spin" /> Analyzing your data…</>
