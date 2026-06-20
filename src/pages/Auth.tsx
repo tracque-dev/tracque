@@ -23,9 +23,15 @@ export default function Auth() {
 
     try {
       if (mode === 'signup') {
-        const { error } = await supabase.auth.signUp({ email, password })
+        const { data, error } = await supabase.auth.signUp({ email, password })
         if (error) throw error
-        setSuccess('Check your email to confirm your account.')
+        // Auto-confirm on → signUp returns a session; sign straight in.
+        // Otherwise (email confirmation required) → prompt to check email.
+        if (data.session) {
+          navigate('/app/dashboard')
+        } else {
+          setSuccess('Account created — check your email to confirm, then sign in.')
+        }
       } else if (mode === 'signin') {
         const { error } = await supabase.auth.signInWithPassword({ email, password })
         if (error) throw error
