@@ -203,10 +203,6 @@ export default function Landing() {
         <div className="relative max-w-6xl mx-auto px-6 lg:px-8 pt-20 pb-24 grid lg:grid-cols-2 gap-16 items-center">
           <div>
             <Reveal>
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-card border border-border rounded-full text-[12px] text-muted-foreground mb-7 shadow-sm">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                AI visibility · SEO · revenue attribution
-              </div>
               <h1 className="text-[44px] md:text-[56px] font-display font-bold leading-[1.04] tracking-[-0.035em] mb-6">
                 See your brand in<br />
                 <span className="bg-gradient-to-r from-[#2D7FF9] to-[#5B9DFF] bg-clip-text text-transparent">every AI answer.</span><br />

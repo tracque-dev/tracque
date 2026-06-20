@@ -70,7 +70,7 @@
 
   .font-mono { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace; }
   /* Display = Inter, tight tracking (Linear-style headers) */
-  .font-display { font-family: 'Inter', -apple-system, sans-serif; letter-spacing: -0.02em; }
+  .font-display { font-family: 'Space Grotesk', 'Inter', sans-serif; letter-spacing: -0.02em; }
   .nums { font-variant-numeric: tabular-nums; }
 
   /* Elevated panels on dark */
