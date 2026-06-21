@@ -8,7 +8,7 @@ const supabase = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPAB
 const DFS_LOGIN = Deno.env.get('DATAFORSEO_LOGIN')
 const DFS_PASSWORD = Deno.env.get('DATAFORSEO_PASSWORD')
 const US = { location_code: 2840, language_code: 'en' }
-const cors = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'authorization, content-type' }
+const cors = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type' }
 
 function auth(): string | null { return DFS_LOGIN && DFS_PASSWORD ? 'Basic ' + btoa(`${DFS_LOGIN}:${DFS_PASSWORD}`) : null }
 function root(d: string): string { return d.replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0].toLowerCase() }

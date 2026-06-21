@@ -5,7 +5,7 @@
 // dimension, so AI-source attribution flows into the client's GA4).
 
 const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY')
-const cors = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'authorization, content-type' }
+const cors = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type' }
 
 // Condense a page to the signals the model needs (cheap + focused).
 function condense(html: string): string {

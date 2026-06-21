@@ -8,7 +8,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 const supabase = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!)
 const DFS_LOGIN = Deno.env.get('DATAFORSEO_LOGIN')
 const DFS_PASSWORD = Deno.env.get('DATAFORSEO_PASSWORD')
-const cors = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'authorization, content-type' }
+const cors = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type' }
 
 function dfsAuth(): string | null {
   if (!DFS_LOGIN || !DFS_PASSWORD) return null

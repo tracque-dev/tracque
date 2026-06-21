@@ -7,7 +7,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const supabase = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!)
 const OPENAI = Deno.env.get('OPENAI_API_KEY')
-const cors = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'authorization, content-type' }
+const cors = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type' }
 const UA = { 'User-Agent': 'TracqueGeoGrid/1.0 (https://tracque.com)' }
 const sleep = (ms: number) => new Promise(r => setTimeout(r, ms))
 
